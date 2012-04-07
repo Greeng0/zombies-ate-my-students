@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
-using COMP476Project;
+using Entities;
 
 namespace HIDInput
 {
     static class KeyboardInput
     {
-        static public bool ProcessInput(Keys key,Hero player)
+        static public bool ProcessInput(Keys key, Hero player)
         {
             switch (player.animState)
             {
-                case Entities.Entity.AnimationState.Idle:
+                case Entity.AnimationState.Idle:
                     {
                         return true;
                     }
-                case Entities.Entity.AnimationState.Walking:
+                case Entity.AnimationState.Walking:
                     {
                         if (player.Stance == AnimationStance.Standing)
                         {
@@ -41,10 +41,21 @@ namespace HIDInput
                         }
                         else
                         {
-                            return false;
+                            switch (key)
+                            {
+                                case Keys.Left:
+                                case Keys.Right:
+                                    {
+                                        return true;
+                                    }
+                                default:
+                                    {
+                                        return false;
+                                    }
+                            }
                         }
                     }
-                case Entities.Entity.AnimationState.Shooting:
+                case Entity.AnimationState.Shooting:
                     {
                         if (player.Stance == AnimationStance.Shooting)
                         {
@@ -65,7 +76,7 @@ namespace HIDInput
                             return false;
                         }
                     }
-                case Entities.Entity.AnimationState.Hurt:
+                case Entity.AnimationState.Hurt:
                     {
                         switch (key)
                         {
@@ -80,7 +91,7 @@ namespace HIDInput
                                 }
                         }
                     }
-                case Entities.Entity.AnimationState.StanceChange:
+                case Entity.AnimationState.StanceChange:
                     {
                             switch (key)
                             {
@@ -98,7 +109,7 @@ namespace HIDInput
                             }
     
                     }
-                case Entities.Entity.AnimationState.UseItem:
+                case Entity.AnimationState.UseItem:
                     {
                         if (player.Stance == AnimationStance.Standing)
                         {
@@ -120,7 +131,7 @@ namespace HIDInput
                             return false;
                         }
                     }
-                case Entities.Entity.AnimationState.Dying:
+                case Entity.AnimationState.Dying:
                 default:
                     {
                         return false;

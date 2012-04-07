@@ -28,7 +28,7 @@ namespace Entities
         }
 
         public static Random rand = new Random((int)DateTime.Now.Ticks);
-        //public Model model;
+        public Model model;
         public Vector3 Position;                //Position on the entity on screen.
         public Vector3 Velocity;                //Velocity Vector containing both the direction and the current velocity of the entity
         public double Rotation;                 //Current orientation Angle 
