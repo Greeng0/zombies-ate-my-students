@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Entities;
 
 
-namespace COMP476Project
+namespace Entities
 {
     //Positional Heuristic Types
     public enum EntityPositionState
@@ -60,8 +61,9 @@ namespace COMP476Project
         public EntityPositionState PosState;    //Movement behavior of the entity
         public EntityOrientationState OrState;  //Orientation behavior of the entity
 
-        public Zombie(int health, int maxHealth, ZombieType type)
+        public Zombie(int health, int maxHealth, ZombieType type, ref Model model)
         {
+            this.model = model;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
 

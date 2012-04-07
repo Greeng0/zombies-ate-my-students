@@ -8,10 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using SkinnedModel;
+using HIDInput;
+using Entities;
 
 namespace zombies
 {
-   
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -23,13 +24,15 @@ namespace zombies
 
         private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
         public Viewport frontViewport;
-        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));  
+        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1300, 700));
 
-       
-        public dude big;
         HUD hud;
 
         Model School;
+        Model HeroModel;
+        Model ZombieModel;
+
+        Hero Player;
 
         int scrollWheel = 0;
 
@@ -40,20 +43,17 @@ namespace zombies
             Mouse.WindowHandle = this.Window.Handle;
            // this.IsMouseVisible = true;
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1500; 
-            graphics.PreferredBackBufferHeight = 900; 
+            graphics.PreferredBackBufferWidth = 1300; 
+            graphics.PreferredBackBufferHeight = 700; 
 
             device = graphics.GraphicsDevice;
             
             Content.RootDirectory = "Content";
-
         }
 
      
         protected override void Initialize()
         {
-            
-
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.Viewport.Width;   
@@ -64,11 +64,9 @@ namespace zombies
 
             device = graphics.GraphicsDevice;
 
-
             int HalfWidth = graphics.PreferredBackBufferWidth / 2;
             int HalfHeight = graphics.PreferredBackBufferHeight / 2;
 
-        
             this.Components.Add(new Camera(this));
 
             frontViewport = new Viewport();
@@ -80,44 +78,34 @@ namespace zombies
             frontViewport.MinDepth = .1f;
             frontViewport.MaxDepth = .8f;
 
-
-           
             room r = new room(this, Content, new Vector3(0));
             this.Components.Add(r);
-
-
-            big = new dude(this, Content, 0, new Vector3(0));
-        
-            this.Components.Add(big);
-
-           
 
             hud = new HUD(this, Content, graphics);
             this.Components.Add(hud);
 
             base.Initialize();
-
         }
-      
-        
       
         protected override void LoadContent()
         {
 
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
+            HeroModel = Content.Load<Model>("dude");
+            ZombieModel = Content.Load<Model>("ZombieWalk");
+
+            Player = new Hero(1000, 1000, ref HeroModel);
 
             base.LoadContent();
-
         }
-      
-    
+
 
         protected override void Update(GameTime gameTime)
         {
             //updatehud
-            HUD.ActiveHUD.p = big.Position;
-            Camera.ActiveCamera.dudeang = big.Angle;
+            HUD.ActiveHUD.p = Player.Position;
+            Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
 
@@ -132,75 +120,84 @@ namespace zombies
                 Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
                 scrollWheel = mouseState.ScrollWheelValue;
             }
+            //end updatehud
 
-            //endupdatehud
-            KeyboardState k = Keyboard.GetState();
-            bool walk = false;
+            KeyboardState keyboard = Keyboard.GetState();
 
-            //translate
-            if (k.IsKeyDown(Keys.Up))
-            {
-                big.Position -= big.speed * new Vector3((float)Math.Sin(big.Angle), 0, (float)Math.Cos(big.Angle));
-               walk = true;
-            }
-
-             if (k.IsKeyDown(Keys.Down))
-            {
-                big.Position += big.speed * new Vector3((float)Math.Sin(big.Angle), 0, (float)Math.Cos(big.Angle));
-
-                walk = true;
-            }
-             if (k.IsKeyDown(Keys.Left))
-            {
-                big.Angle += .1f;
-
-                walk = true;
-            }
-             if (k.IsKeyDown(Keys.Right))
-            {
-                big.Angle -= .1f;
-                walk = true;
-            }
-             if (walk)
-                 big.walking = true;
-             else
-                 big.walking = false;
-
-
-            if (k.IsKeyDown(Keys.Escape))
+            if (keyboard.IsKeyDown(Keys.Escape))
             {
                 Exit();
-
             }
 
+            if (keyboard.IsKeyDown(Keys.LeftShift))
+                Player.Stance = AnimationStance.Shooting;
+            else
+                Player.Stance = AnimationStance.Standing;
 
-            Camera.ActiveCamera.CameraPosition = big.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
-            Camera.ActiveCamera.CameraLookAt = big.Position;
-                
+            bool walk = false;
+            Keys[] keysPressed = keyboard.GetPressedKeys();
 
-                base.Update(gameTime);
-         
+            foreach (Keys key in keysPressed)
+            {
+                switch (key)
+                {
+                    case Keys.LeftShift:
+                        break;
+                    case Keys.Up:
+                        if (KeyboardInput.ProcessInput(key, Player))
+                            Player.MoveForward();
+                        walk = true;
+                        break;
+                    case Keys.Down:
+                        if (KeyboardInput.ProcessInput(key, Player))
+                            Player.MoveBackward();
+                        walk = true;
+                        break;
+                    case Keys.Left:
+                        if (KeyboardInput.ProcessInput(key, Player))
+                            Player.TurnLeft();
+                        walk = true;
+                        break;
+                    case Keys.Right:
+                        if (KeyboardInput.ProcessInput(key, Player))
+                            Player.TurnRight();
+                        walk = true;
+                        break;
+                    case Keys.Tab:
+                        Player.SwitchNextItem();
+                        break;
+                    case Keys.W:
+                        Player.SwitchNextWeapon();
+                        break;
+                }
+            }
+
+            if (walk)
+                Player.animState = Entity.AnimationState.Walking;
+            else
+                Player.animState = Entity.AnimationState.Idle;
+
+            Player.Update(gameTime);
+
+            Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
+            Camera.ActiveCamera.CameraLookAt = Player.Position;
+            
+            base.Update(gameTime);
         }
 
       
         protected override void Draw(GameTime gameTime)
         {
-
             GraphicsDevice.Clear(Color.Black);
-
             graphics.GraphicsDevice.Viewport = frontViewport;
 
+            DrawModel(Player);
 
             base.Draw(gameTime);
-
-
-
         }
 
         private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
         {
-
-
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -216,9 +213,58 @@ namespace zombies
 
                 mesh.Draw();
             }
-
-
         }
+
+        private void DrawModel(Hero hero)
+        {
+            Matrix[] bones = hero.animationPlayer.GetSkinTransforms();
+
+            if (hero.walking)
+            {
+                // Render the skinned mesh. if animation
+                foreach (ModelMesh mesh in hero.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float) hero.Rotation) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
+            }
+            else
+            {
+                foreach (ModelMesh mesh in hero.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float) hero.Rotation) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+
+                    }
+
+                    mesh.Draw();
+                }
+            }
+        }
+
 
     }
 }
