@@ -16,24 +16,35 @@ namespace zombies
     {
         GraphicsDeviceManager graphics;
         GraphicsDevice device;
-  
+        SpriteFont Font1;
+        SpriteBatch spriteBatch;
+
+        MouseState mouseState;
+
         private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
         public Viewport frontViewport;
-        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1200, 700));  
+        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));  
 
        
         public dude big;
         HUD hud;
 
-   
- 
+        Model School;
+
+        int scrollWheel = 0;
+
         public Game1()
         {
+            mouseState = new MouseState();
+
+            Mouse.WindowHandle = this.Window.Handle;
+           // this.IsMouseVisible = true;
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1200; 
-            graphics.PreferredBackBufferHeight = 700; 
+            graphics.PreferredBackBufferWidth = 1500; 
+            graphics.PreferredBackBufferHeight = 900; 
 
             device = graphics.GraphicsDevice;
+            
             Content.RootDirectory = "Content";
 
         }
@@ -41,7 +52,9 @@ namespace zombies
      
         protected override void Initialize()
         {
+            
 
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.Viewport.Width;   
             graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.Viewport.Height;  
@@ -91,6 +104,8 @@ namespace zombies
         protected override void LoadContent()
         {
 
+            Font1 = Content.Load<SpriteFont>("Arial");
+            School = Content.Load<Model>("School");
 
             base.LoadContent();
 
@@ -100,13 +115,23 @@ namespace zombies
 
         protected override void Update(GameTime gameTime)
         {
-
-
-       
             //updatehud
             HUD.ActiveHUD.p = big.Position;
             Camera.ActiveCamera.dudeang = big.Angle;
 
+            mouseState = Mouse.GetState();
+
+            if (mouseState.ScrollWheelValue < scrollWheel)
+            {
+                Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
+                scrollWheel = mouseState.ScrollWheelValue;
+            }
+
+            if (mouseState.ScrollWheelValue > scrollWheel)
+            {
+                Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
+                scrollWheel = mouseState.ScrollWheelValue;
+            }
 
             //endupdatehud
             KeyboardState k = Keyboard.GetState();
@@ -147,11 +172,11 @@ namespace zombies
                 Exit();
 
             }
-       
 
 
-                 Camera.ActiveCamera.dudepo = big.Position;
-     
+            Camera.ActiveCamera.CameraPosition = big.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
+            Camera.ActiveCamera.CameraLookAt = big.Position;
+                
 
                 base.Update(gameTime);
          
@@ -185,6 +210,8 @@ namespace zombies
                     effect.World = world;
                     effect.View = view;
                     effect.Projection = projection;
+
+                    effect.TextureEnabled = true;
                 }
 
                 mesh.Draw();

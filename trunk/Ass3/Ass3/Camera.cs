@@ -13,6 +13,9 @@ namespace zombies
     {
         private static Camera activeCamera = null;
 
+        public Vector3 CameraPosition = new Vector3(0, 40, 30);
+        public Vector3 CameraLookAt = new Vector3(0, 0, 0);
+        public Vector3 CameraZoom = new Vector3(0);
         // View and projection
         protected Matrix projection = Matrix.Identity;
         private Matrix view = Matrix.Identity;
@@ -79,7 +82,7 @@ namespace zombies
         public override void Update(GameTime gameTime)
         {
 
-            view = Matrix.CreateLookAt(new Vector3(0,20,20),new Vector3(0), up);
+            view = Matrix.CreateLookAt(CameraPosition, CameraLookAt, up);
                 
             base.Update(gameTime);
 
