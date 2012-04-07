@@ -173,11 +173,12 @@ namespace zombies
                 Vector2 pos2 = new Vector2(200, 100);
                 spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
+                
 
                 healthscale = rate * playerhealth;
                 int diff = min + (int)(rate * (100 - playerhealth));
 
-                spriteBatch.Draw(healthbar, new Rectangle(40,  diff, 30, (int)healthscale), Color.White);
+
                
                 
              spriteBatch.Draw(slot1, new Rectangle(390, 0, 70, 70), Color.White);

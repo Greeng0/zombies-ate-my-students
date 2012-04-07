@@ -94,13 +94,6 @@ namespace zombies
 
             animationPlayer.StartClip(clip);
 
-          /*  model = _content.Load<Model>("dude");
-            skin = model.Tag as SkinningData;// The SkinnedModelProcessor puts skinning data in the Tag property
-
-            player = new AnimationPlayer(skin);
-            clip = skin.AnimationClips["Take 001"];// The name of the animation
-
-            player.StartClip(clip);*/
             base.LoadContent();
         }
 
@@ -108,8 +101,15 @@ namespace zombies
        
         public override void Update(GameTime gameTime)
         {
-            if (walking) 
-          animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            if (walking)
+            {
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else
+            {
+                animationPlayer.ResetClip();
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
  
             base.Update(gameTime);
 
@@ -150,7 +150,7 @@ namespace zombies
                     foreach (SkinnedEffect effect in mesh.Effects)
                     {
                         effect.World = Matrix.CreateRotationY(angle) * Matrix.CreateScale(scale) * Matrix.CreateTranslation(Position);
-                 
+                        effect.SetBoneTransforms(bones);
                         effect.View = Camera.ActiveCamera.View;
 
                         effect.Projection = Camera.ActiveCamera.Projection;
@@ -159,11 +159,6 @@ namespace zombies
 
                         effect.SpecularColor = new Vector3(0.25f);
                         effect.SpecularPower = 16;
-
-
-
-
-
 
                     }
                

@@ -78,7 +78,7 @@ namespace zombies
         protected override void LoadContent()
         {
 
-            _model = _content.Load<Model>("476map");
+            _model = _content.Load<Model>("School");
 
             // Allocate the transform matrix array.
             _boneTransforms = new Matrix[_model.Bones.Count];
@@ -97,20 +97,28 @@ namespace zombies
 
         public override void Draw(GameTime gameTime)
         {
- 
-            _model.CopyAbsoluteBoneTransformsTo(_boneTransforms);
+
+            SamplerState sample = new SamplerState();
+
+            sample.AddressU = TextureAddressMode.Wrap;
+            sample.AddressV = TextureAddressMode.Wrap;
+            
+
+            //_model.CopyAbsoluteBoneTransformsTo(_boneTransforms);
             foreach (ModelMesh mesh in _model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = _boneTransforms[mesh.ParentBone.Index];
+                    effect.World = Matrix.Identity;
 
 
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
+                    effect.TextureEnabled = true;
+                    effect.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 
-                    effect.EnableDefaultLighting();
+                    //effect.EnableDefaultLighting();
                 }
 
                 mesh.Draw();

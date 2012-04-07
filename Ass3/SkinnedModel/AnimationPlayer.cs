@@ -25,9 +25,9 @@ namespace SkinnedModel
 
 
         // Information about the currently playing animation clip.
-        AnimationClip currentClipValue;
-        TimeSpan currentTimeValue;
-        int currentKeyframe;
+        public AnimationClip currentClipValue;
+        public TimeSpan currentTimeValue;
+        public int currentKeyframe;
 
 
         // Current animation transform matrices.
@@ -68,6 +68,15 @@ namespace SkinnedModel
                 throw new ArgumentNullException("clip");
 
             currentClipValue = clip;
+            currentTimeValue = TimeSpan.Zero;
+            currentKeyframe = 0;
+
+            // Initialize bone transforms to the bind pose.
+            skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+        }
+
+        public void ResetClip()
+        {
             currentTimeValue = TimeSpan.Zero;
             currentKeyframe = 0;
 
@@ -197,7 +206,6 @@ namespace SkinnedModel
             return skinTransforms;
         }
 
-
         /// <summary>
         /// Gets the clip currently being decoded.
         /// </summary>
@@ -205,7 +213,6 @@ namespace SkinnedModel
         {
             get { return currentClipValue; }
         }
-
 
         /// <summary>
         /// Gets the current play position.
