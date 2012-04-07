@@ -1,0 +1,3 @@
+C:\Users\Jo\Desktop\476 proj\Ass3\Ass3Content\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Jo\Desktop\476 repo\476 proj\Ass3\Ass3Content\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\obj\x86\Debug\ResolveAssemblyReference.cache

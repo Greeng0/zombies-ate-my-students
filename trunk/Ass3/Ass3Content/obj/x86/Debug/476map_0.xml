@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics" xmlns:Framework="Microsoft.Xna.Framework">
+  <Asset Type="Graphics:NodeContent">
+    <Name>RootNode</Name>
+    <Identity>
+      <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+      <SourceTool>FbxImporter</SourceTool>
+    </Identity>
+    <Transform>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</Transform>
+    <Children>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_008</Name>
+        <Transform>150 0 0 0 0 0 -150 0 0 1 0 0 -350 0 -100 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource1</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_007</Name>
+        <Transform>-3.19878927E-06 0 -5 0 -100 0 6.39757855E-05 0 0 1 0 0 -100 0 -100 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource2</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_006</Name>
+        <Transform>-3.19878927E-06 0 -5 0 -95 0 6.07769944E-05 0 0 1 0 0 100 0 -100 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource2</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_005</Name>
+        <Transform>5 0 0 0 0 0 -50 0 0 1 0 0 200 0 -100 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource2</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_004</Name>
+        <Transform>5 0 0 0 0 0 -50 0 0 1 0 0 0 0 -100 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource2</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_003</Name>
+        <Transform>50 0 0 0 0 0 -50 0 0 1 0 0 0 0 -200 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource3</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_002</Name>
+        <Transform>50 0 0 0 0 0 -50 0 0 1 0 0 200 0 -200 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource4</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane_001</Name>
+        <Transform>50 0 0 0 0 0 -50 0 0 1 0 0 200 0 0 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource5</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+      <Child Type="Graphics:MeshContent">
+        <Name>Plane</Name>
+        <Transform>50 0 0 0 0 0 -50 0 0 1 0 0 0 0 0 1</Transform>
+        <Positions>1 1 0 1 -1 0 -1 -1 0 -1 1 0</Positions>
+        <Geometry>
+          <Batch>
+            <Material>#Resource1</Material>
+            <Indices>2 1 0 0 3 2</Indices>
+            <Vertices>
+              <PositionIndices>0 3 2 1</PositionIndices>
+              <Channels>
+                <VertexChannel Name="Normal0" ElementType="Framework:Vector3">0 0 0.9999695 0 0 1 0 0 1 0 0 1</VertexChannel>
+              </Channels>
+            </Vertices>
+          </Batch>
+        </Geometry>
+      </Child>
+    </Children>
+  </Asset>
+  <Resources>
+    <Resource ID="#Resource1" Type="Graphics:BasicMaterialContent">
+      <Name>Material_004</Name>
+      <Identity>
+        <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+        <SourceTool>FbxImporter</SourceTool>
+      </Identity>
+      <OpaqueData>
+        <Data Key="DiffuseColor" Type="Framework:Vector3">0.09424 0.236560017 0</Data>
+        <Data Key="EmissiveColor" Type="Framework:Vector3">0 0 0</Data>
+        <Data Key="Alpha" Type="float">1</Data>
+        <Data Key="SpecularColor" Type="Framework:Vector3">0 0 0</Data>
+      </OpaqueData>
+    </Resource>
+    <Resource ID="#Resource2" Type="Graphics:BasicMaterialContent">
+      <Name>Material_005</Name>
+      <Identity>
+        <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+        <SourceTool>FbxImporter</SourceTool>
+      </Identity>
+      <OpaqueData>
+        <Data Key="DiffuseColor" Type="Framework:Vector3">0.640000045 0.25928 0</Data>
+        <Data Key="EmissiveColor" Type="Framework:Vector3">0 0 0</Data>
+        <Data Key="Alpha" Type="float">1</Data>
+        <Data Key="SpecularColor" Type="Framework:Vector3">0 0 0</Data>
+      </OpaqueData>
+    </Resource>
+    <Resource ID="#Resource3" Type="Graphics:BasicMaterialContent">
+      <Name>Material_001</Name>
+      <Identity>
+        <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+        <SourceTool>FbxImporter</SourceTool>
+      </Identity>
+      <OpaqueData>
+        <Data Key="DiffuseColor" Type="Framework:Vector3">0.358400017 0 0.0044</Data>
+        <Data Key="EmissiveColor" Type="Framework:Vector3">0 0 0</Data>
+        <Data Key="Alpha" Type="float">1</Data>
+        <Data Key="SpecularColor" Type="Framework:Vector3">0 0 0</Data>
+      </OpaqueData>
+    </Resource>
+    <Resource ID="#Resource4" Type="Graphics:BasicMaterialContent">
+      <Name>Material_003</Name>
+      <Identity>
+        <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+        <SourceTool>FbxImporter</SourceTool>
+      </Identity>
+      <OpaqueData>
+        <Data Key="DiffuseColor" Type="Framework:Vector3">0.02184 0.11176 0.3816</Data>
+        <Data Key="EmissiveColor" Type="Framework:Vector3">0 0 0</Data>
+        <Data Key="Alpha" Type="float">1</Data>
+        <Data Key="SpecularColor" Type="Framework:Vector3">0 0 0</Data>
+      </OpaqueData>
+    </Resource>
+    <Resource ID="#Resource5" Type="Graphics:BasicMaterialContent">
+      <Name>Material_002</Name>
+      <Identity>
+        <SourceFilename>C:\Users\Alejo\Documents\School\COMP-476\Project\Testing project\476 proj\Ass3\Ass3Content\476map.fbx</SourceFilename>
+        <SourceTool>FbxImporter</SourceTool>
+      </Identity>
+      <OpaqueData>
+        <Data Key="DiffuseColor" Type="Framework:Vector3">0.480079979 0.640000045 0</Data>
+        <Data Key="EmissiveColor" Type="Framework:Vector3">0 0 0</Data>
+        <Data Key="Alpha" Type="float">1</Data>
+        <Data Key="SpecularColor" Type="Framework:Vector3">0 0 0</Data>
+      </OpaqueData>
+    </Resource>
+  </Resources>
+</XnaContent>
