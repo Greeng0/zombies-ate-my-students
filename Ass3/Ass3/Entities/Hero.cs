@@ -28,8 +28,9 @@ namespace Entities
         public SkinningData skinningData;           // This contains all the skinning data
         public float scale = .1f;
 
-        public Dictionary<string, int> ItemsList;
-        public Dictionary<string, int> WeaponsList;
+        public List<string> PowerupsList;
+        public Dictionary<Item, int> ItemsList;
+        public Dictionary<Weapon, int> WeaponsList;
         public Item SelectedItem;
         public Weapon EquippedWeapon;
  
@@ -39,6 +40,11 @@ namespace Entities
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
+
+            PowerupsList = new List<string>();
+            ItemsList = new Dictionary<Item, int>();
+            WeaponsList = new Dictionary<Weapon, int>();
+            AddWeapon(new Weapon(WeaponType.BareHands));
 
             // Look up our custom skinning information.
             skinningData = (SkinningData)model.Tag;
@@ -66,14 +72,70 @@ namespace Entities
             }
         }
 
+        public float DoAction()
+        {
+            if (Stance == AnimationStance.Standing)
+                return UseItem();
+            else
+                return FireWeapon();
+        }
+
+        private float UseItem()
+        {
+            float radius = 0;
+            if (SelectedItem != null)
+            {
+                radius = 20;
+                // TODO: use the selected item
+            }
+            return radius;
+        }
+
+        private float FireWeapon()
+        {
+            float radius = 0;
+            if (EquippedWeapon != null)
+            {
+                radius = EquippedWeapon.SoundRadius;
+                if (EquippedWeapon.weaponType == WeaponType.Handgun9mm && PowerupsList.Contains("silencer"))
+                {
+                    radius /= 2;
+                }
+                // TODO: fire the equipped weapon
+            }
+            return radius;
+        }
+
+        public void AddWeapon(Weapon weapon)
+        {
+            WeaponsList.Add(weapon, 1);
+            EquippedWeapon = weapon;
+        }
+        public void AddItem(Item item)
+        {
+            if (ItemsList.Count < 1)
+            {
+                SelectedItem = item;
+            }
+            if (ItemsList.ContainsKey(item))
+            {
+                ItemsList[item]++;
+            }
+            else
+            {
+                ItemsList.Add(item, 1);
+            }
+        }
+
         public void SwitchNextWeapon()
         {
-            //TODO
+            // TODO
         }
         public void SwitchNextItem()
         {
-            //TODO
+            // TODO
         }
+        
         public void MoveForward()
         {
             Position -= moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));

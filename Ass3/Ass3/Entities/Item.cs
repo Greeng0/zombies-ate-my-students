@@ -23,5 +23,14 @@ namespace Entities
         {
             itemType = type;
         }
+
+        public override bool Equals(object obj)
+        {
+            return itemType.Equals((obj as Item).itemType);
+        }
+        public override int GetHashCode()
+        {
+            return (int)itemType;
+        }
     }
 }
