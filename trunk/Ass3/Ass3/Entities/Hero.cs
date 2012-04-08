@@ -19,7 +19,6 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public bool walking = false;
         public float moveSpeed = 0.1f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
@@ -34,7 +33,7 @@ namespace Entities
         public Item SelectedItem;
         public Weapon EquippedWeapon;
  
-        public Hero(int health, int maxHealth, ref Model model)
+        public Hero(int health, int maxHealth, ref Model model) : base()
         {
             this.model = model;
             this.HealthPoints = health;
@@ -86,10 +85,12 @@ namespace Entities
         public void TurnLeft()
         {
             Rotation += rotationSpeed;
+            Rotation %= Math.PI * 2;
         }
         public void TurnRight()
         {
             Rotation -= rotationSpeed;
+            Rotation %= Math.PI * 2;
         }
     }
 }

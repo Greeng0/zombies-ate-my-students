@@ -165,7 +165,7 @@ namespace zombies
                 string out2 = "Position";
                 out2 += "\n" + p ;
                 out2 += "\n\n\nAngle";
-                out2 += "\n" + angle;
+                out2 += "\n" + MathHelper.ToDegrees(angle);
                 out2 += "\n\n\nFps";
                 out2 += "\n" + fps;
 
