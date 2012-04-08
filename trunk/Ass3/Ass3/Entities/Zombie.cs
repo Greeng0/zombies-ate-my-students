@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Entities;
 using SkinnedModel;
+using AI;
 
 namespace Entities
 {
@@ -61,6 +62,7 @@ namespace Entities
 
         public EntityPositionState PosState;    //Movement behavior of the entity
         public EntityOrientationState OrState;  //Orientation behavior of the entity
+        public BehaviourState BehaviouralState;   //Beahavioural state of the entity
 
         public AnimationPlayer animationPlayer;     // This calculates the Matrices of the animation
         public AnimationClip clip;                  // This contains the keyframes of the animation
@@ -74,7 +76,7 @@ namespace Entities
             this.MaxHealth = maxHealth;
 
             this.MaxVelocity = 0.02f;
-            this.MaxAcceleration = 20f;
+            this.MaxAcceleration = 0.2f;
             ArriveRadius = 1.5f;
             FleeRadius = 15f;
             TimeToTarget = 0.070f;
@@ -88,6 +90,7 @@ namespace Entities
             
             PosState = EntityPositionState.SteeringWander;
             OrState = EntityOrientationState.Face;
+            BehaviouralState = BehaviourState.Wander;
 
             zombieType = type;
 
@@ -117,12 +120,15 @@ namespace Entities
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
 
+            PosState = EvaluateBehaviour();
+            
             switch (PosState)
             {
                 case EntityPositionState.KineticArrive:
                     {
                         KinematicArrive();
-
+                        animState = AnimationState.Walking;
+                        Position += Velocity;
                         break;
                     }
                 case EntityPositionState.KineticFlee:
@@ -130,6 +136,8 @@ namespace Entities
                         if ((Target.Position - this.Position).Length() < FleeRadius)
                         {
                             KinematicFlee();
+                            animState = AnimationState.Walking;
+                            Position += Velocity;
                         }
 
                         break;
@@ -137,6 +145,8 @@ namespace Entities
                 case EntityPositionState.SteeringArrive:
                     {
                         SteeringArrive();
+                        animState = AnimationState.Walking;
+                        Position += Velocity;
                         break;
                     }
                 case EntityPositionState.SteeringFlee:
@@ -144,6 +154,8 @@ namespace Entities
                         if ((Target.Position - this.Position).Length() < FleeRadius)
                         {
                             SteeringFlee();
+                            animState = AnimationState.Walking;
+                            Position += Velocity;
                         }
 
                         break;
@@ -161,6 +173,61 @@ namespace Entities
                         break;
                     }
             }
+        }
+
+        // Adjust position state based on current behaviour
+        private EntityPositionState EvaluateBehaviour()
+        {
+            switch (BehaviouralState)
+            {
+                case BehaviourState.Wander:
+                    {
+                        return EntityPositionState.SteeringWander;
+                    }
+                case BehaviourState.SlowFlee:
+                    {
+                        // TODO: steering flee at decreased speed
+                        return EntityPositionState.SteeringFlee;
+                    }
+                case BehaviourState.RangedPursue:
+                    {
+                        // TODO: check if close enough for ranged attack, else:
+                        return EntityPositionState.SteeringArrive;
+                    }
+                case BehaviourState.RangedCreep:
+                    {
+                        // TODO: check if close enough for ranged attack, else:
+                        // TODO: steering arrige at decreased speed
+                        return EntityPositionState.SteeringArrive;
+                    }
+                case BehaviourState.MeleePursue:
+                    {
+                        // TODO: check if close enough to attack, else:
+                        // TODO: check if close enough to reserve a slot and set slot as target
+                        return EntityPositionState.SteeringArrive;
+                    }
+                case BehaviourState.MeleeCreep:
+                    {
+                        // TODO: steering arrive at decreased speed
+                        return EntityPositionState.SteeringArrive;
+                    }
+                case BehaviourState.Flee:
+                    {
+                        return EntityPositionState.SteeringFlee;
+                    }
+                default:
+                    {
+                        return EntityPositionState.None;
+                    }
+            }
+        }
+
+        public void Alert(Entity target)
+        {
+            this.Target = target;
+            Fuzzifier fuzz = new Fuzzifier(HealthPoints/MaxHealth, (target as Hero).HealthPoints/(target as Hero).MaxHealth, 
+                (Position - target.Position).Length());
+            BehaviouralState = fuzz.GetBehaviour();
         }
 
         //Kinematic Arrive. Player follows target and stops when it touches it
@@ -380,7 +447,7 @@ namespace Entities
 
                         break;
                     }
-            } Console.Out.WriteLine(Rotation);
+            }
         }
     }
 }

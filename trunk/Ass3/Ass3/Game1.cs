@@ -198,6 +198,10 @@ namespace zombies
                     case Keys.W:
                         Player.SwitchNextWeapon();
                         break;
+                    case Keys.Space:
+                        if (KeyboardInput.ProcessInput(key, Player))
+                            CastSoundWave(Player.DoAction());
+                        break;
                 }
             }
 
@@ -218,6 +222,23 @@ namespace zombies
             base.Update(gameTime);
         }
 
+        // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
+        // bounding sphere will be alerted to the Hero's presence
+        private void CastSoundWave(float radius)
+        {
+            if (radius > 0)
+            {
+                BoundingSphere soundWave = new BoundingSphere(Player.Position, radius);
+                foreach (Zombie z in zombies)
+                {
+                    // THIS IS JUST PLACEHOLDER FOR TESTING
+                    BoundingSphere zb = z.model.Meshes[0].BoundingSphere;
+                    zb.Transform(Matrix.CreateTranslation(z.Position));
+                    if (zb.Intersects(soundWave))
+                        z.Alert(Player);
+                }
+            }
+        }
       
         protected override void Draw(GameTime gameTime)
         {
