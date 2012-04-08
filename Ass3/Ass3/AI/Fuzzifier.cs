@@ -28,6 +28,7 @@ namespace AI
 
     class Fuzzifier
     {
+        #region Fields
         private const float HEALTH_LOW = 0.33f;             // health factor separating critical from injured status
         private const float HEALTH_HIGH = 0.66f;            // health factor separating injured from healthy status
         private const float DISTANCE_MELEE = 0.15f;         // distance factor separating melee from projectile range
@@ -43,6 +44,7 @@ namespace AI
         private float Range_Melee;                          // fuzzy set for melee range value
         private float Range_Projectile;                     // fuzzy set for projectile range value
         private float Range_OutOfRange;                     // fuzzy set for outOfRange range value
+        #endregion
 
         /// <summary>
         /// Initializes the Fuzzifier object and fuzzifies the inputs.
@@ -67,7 +69,7 @@ namespace AI
             return Defuzzify(highestOutput);
         }
 
-#region Fuzzification
+        #region Fuzzification
         /// <summary>
         /// Computes degrees of membership for health fuzzy set. Membership functions
         /// are described in the Zombies Ate My Neighbors Design Document.
@@ -151,9 +153,9 @@ namespace AI
                 Range_OutOfRange = 1;
             }
         }
-#endregion
+        #endregion
 
-#region Rule Evaluation
+        #region Rule Evaluation
         /// <summary>
         /// Evaluates a set of rules to assign a value to each FuzzyBehaviour.
         /// </summary>
@@ -183,9 +185,9 @@ namespace AI
             // Finds and returns Key with the highest associated value in the fuzzyOutput dictionary
             return fuzzyOutput.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
         }
-#endregion
+        #endregion
 
-#region Defuzzification
+        #region Defuzzification
         /// <summary>
         /// Converts fuzzy output to crisp output by finding the appropriate set of crisp behaviours 
         /// associated with the fuzzy output and choosing a random behaviour from this set.
@@ -234,9 +236,9 @@ namespace AI
             }
             return BehaviourState.Flee;
         }
-#endregion
+        #endregion
 
-#region Axioms
+        #region Axioms
         /// <summary>
         /// Axiom for AND operation. Assumes inputs are between 0 and 1.
         /// </summary>
@@ -260,6 +262,6 @@ namespace AI
         {
             return 1 - A;
         }
-#endregion
+        #endregion
     }
 }

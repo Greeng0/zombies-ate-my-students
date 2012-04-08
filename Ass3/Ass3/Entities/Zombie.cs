@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Entities;
-
+using SkinnedModel;
 
 namespace Entities
 {
@@ -16,7 +16,8 @@ namespace Entities
         KineticFlee,
         SteeringArrive,
         SteeringFlee,
-        SteeringWander
+        SteeringWander,
+        None
     }
 
     public enum ZombieType
@@ -61,13 +62,18 @@ namespace Entities
         public EntityPositionState PosState;    //Movement behavior of the entity
         public EntityOrientationState OrState;  //Orientation behavior of the entity
 
-        public Zombie(int health, int maxHealth, ZombieType type, ref Model model)
+        public AnimationPlayer animationPlayer;     // This calculates the Matrices of the animation
+        public AnimationClip clip;                  // This contains the keyframes of the animation
+        public SkinningData skinningData;           // This contains all the skinning data
+        public float scale = .1f;
+
+        public Zombie(int health, int maxHealth, ZombieType type, ref Model model) : base()
         {
             this.model = model;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
 
-            this.MaxVelocity = 20f;
+            this.MaxVelocity = 0.02f;
             this.MaxAcceleration = 20f;
             ArriveRadius = 1.5f;
             FleeRadius = 15f;
@@ -80,15 +86,37 @@ namespace Entities
             MaxRotationSpeed = (float)Math.PI / 12;
             MaxRotationAcceleration = (float)Math.PI;
             
-            PosState = EntityPositionState.SteeringArrive;
+            PosState = EntityPositionState.SteeringWander;
             OrState = EntityOrientationState.Face;
 
             zombieType = type;
+
+            // Look up our custom skinning information.
+            skinningData = (SkinningData)model.Tag;
+
+            if (skinningData == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayer = new AnimationPlayer(skinningData);
+            clip = skinningData.AnimationClips["Take 001"];
+            animationPlayer.StartClip(clip);
         }
 
          //Execute entity's action
-        public void Update()
+        public void Update(GameTime gameTime)
         {
+            if (animState == AnimationState.Walking)
+            {
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else
+            {
+                animationPlayer.ResetClip();
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+
             switch (PosState)
             {
                 case EntityPositionState.KineticArrive:
@@ -118,6 +146,18 @@ namespace Entities
                             SteeringFlee();
                         }
 
+                        break;
+                    }
+                case EntityPositionState.SteeringWander:
+                    {
+                        SteeringWander();
+                        animState = AnimationState.Walking;
+                        Position += Velocity;
+                        break;
+                    }
+                default:
+                    {
+                        animState = AnimationState.Idle;
                         break;
                     }
             }
@@ -340,7 +380,7 @@ namespace Entities
 
                         break;
                     }
-            }
+            } Console.Out.WriteLine(Rotation);
         }
     }
 }

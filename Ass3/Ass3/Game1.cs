@@ -33,6 +33,7 @@ namespace zombies
         Model ZombieModel;
 
         Hero Player;
+        List<Zombie> zombies;
 
         int scrollWheel = 0;
 
@@ -84,6 +85,8 @@ namespace zombies
             hud = new HUD(this, Content, graphics);
             this.Components.Add(hud);
 
+            zombies = new List<Zombie>();
+
             base.Initialize();
         }
       
@@ -96,6 +99,31 @@ namespace zombies
             ZombieModel = Content.Load<Model>("ZombieWalk");
 
             Player = new Hero(1000, 1000, ref HeroModel);
+            
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            z1.Position = new Vector3(0, 0, 10);
+            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            z2.Position = new Vector3(0, 0, -10);
+            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            z3.Position = new Vector3(10, 0, 0);
+            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            z4.Position = new Vector3(-10, 0, 0);
+            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //z5.Position = new Vector3(10, 0, 10);
+            //Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //z6.Position = new Vector3(10, 0, -10);
+            //Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //z7.Position = new Vector3(-10, 0, -10);
+            //Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //z8.Position = new Vector3(-10, 0, 10);
+            zombies.Add(z1);
+            zombies.Add(z2);
+            zombies.Add(z3);
+            zombies.Add(z4);
+            //zombies.Add(z5);
+            //zombies.Add(z6);
+            //zombies.Add(z7);
+            //zombies.Add(z8);
 
             base.LoadContent();
         }
@@ -105,6 +133,7 @@ namespace zombies
         {
             //updatehud
             HUD.ActiveHUD.p = Player.Position;
+            HUD.ActiveHUD.angle = (float) Player.Rotation;
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
@@ -178,6 +207,10 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Idle;
 
             Player.Update(gameTime);
+            foreach (Zombie z in zombies)
+            {
+                z.Update(gameTime);
+            }
 
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
@@ -192,7 +225,10 @@ namespace zombies
             graphics.GraphicsDevice.Viewport = frontViewport;
 
             DrawModel(Player);
-
+            foreach (Zombie z in zombies)
+            {
+                DrawModel(z);
+            }
             base.Draw(gameTime);
         }
 
@@ -219,52 +255,52 @@ namespace zombies
         {
             Matrix[] bones = hero.animationPlayer.GetSkinTransforms();
 
-            if (hero.walking)
+            // Render the skinned mesh
+            foreach (ModelMesh mesh in hero.model.Meshes)
             {
-                // Render the skinned mesh. if animation
-                foreach (ModelMesh mesh in hero.model.Meshes)
+                foreach (SkinnedEffect effect in mesh.Effects)
                 {
-                    foreach (SkinnedEffect effect in mesh.Effects)
-                    {
-                        effect.World = Matrix.CreateRotationY((float) hero.Rotation) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
-                        effect.SetBoneTransforms(bones);
-                        effect.View = Camera.ActiveCamera.View;
+                    effect.World = Matrix.CreateRotationY((float) hero.Rotation) * 
+                        Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
+                    effect.SetBoneTransforms(bones);
+                    effect.View = Camera.ActiveCamera.View;
 
-                        effect.Projection = Camera.ActiveCamera.Projection;
+                    effect.Projection = Camera.ActiveCamera.Projection;
 
-                        effect.EnableDefaultLighting();
+                    effect.EnableDefaultLighting();
 
-                        effect.SpecularColor = new Vector3(0.25f);
-                        effect.SpecularPower = 16;
-                    }
-
-                    mesh.Draw();
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
                 }
-            }
-            else
-            {
-                foreach (ModelMesh mesh in hero.model.Meshes)
-                {
-                    foreach (SkinnedEffect effect in mesh.Effects)
-                    {
-                        effect.World = Matrix.CreateRotationY((float) hero.Rotation) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
-                        effect.SetBoneTransforms(bones);
-                        effect.View = Camera.ActiveCamera.View;
 
-                        effect.Projection = Camera.ActiveCamera.Projection;
-
-                        effect.EnableDefaultLighting();
-
-                        effect.SpecularColor = new Vector3(0.25f);
-                        effect.SpecularPower = 16;
-
-                    }
-
-                    mesh.Draw();
-                }
+                mesh.Draw();
             }
         }
 
+        private void DrawModel(Zombie zombie)
+        {
+            Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
 
+            // Render the skinned mesh
+            foreach (ModelMesh mesh in zombie.model.Meshes)
+            {
+                foreach (SkinnedEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.CreateRotationY((float)(zombie.Rotation - Math.PI)) * 
+                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                    effect.SetBoneTransforms(bones);
+                    effect.View = Camera.ActiveCamera.View;
+
+                    effect.Projection = Camera.ActiveCamera.Projection;
+
+                    effect.EnableDefaultLighting();
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
+                }
+
+                mesh.Draw();
+            }
+        }
     }
 }
