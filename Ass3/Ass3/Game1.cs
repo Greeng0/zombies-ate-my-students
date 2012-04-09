@@ -101,16 +101,16 @@ namespace zombies
             Player = new Hero(1000, 1000, ref HeroModel, DoAction);
             
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z1.Position = new Vector3(0, 0, 10);
+            z1.Position = new Vector3(0, 0, 30);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z2.Position = new Vector3(0, 0, -10);
-           Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z3.Position = new Vector3(10, 0, 0);
-          Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z4.Position = new Vector3(-10, 0, 0);
+            z2.Position = new Vector3(0, 0, -30);
+            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z3.Position = new Vector3(30, 0, 0);
+            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z4.Position = new Vector3(-30, 0, 0);
             Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z5.Position = new Vector3(10, 0, 10);
-               Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z6.Position = new Vector3(10, 0, -10);
             //Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z7.Position = new Vector3(-10, 0, -10);
@@ -122,16 +122,15 @@ namespace zombies
             zombies.Add(z4);
             zombies.Add(z5);
             zombies.Add(z6);
-            
-
             //zombies.Add(z7);
             //zombies.Add(z8);
-            Player.reserveSlot(z1);
-            Player.reserveSlot(z2);
-            Player.reserveSlot(z3);
-            Player.reserveSlot(z4);
-            Player.reserveSlot(z5);
-            Player.reserveSlot(z6);
+
+            //z1.targetslot = Player.reserveSlot(z1);
+            //z2.targetslot = Player.reserveSlot(z2);
+            //z3.targetslot = Player.reserveSlot(z3);
+            //z4.targetslot = Player.reserveSlot(z4);
+            //z5.targetslot = Player.reserveSlot(z5);
+            //z6.targetslot = Player.reserveSlot(z6);
             base.LoadContent();
         }
 

@@ -5,9 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 namespace Entities
 {
-    interface IObserver
+    interface IHeroObserver
     {
         void Notify(Vector3 value);
-         int Targetslot();
+        int Targetslot();
     }
 }

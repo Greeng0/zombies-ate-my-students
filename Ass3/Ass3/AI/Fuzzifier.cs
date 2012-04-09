@@ -31,9 +31,9 @@ namespace AI
         #region Fields
         private const float HEALTH_LOW = 0.33f;             // health factor separating critical from injured status
         private const float HEALTH_HIGH = 0.66f;            // health factor separating injured from healthy status
-        private const float DISTANCE_MELEE = 0.15f;         // distance factor separating melee from projectile range
-        private const float DISTANCE_PROJECTILE = 0.4f;     // distance factor separating projectile from outOfRange range
-        private const float DISTANCE_OUT = 0.65f;           // largest distance factor for which projectile range fuzzy set should have value
+        private const float DISTANCE_MELEE = 0.1f;          // distance factor separating melee from projectile range
+        private const float DISTANCE_PROJECTILE = 0.3f;     // distance factor separating projectile from outOfRange range
+        private const float DISTANCE_OUT = 0.5f;            // largest distance factor for which projectile range fuzzy set should have value
 
         private float Health_Critical;                      // fuzzy set for critical health value
         private float Health_Injured;                       // fuzzy set for injured health value
@@ -201,10 +201,10 @@ namespace AI
             switch (fuzzyOutput)
             {
                 case FuzzyBehaviour.CloseIn:
-                    next = rand.Next(1, 4);
-                    if (next == 1) return BehaviourState.MeleePursue;
-                    if (next == 2) return BehaviourState.MeleeCreep;
-                    if (next == 3) return BehaviourState.Wander;
+                    next = rand.Next(1, 6);
+                    if (next == 1 || next == 2) return BehaviourState.MeleePursue;
+                    if (next == 3 || next == 4) return BehaviourState.MeleeCreep;
+                    if (next == 5) return BehaviourState.Wander;
                     break;
                 case FuzzyBehaviour.Flee:
                     next = rand.Next(1, 3);
