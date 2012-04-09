@@ -308,9 +308,6 @@ namespace Entities
                             }
 
                         }
-
-
-
                 }
             }
         
@@ -339,12 +336,13 @@ namespace Entities
             unsubscrive(slot);
         }
 
-        private void subscrive(int slot, Zombie zombie)//
+        private void subscrive(int slot, Zombie zombie)//not used for anything yet
         {
             observer.Insert(slot, zombie);
         }
         private void unsubscrive(int slot)
         {
+            nodes[slot].occ = false;
             observer.RemoveAt(slot);
         }
     }
