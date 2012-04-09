@@ -26,15 +26,18 @@ namespace Entities
         public AnimationPlayer animationPlayer;     // This calculates the Matrices of the animation
         public AnimationClip clip;                  // This contains the keyframes of the animation
         public SkinningData skinningData;           // This contains all the skinning data
-        public float scale = .1f;
+        public float scale = .1f;                   // Scale at which to render the model
 
-        public List<string> PowerupsList;
-        public Dictionary<Item, int> ItemsList;
-        public Dictionary<Weapon, int> WeaponsList;
-        public Item SelectedItem;
+        public List<string> PowerupsList;           // List of powerups obtained by the Hero
+        public Dictionary<Item, int> ItemsList;     // List of items obtained by the Hero
+        public Dictionary<Weapon, int> WeaponsList; // List of weapons obtained by the Hero
+        public Item SelectedItem;                   // Item which will be used when UseItem is called
         public Weapon EquippedWeapon;
- 
-        public Hero(int health, int maxHealth, ref Model model) : base()
+
+        public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
+
+        public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
+            : base()
         {
             this.model = model;
             this.HealthPoints = health;
@@ -45,6 +48,8 @@ namespace Entities
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
             AddWeapon(new Weapon(WeaponType.BareHands));
+
+            this.ActionFunction = actionFunction;
 
             // Look up our custom skinning information.
             skinningData = (SkinningData)model.Tag;
@@ -72,38 +77,28 @@ namespace Entities
             }
         }
 
-        public float DoAction()
+        public void DoAction()
         {
             if (Stance == AnimationStance.Standing)
-                return UseItem();
+                UseItem();
             else
-                return FireWeapon();
+                FireWeapon();
         }
 
-        private float UseItem()
+        private void UseItem()
         {
-            float radius = 0;
             if (SelectedItem != null)
             {
-                radius = 20;
-                // TODO: use the selected item
+                ActionFunction(this, SelectedItem);
             }
-            return radius;
         }
 
-        private float FireWeapon()
+        private void FireWeapon()
         {
-            float radius = 0;
             if (EquippedWeapon != null)
             {
-                radius = EquippedWeapon.SoundRadius;
-                if (EquippedWeapon.weaponType == WeaponType.Handgun9mm && PowerupsList.Contains("silencer"))
-                {
-                    radius /= 2;
-                }
-                // TODO: fire the equipped weapon
+                ActionFunction(this, EquippedWeapon);
             }
-            return radius;
         }
 
         public void AddWeapon(Weapon weapon)

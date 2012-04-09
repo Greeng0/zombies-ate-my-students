@@ -98,23 +98,23 @@ namespace zombies
             HeroModel = Content.Load<Model>("dude");
             ZombieModel = Content.Load<Model>("ZombieWalk");
 
-            Player = new Hero(1000, 1000, ref HeroModel);
+            Player = new Hero(1000, 1000, ref HeroModel, DoAction);
             
-            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z1.Position = new Vector3(0, 0, 10);
-            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z2.Position = new Vector3(0, 0, -10);
-            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z3.Position = new Vector3(10, 0, 0);
-            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z4.Position = new Vector3(-10, 0, 0);
-            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z5.Position = new Vector3(10, 0, 10);
-            //Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z6.Position = new Vector3(10, 0, -10);
-            //Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z7.Position = new Vector3(-10, 0, -10);
-            //Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel);
+            //Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z8.Position = new Vector3(-10, 0, 10);
             zombies.Add(z1);
             zombies.Add(z2);
@@ -200,7 +200,7 @@ namespace zombies
                         break;
                     case Keys.Space:
                         if (KeyboardInput.ProcessInput(key, Player))
-                            CastSoundWave(Player.DoAction());
+                            Player.DoAction();
                         break;
                 }
             }
@@ -215,11 +215,26 @@ namespace zombies
             {
                 z.Update(gameTime);
             }
-
+            
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
             
             base.Update(gameTime);
+        }
+
+        public void DoAction(Entity actionCaster, Entity objectCasted)
+        {
+            if (objectCasted is Weapon)
+            {
+                Weapon weapon = objectCasted as Weapon;
+                CastSoundWave(weapon.SoundRadius);
+                // TODO: check if caster is Hero or Zombie, perform attack accordingly
+            }
+            else if (objectCasted is Item)
+            {
+                Item item = objectCasted as Item;
+                CastSoundWave(item.SoundRadius);
+            }
         }
 
         // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
@@ -231,7 +246,7 @@ namespace zombies
                 BoundingSphere soundWave = new BoundingSphere(Player.Position, radius);
                 foreach (Zombie z in zombies)
                 {
-                    // THIS IS JUST PLACEHOLDER FOR TESTING
+                    // ****************THIS IS JUST PLACEHOLDER FOR TESTING**************************
                     BoundingSphere zb = z.model.Meshes[0].BoundingSphere;
                     zb.Transform(Matrix.CreateTranslation(z.Position));
                     if (zb.Intersects(soundWave))

@@ -18,6 +18,8 @@ namespace Entities
         SteeringArrive,
         SteeringFlee,
         SteeringWander,
+        Attack,
+        RangedAttack,
         None
     }
 
@@ -38,10 +40,15 @@ namespace Entities
 
     class Zombie : Entity
     {
+        public const float MAX_DISTANCE = 50;               //Maximum distance at which range will be evaluated
+        public const float MAX_PROJECTILE_DISTANCE = 20;    //Maximum distance at which projectile attacks can be made
+        public const float MAX_MELEE_DISTANCE = 5;          //Maximum distance at which melee attacks can be made
+
         public int HealthPoints;
         public int MaxHealth;
         public ZombieType zombieType;
 
+        public bool creep = false;              //Whether or not the Entity should move at half of MaxVelocity
         public float MaxVelocity;               //Maximum Entity Velocity
         public float MaxAcceleration;           //Maximum Entity Acceleration
         public float ArriveRadius;              //Radius used in Steering arrive. Determine when to stop slowing down 
@@ -60,16 +67,22 @@ namespace Entities
         public Entity Target;                   //Entity Target used for seeking, arriving, pursuing and such behaviors  
         public Vector3 GroundTarget;            //Target used for wandering behavior.
 
+        public Weapon MeleeAttack;              //Weapon used for melee attacks
+        public Weapon RangedAttack;             //Weapon used for ranged attacks
+
         public EntityPositionState PosState;    //Movement behavior of the entity
         public EntityOrientationState OrState;  //Orientation behavior of the entity
-        public BehaviourState BehaviouralState;   //Beahavioural state of the entity
+        public BehaviourState BehaviouralState; //Beahavioural state of the entity
 
-        public AnimationPlayer animationPlayer;     // This calculates the Matrices of the animation
-        public AnimationClip clip;                  // This contains the keyframes of the animation
-        public SkinningData skinningData;           // This contains all the skinning data
-        public float scale = .1f;
+        public AnimationPlayer animationPlayer; // This calculates the Matrices of the animation
+        public AnimationClip clip;              // This contains the keyframes of the animation
+        public SkinningData skinningData;       // This contains all the skinning data
+        public float scale = .1f;               // Scale at which to render the model
 
-        public Zombie(int health, int maxHealth, ZombieType type, ref Model model) : base()
+        public Action<Entity, Entity> AttackFunction;   // Callback function used when an attack is made
+
+        public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
+            : base()
         {
             this.model = model;
             this.HealthPoints = health;
@@ -78,7 +91,7 @@ namespace Entities
             this.MaxVelocity = 0.02f;
             this.MaxAcceleration = 0.2f;
             ArriveRadius = 1.5f;
-            FleeRadius = 15f;
+            FleeRadius = 30;
             TimeToTarget = 0.070f;
             RotationTimeToTarget = 0.00025f;
             InterpolationSpeed = 10;
@@ -93,6 +106,9 @@ namespace Entities
             BehaviouralState = BehaviourState.Wander;
 
             zombieType = type;
+            MeleeAttack = new Weapon(WeaponType.ZombieHands);
+            RangedAttack = new Weapon(WeaponType.Vomit);
+            this.AttackFunction = attackFunction;
 
             // Look up our custom skinning information.
             skinningData = (SkinningData)model.Tag;
@@ -139,12 +155,11 @@ namespace Entities
                             animState = AnimationState.Walking;
                             Position += Velocity;
                         }
-
                         break;
                     }
                 case EntityPositionState.SteeringArrive:
                     {
-                        SteeringArrive();
+                        SteeringArrive(creep);
                         animState = AnimationState.Walking;
                         Position += Velocity;
                         break;
@@ -153,11 +168,10 @@ namespace Entities
                     {
                         if ((Target.Position - this.Position).Length() < FleeRadius)
                         {
-                            SteeringFlee();
+                            SteeringFlee(creep);
                             animState = AnimationState.Walking;
                             Position += Velocity;
                         }
-
                         break;
                     }
                 case EntityPositionState.SteeringWander:
@@ -165,6 +179,20 @@ namespace Entities
                         SteeringWander();
                         animState = AnimationState.Walking;
                         Position += Velocity;
+                        break;
+                    }
+                case EntityPositionState.Attack:
+                    {
+                        animState = AnimationState.Attacking;
+                        SetOrientation(Position - Target.Position);
+                        AttackFunction(this, MeleeAttack);
+                        break;
+                    }
+                case EntityPositionState.RangedAttack:
+                    {
+                        animState = AnimationState.Attacking;
+                        SetOrientation(Position - Target.Position);
+                        AttackFunction(this, RangedAttack);
                         break;
                     }
                 default:
@@ -175,9 +203,11 @@ namespace Entities
             }
         }
 
+        
         // Adjust position state based on current behaviour
         private EntityPositionState EvaluateBehaviour()
         {
+            creep = false;
             switch (BehaviouralState)
             {
                 case BehaviourState.Wander:
@@ -186,29 +216,38 @@ namespace Entities
                     }
                 case BehaviourState.SlowFlee:
                     {
-                        // TODO: steering flee at decreased speed
+                        creep = true;
                         return EntityPositionState.SteeringFlee;
                     }
                 case BehaviourState.RangedPursue:
                     {
-                        // TODO: check if close enough for ranged attack, else:
+                        if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        {
+                            return EntityPositionState.RangedAttack;
+                        }
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.RangedCreep:
                     {
-                        // TODO: check if close enough for ranged attack, else:
-                        // TODO: steering arrige at decreased speed
+                        if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        {
+                            return EntityPositionState.RangedAttack;
+                        }
+                        creep = true;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.MeleePursue:
                     {
-                        // TODO: check if close enough to attack, else:
+                        if ((Position - Target.Position).Length() < MAX_MELEE_DISTANCE)
+                        {
+                            return EntityPositionState.Attack;
+                        }
                         // TODO: check if close enough to reserve a slot and set slot as target
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.MeleeCreep:
                     {
-                        // TODO: steering arrive at decreased speed
+                        creep = true;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.Flee:
@@ -222,12 +261,16 @@ namespace Entities
             }
         }
 
+        // Set a target for the Zombie if he doesn't already  have one
         public void Alert(Entity target)
         {
-            this.Target = target;
-            Fuzzifier fuzz = new Fuzzifier(HealthPoints/MaxHealth, (target as Hero).HealthPoints/(target as Hero).MaxHealth, 
-                (Position - target.Position).Length());
-            BehaviouralState = fuzz.GetBehaviour();
+            if (Target == null)
+            {
+                this.Target = target;
+                Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (target as Hero).HealthPoints / (target as Hero).MaxHealth,
+                    (Position - target.Position).Length());
+                BehaviouralState = fuzz.GetBehaviour();
+            }
         }
 
         //Kinematic Arrive. Player follows target and stops when it touches it
@@ -260,7 +303,7 @@ namespace Entities
 
         //Steering Arrive. Player follows target and swill slow down near its target until it touches it
         //Mostly based on Artificial Intelligence For Games 2nd Edition by Millington & Funge
-        private void SteeringArrive()
+        private void SteeringArrive(bool creep = false)
         {
             Vector3 newDirection = Target.Position - this.Position;
 
@@ -273,13 +316,14 @@ namespace Entities
                 return;
             }
 
+            float adjustedMaxVelocity = (creep) ? MaxVelocity / 2 : MaxVelocity;
             if (Distance > SlowRadiusThreshold)
             {
-                TargetSpeed = MaxVelocity;
+                TargetSpeed = adjustedMaxVelocity;
             }
             else
             {
-                TargetSpeed = MaxVelocity * Distance / SlowRadiusThreshold;
+                TargetSpeed = adjustedMaxVelocity * Distance / SlowRadiusThreshold;
             }
 
             newDirection.Normalize();
@@ -361,13 +405,14 @@ namespace Entities
         //Same as Kinematic Flee, thus redundant but there only for "distinguishing" between behaviors
         //Steering Flee. Player follows target and stops when it touches it
         //Mostly based on Artificial Intelligence For Games 2nd Edition by Millington & Funge
-        private void SteeringFlee()
+        private void SteeringFlee(bool creep = false)
         {
             Vector3 Direction = this.Position - Target.Position;
 
             //Make it a unit vector
             Direction.Normalize();
 
+            float adjustedMaxVelocity = (creep) ? MaxVelocity / 2 : MaxVelocity;
             Direction *= MaxVelocity * 0.75f;
 
             SetOrientation(Direction);
