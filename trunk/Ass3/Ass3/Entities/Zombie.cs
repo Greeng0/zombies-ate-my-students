@@ -38,10 +38,10 @@ namespace Entities
         Face
     }
 
-    class Zombie : Entity, IObserver
+    class Zombie : Entity, IHeroObserver
     {
         public const float MAX_DISTANCE = 50;               //Maximum distance at which range will be evaluated
-        public const float MAX_PROJECTILE_DISTANCE = 20;    //Maximum distance at which projectile attacks can be made
+        public const float MAX_PROJECTILE_DISTANCE = 15;    //Maximum distance at which projectile attacks can be made
         public const float MAX_MELEE_DISTANCE = 5;          //Maximum distance at which melee attacks can be made
 
         public int HealthPoints;
@@ -64,11 +64,12 @@ namespace Entities
         public float MaxRotationAcceleration;   //Maximum rotation acceleration for the Align behavior
         public float InterpolationSpeed;        //Speed at which the orientation occurs
         
-        public Entity Target;                   //Entity Target used for seeking, arriving, pursuing and such behaviors  
-        public Vector3 GroundTarget;            //Target used for wandering behavior.
+        public Hero Target;                   //Entity Target used for seeking, arriving, pursuing and such behaviors  
+        public Vector3 GroundTarget;            //Target used for wandering behavior and slot assignment.
 
         public Weapon MeleeAttack;              //Weapon used for melee attacks
         public Weapon RangedAttack;             //Weapon used for ranged attacks
+        public float lastAttackTime;
 
         public EntityPositionState PosState;    //Movement behavior of the entity
         public EntityOrientationState OrState;  //Orientation behavior of the entity
@@ -84,7 +85,7 @@ namespace Entities
         //flanking data
         public int Targetslot() { return targetslot; }
         public int targetslot = -1;
-     
+
         public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
             : base()
         {
@@ -93,7 +94,7 @@ namespace Entities
             this.MaxHealth = maxHealth;
 
             this.MaxVelocity = 0.02f;
-            this.MaxAcceleration = 0.2f;
+            this.MaxAcceleration = 0.02f;
             ArriveRadius = 1.5f;
             FleeRadius = 30;
             TimeToTarget = 0.070f;
@@ -113,6 +114,7 @@ namespace Entities
             MeleeAttack = new Weapon(WeaponType.ZombieHands);
             RangedAttack = new Weapon(WeaponType.Vomit);
             this.AttackFunction = attackFunction;
+            lastAttackTime = 0;
 
             // Look up our custom skinning information.
             skinningData = (SkinningData)model.Tag;
@@ -130,6 +132,8 @@ namespace Entities
          //Execute entity's action
         public void Update(GameTime gameTime)
         {
+            lastAttackTime += gameTime.ElapsedGameTime.Milliseconds;
+
             if (animState == AnimationState.Walking)
             {
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
@@ -188,15 +192,21 @@ namespace Entities
                 case EntityPositionState.Attack:
                     {
                         animState = AnimationState.Attacking;
-                        SetOrientation(Position - Target.Position);
-                        AttackFunction(this, MeleeAttack);
+                        if (lastAttackTime > MeleeAttack.Speed)
+                        {
+                            Attack(MeleeAttack);
+                            lastAttackTime = 0;
+                        }
                         break;
                     }
                 case EntityPositionState.RangedAttack:
                     {
                         animState = AnimationState.Attacking;
-                        SetOrientation(Position - Target.Position);
-                        AttackFunction(this, RangedAttack);
+                        if (lastAttackTime > RangedAttack.Speed)
+                        {
+                            Attack(RangedAttack);
+                            lastAttackTime = 0;
+                        }
                         break;
                     }
                 default:
@@ -229,6 +239,7 @@ namespace Entities
                         {
                             return EntityPositionState.RangedAttack;
                         }
+                        GroundTarget = Target.Position;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.RangedCreep:
@@ -238,6 +249,7 @@ namespace Entities
                             return EntityPositionState.RangedAttack;
                         }
                         creep = true;
+                        GroundTarget = Target.Position;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.MeleePursue:
@@ -246,12 +258,53 @@ namespace Entities
                         {
                             return EntityPositionState.Attack;
                         }
-                        // TODO: check if close enough to reserve a slot and set slot as target
+
+                        if (targetslot >= 0)
+                        {
+                            // check if far enough to release slot
+                            if ((Position - Target.Position).Length() > 2 * MAX_PROJECTILE_DISTANCE)
+                            {
+                                Target.releaseSlot(targetslot);
+                                targetslot = -1;
+                            }
+                            return EntityPositionState.SteeringArrive;
+                        }
+                        // check if close enough to reserve a slot and set slot as target
+                        else if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        {
+                            targetslot = Target.reserveSlot(this);
+                            return EntityPositionState.SteeringArrive;
+                        }
+                        
+                        GroundTarget = Target.Position;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.MeleeCreep:
                     {
+                        if ((Position - Target.Position).Length() < MAX_MELEE_DISTANCE)
+                        {
+                            return EntityPositionState.Attack;
+                        }
+                        // check if close enough to reserve a slot and set slot as target
+                        if (targetslot >= 0)
+                        {
+                            // check if far enough to release slot
+                            if ((Position - Target.Position).Length() > 2 * MAX_PROJECTILE_DISTANCE)
+                            {
+                                Target.releaseSlot(targetslot);
+                                targetslot = -1;
+                            }
+                            return EntityPositionState.SteeringArrive;
+                        }
+                        // check if close enough to reserve a slot and set slot as target
+                        else if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        {
+                            targetslot = Target.reserveSlot(this);
+                            return EntityPositionState.SteeringArrive;
+                        }
+
                         creep = true;
+                        GroundTarget = Target.Position;
                         return EntityPositionState.SteeringArrive;
                     }
                 case BehaviourState.Flee:
@@ -265,8 +318,8 @@ namespace Entities
             }
         }
 
-        // Set a target for the Zombie if he doesn't already  have one
-        public void Alert(Entity target)
+        // Set a target for the Zombie if he doesn't already have one
+        public void Alert(Hero target)
         {
             if (Target == null)
             {
@@ -275,6 +328,27 @@ namespace Entities
                     (Position - target.Position).Length());
                 BehaviouralState = fuzz.GetBehaviour();
             }
+        }
+
+        public void TakeDamage(int damage)
+        {
+            animState = AnimationState.Hurt;
+            HealthPoints -= damage;
+
+            Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
+                    (Position - Target.Position).Length());
+            BehaviouralState = fuzz.GetBehaviour();
+
+            if (BehaviouralState == BehaviourState.Wander)
+                GroundTarget = new Vector3();
+
+            if (HealthPoints <= 0)
+                Die();
+        }
+
+        private void Die()
+        {
+            animState = AnimationState.Dying;
         }
 
         //Kinematic Arrive. Player follows target and stops when it touches it
@@ -309,7 +383,7 @@ namespace Entities
         //Mostly based on Artificial Intelligence For Games 2nd Edition by Millington & Funge
         private void SteeringArrive(bool creep = false)
         {
-            Vector3 newDirection = Target.Position - this.Position;
+            Vector3 newDirection = GroundTarget - this.Position;
 
             float Distance = newDirection.Length();
             float TargetSpeed = 0;
@@ -364,11 +438,11 @@ namespace Entities
             //Increase speed if from target and reduce it slowly when near target
             if (Distance > SlowRadiusThreshold)
             {
-                TargetSpeed = MaxVelocity;
+                TargetSpeed = MaxVelocity / 2;
             }
             else
             {
-                TargetSpeed = MaxVelocity * Distance / SlowRadiusThreshold;
+                TargetSpeed = MaxVelocity / 2 * Distance / SlowRadiusThreshold;
             }
 
             newDirection.Normalize();
@@ -498,6 +572,21 @@ namespace Entities
                     }
             }
         }
+
+        //Executes procedure for performing an attack
+        private void Attack(Weapon weapon)
+        {
+            SetOrientation(Position - Target.Position);
+            AttackFunction(this, weapon);
+
+            Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
+                    (Position - Target.Position).Length());
+            BehaviouralState = fuzz.GetBehaviour();
+
+            if (BehaviouralState == BehaviourState.Wander)
+                GroundTarget = new Vector3();
+        }
+
         //code for flanking
         public void Notify(Vector3 value)
         {

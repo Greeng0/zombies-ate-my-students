@@ -14,17 +14,20 @@ namespace Entities
         Standing,
         Shooting
     }
-        public struct moveme
+    
+    public struct moveme
     {
         public bool move;
         public Vector3 pos;
-        
+        public int slot;
     }
-        public struct Node
-        {
-            public Vector3 po;
-            public bool occ;
-        }
+
+    public struct Node
+    {
+        public Vector3 po;
+        public bool occ;
+    }
+
     class Hero : Entity
     {
         public int HealthPoints;
@@ -50,7 +53,7 @@ namespace Entities
         //adding flanking var
 
         private float attackdist = 3;
-        private List<IObserver> observer = new List<IObserver>();
+        private List<IHeroObserver> observer = new List<IHeroObserver>();
         //add nodes
         private Node[] nodes = new Node[6];
 
@@ -104,8 +107,6 @@ namespace Entities
                 animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
-            notifyObservers();
-
         }
 
         public void DoAction()
@@ -165,10 +166,12 @@ namespace Entities
         public void MoveForward()
         {
             Position -= moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            notifyObservers();
         }
         public void MoveBackward()
         {
             Position += moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            notifyObservers();
         }
         public void TurnLeft()
         {
@@ -181,6 +184,18 @@ namespace Entities
             Rotation %= Math.PI * 2;
         }
 
+        public void TakeDamage(int damage)
+        {
+            animState = AnimationState.Hurt;
+            HealthPoints -= damage;
+            if (HealthPoints <= 0)
+                Die();
+        }
+
+        private void Die()
+        {
+            animState = AnimationState.Dying;
+        }
 
           //adding flanking data
 
@@ -188,13 +203,13 @@ namespace Entities
         private void notifyObservers()
         {
  
-            foreach (IObserver i in observer)
+            foreach (IHeroObserver i in observer)
             {
                 i.Notify(nodes[i.Targetslot()].po+Position);             
             }
         }
   
-        private moveme calculateSlotPositiion(Zombie z)
+        private moveme calculateSlotPositiion(Entity z)
         {
            
             //finding slot positions.
@@ -206,8 +221,8 @@ namespace Entities
                 //give new slot at shortest distace
             
          
-                  decision.move = true;
-                decision.pos = Vector3.Normalize(z.Position - Position)*attackdist;
+                decision.move = true;
+                decision.pos = Vector3.Normalize(z.Position - Position) * attackdist;
                 //reset nodes
 
 
@@ -223,11 +238,8 @@ namespace Entities
                 //set node to right state
 
                 nodes[0].occ = true;
-                z.targetslot = 0;
+                decision.slot = 0;
 
-                
-
-                
             }
             else if (observer.Count > 6)//too many zombies, refuse
             {
@@ -236,111 +248,80 @@ namespace Entities
             else
             {
                 int start = observer.Last().Targetslot();
-                int final;
            
                 if (!nodes[((start + 2))%6].occ)
                 {
                     nodes[((start + 2) % 6)].occ = true;
-                    z.targetslot = ((start + 2) % 6);
+                    decision.slot = ((start + 2) % 6);
 
-                    //give new slot at shortest distace
                     decision.move = true;
                     decision.pos = nodes[((start + 2) % 6)].po;
                 }
-                    else{//first try not open go on
+                else if (!nodes[((start + 4)) % 6].occ)//first try not open go on
+                {
+                    nodes[((start + 4) % 6)].occ = true;
+                    decision.slot = ((start + 4) % 6);
 
-
-
-
-                        if (!nodes[((start + 4)) % 6].occ)
-                        {
-                            nodes[((start + 4) % 6)].occ = true;
-                            z.targetslot = ((start + 4) % 6);
-
-                            //give new slot at shortest distace
-                            decision.move = true;
-                            decision.pos = nodes[((start + 4) % 6)].po;
-                        }
-                        else
-                        {//first try not open go on
-
-                            if (!nodes[((start + 3)) % 6].occ)
-                            {
-                                nodes[((start + 3) % 6)].occ = true;
-                                z.targetslot = ((start + 3) % 6);
-
-                                //give new slot at shortest distace
-                                decision.move = true;
-                                decision.pos = nodes[((start + 3) % 6)].po;
-                            }
-                            else
-                            {//first try not open go on
-
-                                if (!nodes[((start + 5)) % 6].occ)
-                                {
-                                    nodes[((start + 5) % 6)].occ = true;
-                                    z.targetslot = ((start + 5) % 6);
-
-                                    //give new slot at shortest distace
-                                    decision.move = true;
-                                    decision.pos = nodes[((start + 5) % 6)].po;
-                                }
-                                else
-                                {//first try not open go on
-
-                                    if (!nodes[((start + 1)) % 6].occ)
-                                    {
-                                        nodes[((start + 1) % 6)].occ = true;
-                                        z.targetslot = ((start + 1) % 6);
-
-                                        //give new slot at shortest distace
-                                        decision.move = true;
-                                        decision.pos = nodes[((start + 1) % 6)].po;
-                                    }
-                                    else
-                                    {//absolutely no solution get ouyt.
-
-                                        decision.move = false;
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                    decision.move = true;
+                    decision.pos = nodes[((start + 4) % 6)].po;
                 }
+                else if (!nodes[((start + 3)) % 6].occ)
+                {
+                    nodes[((start + 3) % 6)].occ = true;
+                    decision.slot = ((start + 3) % 6);
+
+                    decision.move = true;
+                    decision.pos = nodes[((start + 3) % 6)].po;
+                }
+                else if (!nodes[((start + 5)) % 6].occ)
+                {
+                    nodes[((start + 5) % 6)].occ = true;
+                    decision.slot = ((start + 5) % 6);
+
+                    decision.move = true;
+                    decision.pos = nodes[((start + 5) % 6)].po;
+                }
+                else if (!nodes[((start + 1)) % 6].occ)
+                {
+                    nodes[((start + 1) % 6)].occ = true;
+                    decision.slot = ((start + 1) % 6);
+
+                    decision.move = true;
+                    decision.pos = nodes[((start + 1) % 6)].po;
+                }
+                else
+                {
+                    //absolutely no solution get ouyt.
+                    decision.move = false;
+                }
+
             }
-        
-               
+
             return decision;
         }
 
-        public void reserveSlot(Zombie z)
+        public int reserveSlot(Zombie z)
         {
-             moveme decision = calculateSlotPositiion(z);
+            moveme decision = calculateSlotPositiion(z);
 
-             if (decision.move)//if good value returned
-             {      
-                 
-                 observer.Add(z);    
-             }
-             else//no slots available, deny move
-             {
-              
-             }
-           
+            if (decision.move)//if good value returned
+            {
+                subscribe(z);
+                return decision.slot;
+            }
+            return -1;
         }
 
         public void releaseSlot(int slot)
         {
-            unsubscrive(slot);
+            unsubscribe(slot);
         }
 
-        private void subscrive(int slot, Zombie zombie)//not used for anything yet
+        private void subscribe(IHeroObserver obs)
         {
-            observer.Insert(slot, zombie);
+            observer.Add(obs);
         }
-        private void unsubscrive(int slot)
+        private void unsubscribe(int slot)
         {
             nodes[slot].occ = false;
             observer.RemoveAt(slot);
