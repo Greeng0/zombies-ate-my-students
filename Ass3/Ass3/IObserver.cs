@@ -7,10 +7,7 @@ namespace Entities
 {
     interface IObserver
     {
-
         void Notify(Vector3 value);
-        Vector3 Position { get; }
          int Targetslot();
-      
     }
 }

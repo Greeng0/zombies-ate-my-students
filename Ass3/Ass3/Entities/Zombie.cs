@@ -83,10 +83,8 @@ namespace Entities
 
         //flanking data
         public int Targetslot() { return targetslot; }
-         
         public int targetslot = -1;
-       public Vector3 Position { get; set; }
-
+     
         public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
             : base()
         {
