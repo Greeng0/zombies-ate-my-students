@@ -38,7 +38,7 @@ namespace Entities
         Face
     }
 
-    class Zombie : Entity
+    class Zombie : Entity, IObserver
     {
         public const float MAX_DISTANCE = 50;               //Maximum distance at which range will be evaluated
         public const float MAX_PROJECTILE_DISTANCE = 20;    //Maximum distance at which projectile attacks can be made
@@ -80,6 +80,11 @@ namespace Entities
         public float scale = .1f;               // Scale at which to render the model
 
         public Action<Entity, Entity> AttackFunction;   // Callback function used when an attack is made
+
+        //flanking data
+
+        public int targetslot;
+      
 
         public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
             : base()
@@ -493,6 +498,11 @@ namespace Entities
                         break;
                     }
             }
+        }
+        //code for flanking
+        public void Notify(Vector3 value)
+        {
+            GroundTarget = value;
         }
     }
 }
