@@ -32,7 +32,7 @@ namespace zombies
         Model model;// The actual model
         private float scale = .1f;
         public bool walking = false;
-        public float speed = 0.1f;
+        public float speed = 0.4f;
         public static dude Activedude
         {
             get { return activedude; }
@@ -78,7 +78,7 @@ namespace zombies
         protected override void LoadContent()
         {
                       // Load the model.
-            _model = _content.Load<Model>("ZombieWalk");
+            _model = _content.Load<Model>("HeroWalk");
 
             // Look up our custom skinning information.
             SkinningData skinningData = (SkinningData)_model.Tag;
@@ -150,7 +150,7 @@ namespace zombies
                     foreach (SkinnedEffect effect in mesh.Effects)
                     {
                         effect.World = Matrix.CreateRotationY(angle) * Matrix.CreateScale(scale) * Matrix.CreateTranslation(Position);
-                        effect.SetBoneTransforms(bones);
+                        //effect.SetBoneTransforms(bones);
                         effect.View = Camera.ActiveCamera.View;
 
                         effect.Projection = Camera.ActiveCamera.Projection;

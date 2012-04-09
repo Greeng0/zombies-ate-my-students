@@ -42,6 +42,7 @@ namespace SkinnedModel
 
         #endregion
 
+        TimeSpan tmsp;
 
         /// <summary>
         /// Constructs a new animation player.
@@ -109,7 +110,9 @@ namespace SkinnedModel
             // Update the animation position.
             if (relativeToCurrentTime)
             {
-                time += currentTimeValue;
+                time += currentTimeValue;//tmsp;
+
+                //tmsp += new TimeSpan(0, 0, 0, 0, 1);
 
                 // If we reached the end, loop back to the start.
                 while (time >= currentClipValue.Duration)
