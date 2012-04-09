@@ -82,9 +82,10 @@ namespace Entities
         public Action<Entity, Entity> AttackFunction;   // Callback function used when an attack is made
 
         //flanking data
-
-        public int targetslot;
-      
+        public int Targetslot() { return targetslot; }
+         
+        public int targetslot = -1;
+       public Vector3 Position { get; set; }
 
         public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
             : base()
@@ -127,7 +128,7 @@ namespace Entities
             clip = skinningData.AnimationClips["Take 001"];
             animationPlayer.StartClip(clip);
         }
-
+        
          //Execute entity's action
         public void Update(GameTime gameTime)
         {

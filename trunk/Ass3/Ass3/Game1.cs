@@ -104,14 +104,14 @@ namespace zombies
             z1.Position = new Vector3(0, 0, 10);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z2.Position = new Vector3(0, 0, -10);
-            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+           Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z3.Position = new Vector3(10, 0, 0);
-            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+          Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z4.Position = new Vector3(-10, 0, 0);
-            //Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
-            //z5.Position = new Vector3(10, 0, 10);
-            //Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
-            //z6.Position = new Vector3(10, 0, -10);
+            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z5.Position = new Vector3(10, 0, 10);
+               Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z6.Position = new Vector3(10, 0, -10);
             //Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
             //z7.Position = new Vector3(-10, 0, -10);
             //Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAttack);
@@ -120,11 +120,18 @@ namespace zombies
             zombies.Add(z2);
             zombies.Add(z3);
             zombies.Add(z4);
-            //zombies.Add(z5);
-            //zombies.Add(z6);
+            zombies.Add(z5);
+            zombies.Add(z6);
+            
+
             //zombies.Add(z7);
             //zombies.Add(z8);
-
+            Player.reserveSlot(z1);
+            Player.reserveSlot(z2);
+            Player.reserveSlot(z3);
+            Player.reserveSlot(z4);
+            Player.reserveSlot(z5);
+            Player.reserveSlot(z6);
             base.LoadContent();
         }
 

@@ -20,6 +20,11 @@ namespace Entities
         public Vector3 pos;
         
     }
+        public struct Node
+        {
+            public Vector3 po;
+            public bool occ;
+        }
     class Hero : Entity
     {
         public int HealthPoints;
@@ -41,15 +46,20 @@ namespace Entities
 
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
 
+
         //adding flanking var
 
-        private List<Zombie> Observers;
-        private float attackdist = 5;
+        private float attackdist = 3;
         private List<IObserver> observer = new List<IObserver>();
+        //add nodes
+        private Node[] nodes = new Node[6];
 
+ 
         public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
             : base()
         {
+
+
             this.model = model;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
@@ -73,6 +83,14 @@ namespace Entities
             animationPlayer = new AnimationPlayer(skinningData);
             clip = skinningData.AnimationClips["Take 001"];
             animationPlayer.StartClip(clip);
+
+            //adding flanking info
+            for (int i = 0; i < 6; i++)
+            {
+                nodes[i] = new Node();
+
+            }
+
         }
 
         public void Update(GameTime gameTime)
@@ -86,6 +104,8 @@ namespace Entities
                 animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
+            notifyObservers();
+
         }
 
         public void DoAction()
@@ -167,50 +187,144 @@ namespace Entities
 
         private void notifyObservers()
         {
-           /* foreach (Zombie obs in Observers)
-            {
-                
-            }
-            */
-
+ 
             foreach (IObserver i in observer)
             {
-                i.Notify(Position);
+                i.Notify(nodes[i.Targetslot()].po+Position);             
             }
         }
-        private moveme calculateSlotPositiion(Vector3 position)
+  
+        private moveme calculateSlotPositiion(Zombie z)
         {
+           
             //finding slot positions.
             moveme decision = new moveme();
         
-            if (Observers.Count == 0)//if first in list, give him ideal position
+            if (observer.Count == 0 )//if first in list, give him ideal position
             {
-          
-                decision.move = true;
+                
                 //give new slot at shortest distace
-                decision.pos = Vector3.Normalize(Position - position) * attackdist;
+            
+         
+                  decision.move = true;
+                decision.pos = Vector3.Normalize(z.Position - Position)*attackdist;
+                //reset nodes
 
+
+                float angle = (float)Math.Atan((z.Position - Position).Z/(z.Position - Position).X);
+
+                nodes[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle))*attackdist;
+                nodes[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle  +MathHelper.ToRadians(60))) * attackdist;
+                nodes[2].po = new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle +MathHelper.ToRadians(120))) * attackdist;
+                nodes[3].po = -new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
+                nodes[4].po = -new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle  +MathHelper.ToRadians(60))) * attackdist;
+                nodes[5].po = -new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
+               
+                //set node to right state
+
+                nodes[0].occ = true;
+                z.targetslot = 0;
+
+                
+
+                
             }
-            else if (Observers.Count > 6)//too many zombies, refuse
+            else if (observer.Count > 6)//too many zombies, refuse
             {
                 decision.move = false;
-
             }
             else
             {
-                decision.move = true;
-                //give new slot at shortest distace
-                decision.pos = Vector3.Normalize(Position - position) * attackdist;
+                int start = observer.Last().Targetslot();
+                int final;
+           
+                if (!nodes[((start + 2))%6].occ)
+                {
+                    nodes[((start + 2) % 6)].occ = true;
+                    z.targetslot = ((start + 2) % 6);
+
+                    //give new slot at shortest distace
+                    decision.move = true;
+                    decision.pos = nodes[((start + 2) % 6)].po;
+                }
+                    else{//first try not open go on
+
+
+
+
+                        if (!nodes[((start + 4)) % 6].occ)
+                        {
+                            nodes[((start + 4) % 6)].occ = true;
+                            z.targetslot = ((start + 4) % 6);
+
+                            //give new slot at shortest distace
+                            decision.move = true;
+                            decision.pos = nodes[((start + 4) % 6)].po;
+                        }
+                        else
+                        {//first try not open go on
+
+                            if (!nodes[((start + 3)) % 6].occ)
+                            {
+                                nodes[((start + 3) % 6)].occ = true;
+                                z.targetslot = ((start + 3) % 6);
+
+                                //give new slot at shortest distace
+                                decision.move = true;
+                                decision.pos = nodes[((start + 3) % 6)].po;
+                            }
+                            else
+                            {//first try not open go on
+
+                                if (!nodes[((start + 5)) % 6].occ)
+                                {
+                                    nodes[((start + 5) % 6)].occ = true;
+                                    z.targetslot = ((start + 5) % 6);
+
+                                    //give new slot at shortest distace
+                                    decision.move = true;
+                                    decision.pos = nodes[((start + 5) % 6)].po;
+                                }
+                                else
+                                {//first try not open go on
+
+                                    if (!nodes[((start + 1)) % 6].occ)
+                                    {
+                                        nodes[((start + 1) % 6)].occ = true;
+                                        z.targetslot = ((start + 1) % 6);
+
+                                        //give new slot at shortest distace
+                                        decision.move = true;
+                                        decision.pos = nodes[((start + 1) % 6)].po;
+                                    }
+                                    else
+                                    {//absolutely no solution get ouyt.
+
+                                        decision.move = false;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+
+
+                }
             }
+        
+               
             return decision;
         }
 
         public void reserveSlot(Zombie z)
         {
-             moveme decision = calculateSlotPositiion(z.Position);
+             moveme decision = calculateSlotPositiion(z);
 
              if (decision.move)//if good value returned
              {      
+                 
                  observer.Add(z);    
              }
              else//no slots available, deny move
