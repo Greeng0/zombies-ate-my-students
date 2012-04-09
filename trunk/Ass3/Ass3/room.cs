@@ -115,10 +115,32 @@ namespace zombies
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
-                    effect.TextureEnabled = true;
-                    effect.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 
-                    //effect.EnableDefaultLighting();
+
+                    switch (mesh.ParentBone.Parent.Name)
+                    {
+                        case "Urinals":
+                        case "Toilet":
+                        case "Computers":
+                        case "BigDesks":
+                        case "StudentDesks":
+                        case "GymCourt":
+                        case "TVHolder":
+                        case "BigTable":
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                effect.TextureEnabled = true;
+                                break;
+                            }
+                    }
+                  
+                    effect.EnableDefaultLighting();
+
+                    effect.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+                    
                 }
 
                 mesh.Draw();

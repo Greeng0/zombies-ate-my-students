@@ -24,8 +24,9 @@ namespace zombies
 
         private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
         public Viewport frontViewport;
-        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1300, 700));
+        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));
 
+        public dude big;
         HUD hud;
 
         Model School;
@@ -79,8 +80,20 @@ namespace zombies
             frontViewport.MinDepth = .1f;
             frontViewport.MaxDepth = .8f;
 
-            room r = new room(this, Content, new Vector3(0));
-            this.Components.Add(r);
+
+            room[] r = new room[1];
+            for (int i = 0; i < r.Length; i++)
+            {
+                r[i] = new room(this, Content, new Vector3(0));
+                this.Components.Add(r[i]);
+            }
+                
+
+            big = new dude(this, Content, 0, new Vector3(47, 0, 8));
+        
+            this.Components.Add(big);
+
+           
 
             hud = new HUD(this, Content, graphics);
             this.Components.Add(hud);
@@ -95,7 +108,7 @@ namespace zombies
 
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
-            HeroModel = Content.Load<Model>("dude");
+            HeroModel = Content.Load<Model>("HeroWalk");
             ZombieModel = Content.Load<Model>("ZombieWalk");
 
             Player = new Hero(1000, 1000, ref HeroModel, DoAction);
