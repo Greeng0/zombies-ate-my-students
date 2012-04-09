@@ -17,11 +17,13 @@ namespace Entities
 
     class Item : Entity
     {
-        ItemType itemType;
+        public ItemType itemType;
+        public float SoundRadius;
 
         public Item(ItemType type)
         {
             itemType = type;
+            SoundRadius = 20;
         }
 
         public override bool Equals(object obj)

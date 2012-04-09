@@ -9,10 +9,12 @@ namespace Entities
     {
         BareHands,
         Handgun9mm,
-        Magnum
+        Magnum,
+        ZombieHands,
+        Vomit
     }
     
-    class Weapon
+    class Weapon : Entity
     {
         public WeaponType weaponType;
         public float Speed;            // time interval, in seconds, at which the weapon can be used
@@ -43,6 +45,20 @@ namespace Entities
                         FirePower = 1000;
                         Speed = 2;
                         SoundRadius = 50;
+                        break;
+                    }
+                case WeaponType.Vomit:
+                    {
+                        FirePower = 100;
+                        Speed = 2;
+                        SoundRadius = 20;
+                        break;
+                    }
+                case WeaponType.ZombieHands:
+                    {
+                        FirePower = 100;
+                        Speed = 2;
+                        SoundRadius = 20;
                         break;
                     }
             }

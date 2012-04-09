@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework;
 
 namespace Entities
 {
-    class Entity
+    public class Entity
     {
         public enum AnimationState
         {
