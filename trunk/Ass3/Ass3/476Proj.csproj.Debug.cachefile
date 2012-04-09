@@ -1,6 +1,7 @@
 Content\dude.xnb
 Content\476map.xnb
 Content\ZombieWalk.xnb
+Content\School.xnb
 Content\Arial.xnb
 Content\shoe.xnb
 Content\gun.xnb
@@ -21,9 +22,8 @@ Content\head_0.xnb
 Content\jacket_0.xnb
 Content\pants_0.xnb
 Content\upBodyC_0.xnb
-Content\FBX\49962835\ZombieWalk.fbm\difusse_0.xnb
-Content\School.xnb
-Content\FBX\A9F12688\School.fbm\Linoleum2_1.xnb
-Content\FBX\A9F12688\School.fbm\door-wood texture_1.xnb
-Content\FBX\A9F12688\School.fbm\Wall_plaster_05_1.xnb
-Content\FBX\A9F12688\School.fbm\InteriorDoor_Diffuce_1.xnb
+Content\FBX\D6BA17D9\ZombieWalk.fbm\difusse_0.xnb
+Content\FBX\7894162C\School.fbm\Linoleum2_0.xnb
+Content\FBX\7894162C\School.fbm\door-wood texture_0.xnb
+Content\FBX\7894162C\School.fbm\Wall_plaster_05_0.xnb
+Content\FBX\7894162C\School.fbm\InteriorDoor_Diffuce_0.xnb

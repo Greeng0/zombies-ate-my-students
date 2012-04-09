@@ -14,7 +14,12 @@ namespace Entities
         Standing,
         Shooting
     }
-
+        public struct moveme
+    {
+        public bool move;
+        public Vector3 pos;
+        
+    }
     class Hero : Entity
     {
         public int HealthPoints;
@@ -35,6 +40,12 @@ namespace Entities
         public Weapon EquippedWeapon;
 
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
+
+        //adding flanking var
+
+        private List<Zombie> Observers;
+        private float attackdist = 5;
+        private List<IObserver> observer = new List<IObserver>();
 
         public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
             : base()
@@ -149,5 +160,79 @@ namespace Entities
             Rotation -= rotationSpeed;
             Rotation %= Math.PI * 2;
         }
+
+
+          //adding flanking data
+
+
+        private void notifyObservers()
+        {
+           /* foreach (Zombie obs in Observers)
+            {
+                
+            }
+            */
+
+            foreach (IObserver i in observer)
+            {
+                i.Notify(Position);
+            }
+        }
+        private moveme calculateSlotPositiion(Vector3 position)
+        {
+            //finding slot positions.
+            moveme decision = new moveme();
+        
+            if (Observers.Count == 0)//if first in list, give him ideal position
+            {
+          
+                decision.move = true;
+                //give new slot at shortest distace
+                decision.pos = Vector3.Normalize(Position - position) * attackdist;
+
+            }
+            else if (Observers.Count > 6)//too many zombies, refuse
+            {
+                decision.move = false;
+
+            }
+            else
+            {
+                decision.move = true;
+                //give new slot at shortest distace
+                decision.pos = Vector3.Normalize(Position - position) * attackdist;
+            }
+            return decision;
+        }
+
+        public void reserveSlot(Zombie z)
+        {
+             moveme decision = calculateSlotPositiion(z.Position);
+
+             if (decision.move)//if good value returned
+             {      
+                 observer.Add(z);    
+             }
+             else//no slots available, deny move
+             {
+              
+             }
+           
+        }
+
+        public void releaseSlot(int slot)
+        {
+            unsubscrive(slot);
+        }
+
+        private void subscrive(int slot, Zombie zombie)//
+        {
+            observer.Insert(slot, zombie);
+        }
+        private void unsubscrive(int slot)
+        {
+            observer.RemoveAt(slot);
+        }
     }
+    
 }
