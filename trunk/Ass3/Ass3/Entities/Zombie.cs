@@ -86,6 +86,11 @@ namespace Entities
         public int Targetslot() { return targetslot; }
         public int targetslot = -1;
 
+
+        //collision data
+        public float modelRadius = 1.5f;
+
+
         public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
             : base()
         {

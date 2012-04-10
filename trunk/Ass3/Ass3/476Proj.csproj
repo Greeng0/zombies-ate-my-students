@@ -124,6 +124,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="room.cs" />
     <Compile Include="Entities\Zombie.cs" />
+    <Compile Include="Sounds\Sounds.cs" />
     <Compile Include="SpacePartition\QuadTree.cs" />
   </ItemGroup>
   <ItemGroup>
