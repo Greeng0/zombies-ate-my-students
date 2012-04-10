@@ -136,7 +136,7 @@ namespace zombies
             // TODO: Initialize quad tree and insert all objects into it********************************************
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
-            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
+            Player = new Hero(1, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
 
             /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
@@ -197,6 +197,7 @@ namespace zombies
         protected override void Update(GameTime gameTime)
         {
             #region Update hud
+            HUD.ActiveHUD.playerhealth = Player.HealthPoints;
             HUD.ActiveHUD.p = Player.Position;
             HUD.ActiveHUD.angle = (float) Player.Rotation;
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
@@ -204,7 +205,7 @@ namespace zombies
             mouseState = Mouse.GetState();
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-             
+                Player.HealthPoints = 0;
                 foreach(Zombie z in zombies)
                z.animState = Entity.AnimationState.Idle;
             }
@@ -290,7 +291,7 @@ namespace zombies
 
             bool walk = false;
             Keys[] keysPressed = keyboard.GetPressedKeys();
-
+           
             foreach (Keys key in keysPressed)
             {
                 switch (key)
@@ -336,7 +337,12 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Walking;
             else if (Player.animState != Entity.AnimationState.Hurt)
                 Player.animState = Entity.AnimationState.Idle;
-
+            if (Player.HealthPoints <= 0 || Player.animState == Entities.Entity.AnimationState.Dying)//start dying animation
+            {
+                Player.animState = Entity.AnimationState.Dying;
+            }
+        
+           
             #endregion
 
             Player.Update(gameTime);
@@ -361,8 +367,7 @@ namespace zombies
 
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
-            //Player.animState = Entity.AnimationState.Dying;
-
+           
             globalEffect.View = Camera.ActiveCamera.View;
             globalEffect.World = world;
             globalEffect.Projection = Camera.ActiveCamera.Projection;
