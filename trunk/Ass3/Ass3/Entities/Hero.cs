@@ -14,7 +14,7 @@ namespace Entities
         Standing,
         Shooting
     }
-    
+
     public struct moveme
     {
         public bool move;
@@ -36,9 +36,27 @@ namespace Entities
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
 
-        public AnimationPlayer animationPlayer;     // This calculates the Matrices of the animation
-        public AnimationClip clip;                  // This contains the keyframes of the animation
-        public SkinningData skinningData;           // This contains all the skinning data
+        //animations
+        //basic state
+        public AnimationPlayer animationPlayer; // main animation player
+
+        //walking state
+        public AnimationPlayer animationPlayerwalk; // This calculates the Matrices of the animation
+        public AnimationClip clipwalk;              // This contains the keyframes of the animation
+        public SkinningData skinningDatawalk;       // This contains all the skinning data
+
+        //hurt state
+        public AnimationPlayer animationPlayerhurt; // This calculates the Matrices of the animation
+        public AnimationClip cliphurt;              // This contains the keyframes of the animation
+        public SkinningData skinningDatahurt;       // This contains all the skinning data
+
+        //die
+        public AnimationPlayer animationPlayerdie; // This calculates the Matrices of the animation
+        public AnimationClip clipdie;              // This contains the keyframes of the animation
+        public SkinningData skinningDatadie;       // This contains all the skinning data
+
+
+
         public float scale = .1f;                   // Scale at which to render the model
 
         public List<string> PowerupsList;           // List of powerups obtained by the Hero
@@ -56,12 +74,14 @@ namespace Entities
         private List<IHeroObserver> observer = new List<IHeroObserver>();
         //add nodes
         private Node[] nodes = new Node[6];
- 
-        public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
+        //collision data
+        public float modelRadius = 1.5f;
+
+        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model modelhurt, ref Model modeldie, Action<Entity, Entity> actionFunction)
             : base()
         {
 
-            this.model = model;
+            this.model = modelwalk;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
@@ -73,17 +93,44 @@ namespace Entities
 
             this.ActionFunction = actionFunction;
 
-            // Look up our custom skinning information.
-            skinningData = (SkinningData)model.Tag;
+            //get animations
+            // Look up our custom skinning information. for walking
+            skinningDatawalk = (SkinningData)modelwalk.Tag;
 
-            if (skinningData == null)
+            if (skinningDatawalk == null)
                 throw new InvalidOperationException
                     ("This model does not contain a SkinningData tag.");
 
             // Create an animation player, and start decoding an animation clip.
-            animationPlayer = new AnimationPlayer(skinningData);
-            clip = skinningData.AnimationClips["Take 001"];
-            animationPlayer.StartClip(clip);
+            animationPlayerwalk = new AnimationPlayer(skinningDatawalk);
+            clipwalk = skinningDatawalk.AnimationClips["Take 001"];
+            animationPlayerwalk.StartClip(clipwalk);
+
+
+            // Look up our custom skinning information. for dying
+            skinningDatadie = (SkinningData)modeldie.Tag;
+
+            if (skinningDatadie == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayerdie = new AnimationPlayer(skinningDatadie);
+            clipdie = skinningDatadie.AnimationClips["Take 001"];
+            animationPlayerdie.StartClip(clipdie);
+
+
+            // Look up our custom skinning information. for hurting
+            skinningDatahurt = (SkinningData)modelhurt.Tag;
+
+            if (skinningDatahurt == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayerhurt = new AnimationPlayer(skinningDatahurt);
+            cliphurt = skinningDatahurt.AnimationClips["Take 001"];
+            animationPlayerhurt.StartClip(cliphurt);
 
             //adding flanking info
             for (int i = 0; i < 6; i++)
@@ -94,11 +141,30 @@ namespace Entities
 
         public void Update(GameTime gameTime)
         {
-            if (animState == AnimationState.Walking)
+            if (animState == AnimationState.Idle)
             {
+                animationPlayer = animationPlayerhurt;
+                animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
-            else
+            else if (animState == AnimationState.Walking)
+            {
+                animationPlayer = animationPlayerwalk;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else if (animState == AnimationState.Hurt)//animation when hurt
+            {
+                animationPlayer = animationPlayerhurt;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+
+            }
+            else if (animState == AnimationState.Dying)//animation for dying
+            {
+
+                animationPlayer = animationPlayerdie;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else//if just standing
             {
                 animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
@@ -158,28 +224,28 @@ namespace Entities
         {
             // TODO
         }
-        
+
         public void MoveForward()
         {
+            Velocity = -moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
             Position += Velocity;
             notifyObservers();
         }
         public void MoveBackward()
         {
-            Position -= Velocity;
+            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            Position += Velocity;
             notifyObservers();
         }
         public void TurnLeft()
         {
             Rotation += rotationSpeed;
             Rotation %= Math.PI * 2;
-            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
         public void TurnRight()
         {
             Rotation -= rotationSpeed;
             Rotation %= Math.PI * 2;
-            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
 
         public void TakeDamage(int damage)
@@ -198,7 +264,7 @@ namespace Entities
             animState = AnimationState.Dying;
         }
 
-          //adding flanking data
+        //adding flanking data
         private void notifyObservers()
         {
             foreach (IHeroObserver i in observer)
@@ -206,28 +272,28 @@ namespace Entities
                 i.Notify(nodes[i.Targetslot()].po + Position);
             }
         }
-  
+
         private moveme calculateSlotPositiion(Entity ent)
         {
             //finding slot positions.
             moveme decision = new moveme();
-        
-            if (observer.Count == 0 )//if first in list, give him ideal position
+
+            if (observer.Count == 0)//if first in list, give him ideal position
             {
                 //give new slot at shortest distace
                 decision.move = true;
                 decision.pos = Vector3.Normalize(ent.Position - Position) * attackdist;
-                
-                //reset nodes
-                float angle = (float)Math.Atan((ent.Position - Position).Z/(ent.Position - Position).X);
 
-                nodes[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle))*attackdist;
-                nodes[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle  +MathHelper.ToRadians(60))) * attackdist;
-                nodes[2].po = new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle +MathHelper.ToRadians(120))) * attackdist;
+                //reset nodes
+                float angle = (float)Math.Atan((ent.Position - Position).Z / (ent.Position - Position).X);
+
+                nodes[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
+                nodes[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
+                nodes[2].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
                 nodes[3].po = -new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
-                nodes[4].po = -new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle  +MathHelper.ToRadians(60))) * attackdist;
-                nodes[5].po = -new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
-               
+                nodes[4].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
+                nodes[5].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
+
                 //set node to right state
                 nodes[0].occ = true;
                 decision.slot = 0;
@@ -239,8 +305,8 @@ namespace Entities
             else
             {
                 int start = observer.Last().Targetslot();
-           
-                if (!nodes[((start + 2))%6].occ)
+
+                if (!nodes[((start + 2)) % 6].occ)
                 {
                     nodes[((start + 2) % 6)].occ = true;
                     decision.slot = ((start + 2) % 6);
