@@ -138,7 +138,7 @@ namespace zombies
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
 
-            /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z2.Position = new Vector3(0, 0, -10);
@@ -171,7 +171,7 @@ namespace zombies
             zombies.Add(z8);
             zombies.Add(z9);
             zombies.Add(z10);
-            zombies.Add(z11);*/
+            zombies.Add(z11);
 
             CollisionBoxes.Add(new Box(new Vector3(10, 0, 0), new Vector3(0), new Vector3(10, 40, 10)));
 
@@ -364,6 +364,13 @@ namespace zombies
 
             CheckCollisions();
 
+
+            if (Player.Stance == AnimationStance.Shooting)//if shooting, check ray collisison
+            {
+                CheckRayCollisions();
+            }
+            
+
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
            
@@ -373,6 +380,24 @@ namespace zombies
 
             base.Update(gameTime);
         }
+
+
+        private void CheckRayCollisions()
+        {
+            float length = SIGHT_RADIUS;
+            foreach (Zombie z1 in zombies)
+            {
+                if ((z1.Position - Player.Position).Length() < SIGHT_RADIUS || z1.BehaviouralState != BehaviourState.Wander)
+                {
+
+                }
+
+            }
+
+            Player.raydist = length;
+
+        }
+        
 
         private void CheckCollisions()
         {
