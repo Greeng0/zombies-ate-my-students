@@ -15,7 +15,28 @@ namespace HIDInput
             {
                 case Entity.AnimationState.Idle:
                     {
-                        return true;
+                        if (player.Stance == AnimationStance.Standing)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            switch (key)
+                            {
+                                case Keys.Left:
+                                case Keys.Right:
+                                case Keys.Space:
+                                case Keys.W:
+                                case Keys.Tab:
+                                    {
+                                        return true;
+                                    }
+                                default:
+                                    {
+                                        return false;
+                                    }
+                            }
+                        }
                     }
                 case Entity.AnimationState.Walking:
                     {
