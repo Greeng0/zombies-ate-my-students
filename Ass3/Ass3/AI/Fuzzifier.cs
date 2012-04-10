@@ -136,9 +136,9 @@ namespace AI
             }
             else if (distance < DISTANCE_PROJECTILE)
             {
-                Range_Melee = (Range_Projectile - distance) / Range_Melee;
+                Range_Melee = (DISTANCE_PROJECTILE - distance) / DISTANCE_MELEE;
                 Range_Projectile = 1;
-                Range_OutOfRange = (distance - Range_Melee) / (Range_Projectile - Range_Melee);
+                Range_OutOfRange = (distance - DISTANCE_MELEE) / (DISTANCE_PROJECTILE - DISTANCE_MELEE);
             }
             else if (distance < DISTANCE_OUT)
             {

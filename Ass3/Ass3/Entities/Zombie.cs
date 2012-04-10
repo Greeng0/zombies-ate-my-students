@@ -95,7 +95,7 @@ namespace Entities
 
             this.MaxVelocity = 0.02f;
             this.MaxAcceleration = 0.02f;
-            ArriveRadius = 1.5f;
+            ArriveRadius = 1;
             FleeRadius = 30;
             TimeToTarget = 0.070f;
             RotationTimeToTarget = 0.00025f;
@@ -254,23 +254,29 @@ namespace Entities
                     }
                 case BehaviourState.MeleePursue:
                     {
-                        if ((Position - Target.Position).Length() < MAX_MELEE_DISTANCE)
-                        {
-                            return EntityPositionState.Attack;
-                        }
-
+                        // if zombie has reserved a slot, check if close enough to attack, or far enough to release
                         if (targetslot >= 0)
                         {
+                            // check if close enough to slot to start attacking
+                            if ((Position - GroundTarget).Length() < ArriveRadius)
+                            {
+                                return EntityPositionState.Attack;
+                            }
                             // check if far enough to release slot
                             if ((Position - Target.Position).Length() > 2 * MAX_PROJECTILE_DISTANCE)
                             {
-                                Target.releaseSlot(targetslot);
+                                Target.releaseSlot(this, targetslot);
                                 targetslot = -1;
                             }
                             return EntityPositionState.SteeringArrive;
                         }
+                        // zombie has no slot, try to attack or reserve a slot
+                        if ((Position - Target.Position).Length() < MAX_MELEE_DISTANCE)
+                        {
+                            return EntityPositionState.Attack;
+                        }
                         // check if close enough to reserve a slot and set slot as target
-                        else if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
                         {
                             targetslot = Target.reserveSlot(this);
                             return EntityPositionState.SteeringArrive;
@@ -281,23 +287,29 @@ namespace Entities
                     }
                 case BehaviourState.MeleeCreep:
                     {
+                        // if zombie has reserved a slot, check if close enough to attack, or far enough to release
+                        if (targetslot >= 0)
+                        {
+                            // check if close enough to slot to start attacking
+                            if ((Position - GroundTarget).Length() < ArriveRadius)
+                            {
+                                return EntityPositionState.Attack;
+                            }
+                            // check if far enough to release slot
+                            if ((Position - Target.Position).Length() > 2 * MAX_PROJECTILE_DISTANCE)
+                            {
+                                Target.releaseSlot(this, targetslot);
+                                targetslot = -1;
+                            }
+                            return EntityPositionState.SteeringArrive;
+                        }
+                        // zombie has no slot, try to attack or reserve a slot
                         if ((Position - Target.Position).Length() < MAX_MELEE_DISTANCE)
                         {
                             return EntityPositionState.Attack;
                         }
                         // check if close enough to reserve a slot and set slot as target
-                        if (targetslot >= 0)
-                        {
-                            // check if far enough to release slot
-                            if ((Position - Target.Position).Length() > 2 * MAX_PROJECTILE_DISTANCE)
-                            {
-                                Target.releaseSlot(targetslot);
-                                targetslot = -1;
-                            }
-                            return EntityPositionState.SteeringArrive;
-                        }
-                        // check if close enough to reserve a slot and set slot as target
-                        else if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
+                        if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
                         {
                             targetslot = Target.reserveSlot(this);
                             return EntityPositionState.SteeringArrive;
@@ -324,9 +336,7 @@ namespace Entities
             if (Target == null)
             {
                 this.Target = target;
-                Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (target as Hero).HealthPoints / (target as Hero).MaxHealth,
-                    (Position - target.Position).Length());
-                BehaviouralState = fuzz.GetBehaviour();
+                DoFuzzyLogic();
             }
         }
 
@@ -335,22 +345,20 @@ namespace Entities
             animState = AnimationState.Hurt;
             HealthPoints -= damage;
 
-            Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
-                    (Position - Target.Position).Length());
-            BehaviouralState = fuzz.GetBehaviour();
-
-            if (BehaviouralState == BehaviourState.Wander)
-                GroundTarget = new Vector3();
-
             if (HealthPoints <= 0)
                 Die();
+
+            DoFuzzyLogic();
         }
 
         private void Die()
         {
             animState = AnimationState.Dying;
+            if (targetslot >= 0)
+                Target.releaseSlot(this, targetslot);
         }
 
+        #region Movement Heuristics
         //Kinematic Arrive. Player follows target and stops when it touches it
         //Mostly based on Artificial Intelligence For Games 2nd Edition by Millington & Funge
         private void KinematicArrive()
@@ -572,19 +580,38 @@ namespace Entities
                     }
             }
         }
+        #endregion
 
-        //Executes procedure for performing an attack
+        // Executes procedure for performing an attack
         private void Attack(Weapon weapon)
         {
             SetOrientation(Position - Target.Position);
             AttackFunction(this, weapon);
 
+            DoFuzzyLogic();
+        }
+
+        // Retrieves next behaviour from fuzzy logic module
+        private void DoFuzzyLogic()
+        {
             Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
-                    (Position - Target.Position).Length());
+                    (Position - Target.Position).Length() / MAX_DISTANCE);
             BehaviouralState = fuzz.GetBehaviour();
 
-            if (BehaviouralState == BehaviourState.Wander)
+            // release any reserved slot if new behaviour does not require one
+            if (!(BehaviouralState == BehaviourState.MeleeCreep || BehaviouralState == BehaviourState.MeleePursue))
+            {
+                if (targetslot >= 0)
+                {
+                    Target.releaseSlot(this, targetslot);
+                }
                 GroundTarget = new Vector3();
+            }
+            // forget the target if the bew behaviour does not require one
+            if (BehaviouralState == BehaviourState.Wander)
+            {
+                Target = null;
+            }
         }
 
         //code for flanking
