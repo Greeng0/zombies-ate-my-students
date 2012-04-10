@@ -324,7 +324,6 @@ namespace zombies
             Collisions.Contact c = p1.Collides(p2);
 
 
-
             if (c != null)
             {
                 if (c.DeepestPoint.Length() > 0)
@@ -347,24 +346,16 @@ namespace zombies
 
             Collisions.Contact c = p1.Collides(p2);
 
-
-
             if (c!=null)
             {
                 if (c.DeepestPoint.Length() > 0)
                 {
-
+                    
                     z1.Position -= c.DeepestPoint - c.ContactPoint;
                     z2.Position += c.DeepestPoint - c.ContactPoint;
                 }
             }
-       
-            /*
-            //test code here
-            if ((z1.Position - z2.Position).Length() < 3)
-            {//assuming 1.5 unit radius each zombies
-                
-            }*/
+
         }
 
 
