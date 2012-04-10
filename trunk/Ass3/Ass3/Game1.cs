@@ -328,8 +328,15 @@ namespace zombies
             {
                 if (c.DeepestPoint.Length() > 0)
                 {
-                    Player.Position += c.DeepestPoint - c.ContactPoint;
-                    z.Position -= c.DeepestPoint - c.ContactPoint;
+                    if (Player.animationPlayer.CurrentTime.Milliseconds <  18)//if standing, dont push player, only affect zombie
+                    {
+                        z.Position -= c.DeepestPoint - c.ContactPoint;
+                    }
+                    else//push player back when walking
+                    {
+                        z.Position -= c.DeepestPoint - c.ContactPoint;
+                        Player.Position += c.DeepestPoint - c.ContactPoint;
+                    }
                 }
             }
         }
