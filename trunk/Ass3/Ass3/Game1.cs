@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Media;
 using SkinnedModel;
 using HIDInput;
 using Entities;
+using Collisions;
+using SpacePartition;
+using AI;
 
 namespace zombies
 {
@@ -26,12 +29,13 @@ namespace zombies
         public Viewport frontViewport;
         public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));
 
-        public dude big;
         HUD hud;
 
         Model School;
         Model HeroModel;
         Model ZombieModel;
+
+        QuadTree LevelQuadTree;
 
         Hero Player;
         List<Zombie> zombies;
@@ -90,14 +94,7 @@ namespace zombies
             {
                 r[i] = new room(this, Content, new Vector3(0));
                 this.Components.Add(r[i]);
-            }
-                
-
-            big = new dude(this, Content, 0, new Vector3(47, 0, 8));
-        
-            this.Components.Add(big);
-
-           
+            }           
 
             hud = new HUD(this, Content, graphics);
             this.Components.Add(hud);
@@ -114,6 +111,9 @@ namespace zombies
             School = Content.Load<Model>("School");
             HeroModel = Content.Load<Model>("HeroWalk");
             ZombieModel = Content.Load<Model>("ZombieWalk");
+
+            // TODO: Initialize quad tree and insert all objects into it********************************************
+            //QuadTree = new QuadTree(centerPosition, size, depth);
 
             Player = new Hero(1000, 1000, ref HeroModel, DoAction);
             
@@ -133,15 +133,12 @@ namespace zombies
             z7.Position = new Vector3(-15, 0, -10);
             Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z8.Position = new Vector3(-10, 0, 15);
-
             Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z6.Position = new Vector3(0, 0, -25);
+            z9.Position = new Vector3(0, 0, -25);
             Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z7.Position = new Vector3(0, 0, -35);
+            z10.Position = new Vector3(0, 0, -35);
             Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z8.Position = new Vector3(5, 0, -45);
-
-
+            z11.Position = new Vector3(45, 0, -45);
 
             zombies.Add(z1);
             zombies.Add(z2);
@@ -154,19 +151,14 @@ namespace zombies
             zombies.Add(z9);
             zombies.Add(z10);
             zombies.Add(z11);
-            //z1.targetslot = Player.reserveSlot(z1);
-            //z2.targetslot = Player.reserveSlot(z2);
-            //z3.targetslot = Player.reserveSlot(z3);
-            //z4.targetslot = Player.reserveSlot(z4);
-            //z5.targetslot = Player.reserveSlot(z5);
-            //z6.targetslot = Player.reserveSlot(z6);
+
             base.LoadContent();
         }
 
 
         protected override void Update(GameTime gameTime)
         {
-            //updatehud
+            #region Update hud
             HUD.ActiveHUD.p = Player.Position;
             HUD.ActiveHUD.angle = (float) Player.Rotation;
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
@@ -178,7 +170,6 @@ namespace zombies
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
                 {
                     Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
-                   
                 }
                 scrollWheel = mouseState.ScrollWheelValue;
             }
@@ -188,12 +179,12 @@ namespace zombies
                 if (Camera.ActiveCamera.CameraZoom.Length() > scrollWheelLow)
                 {
                     Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
-                   
                 }
                 scrollWheel = mouseState.ScrollWheelValue;
             }
-            //end updatehud
+            #endregion
 
+            #region Player input
             KeyboardState keyboard = Keyboard.GetState();
 
             if (keyboard.IsKeyDown(Keys.Escape))
@@ -252,50 +243,140 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Walking;
             else
                 Player.animState = Entity.AnimationState.Idle;
+            #endregion
 
             Player.Update(gameTime);
 
-
             //update right zombies
-
-
             foreach (Zombie z in zombies)
             {
+                //This checks a radius around the player to see whether or not we should be updating the zombie
                 if ((z.Position - Player.Position).Length() < radiusofsight)
-                {//This checks a radius around the player to see whether or not we should be updating the zombie
                     z.Update(gameTime);
-
-
-                    //check col against player
-
-                    checkZombietoPlayer(z);
-
-                    //need to call function to check zombie collision with other apparent zombies
-                    foreach (Zombie z2 in zombies)
-                    {
-                        if (z != z2)//check to make sure zombies dont check against themselves
-                        {
-                            if ((z2.Position - Player.Position).Length() < radiusofsight)
-                            {
-                                checkZombietoZombie(z, z2);
-                            }
-                        }
-                    }
-                }
-                else//If zombie is out of radius, we must still check to see if it is chasing the character. if that is the case then we still need to update, but not to draw.
+                //If zombie is out of radius, we must still check to see if it is chasing the character. 
+                //If that is the case then we still need to update, but not to draw.
+                else if (z.BehaviouralState != BehaviourState.Wander)
                 {
-                    if (z.BehaviouralState != AI.BehaviourState.Wander)//if nto wandering
-                    {
-                        z.Update(gameTime);
-                        //no need to check collisions against others since out of camera
-                    }
+                    z.Update(gameTime);
                 }
             }
-            
+
+            CheckCollisions();
+
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
             
             base.Update(gameTime);
+        }
+
+        private void CheckCollisions()
+        {
+            /*
+            #region Player collisions
+
+            Sphere heroSphere = new Sphere(Player.Position, Player.Velocity, Player.modelRadius);
+            List<Primitive> primitivesNearby = new List<Primitive>();
+            LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitivesNearby);
+            foreach (Primitive p in primitivesNearby)
+            {
+                Contact c = heroSphere.Collides(p as Box);
+                if (c != null)
+                {
+                    ResolveStaticCollision(c, Player, heroSphere);
+                }
+            }
+            
+            #endregion
+
+            #region Zombie collisions
+
+            foreach (Zombie z in zombies)
+            {
+                // Check for zombies in sight radius and zombies who are not wandering
+                if ((z.Position - Player.Position).Length() < radiusofsight || z.BehaviouralState != BehaviourState.Wander)
+                {
+                    Sphere zombieSphere = new Sphere(z.Position, z.Velocity, z.modelRadius);
+                    List<Primitive> primitives = new List<Primitive>();
+                    LevelQuadTree.RetrieveNearbyObjects(zombieSphere, ref primitives);
+                    foreach (Primitive p in primitives)
+                    {
+                        Contact c = zombieSphere.Collides(p as Box);
+                        if (c != null)
+                        {
+                            ResolveStaticCollision(c, z, zombieSphere);
+                        }
+                    }
+                }
+            }
+
+            #endregion
+            */
+            foreach (Zombie z1 in zombies)
+            {
+                if ((z1.Position - Player.Position).Length() < radiusofsight || z1.BehaviouralState != BehaviourState.Wander)
+                {
+                    checkZombietoPlayer(z1);
+                    foreach (Zombie z2 in zombies)
+                    {
+                        if (!z2.Equals(z1) &&((z2.Position - Player.Position).Length() < radiusofsight || z2.BehaviouralState != BehaviourState.Wander))
+                        {
+                            checkZombietoZombie(z1, z2);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ResolveStaticCollision(Contact contact, Entity ent, Sphere sphere)
+        {
+            Vector3 closingVelocity = -contact.ContactNormal * (Vector3.Dot(-contact.ContactNormal, ent.Velocity));
+            ent.Position += -closingVelocity * sphere.Mass;
+        }
+
+        //checking zombie to character
+        private void checkZombietoPlayer(Zombie z)
+        {
+            Sphere p1 = new Collisions.Sphere(z.Position, z.Velocity, z.modelRadius);
+            Sphere p2 = new Collisions.Sphere(Player.Position, Player.Velocity, Player.modelRadius);
+
+            Contact c = p1.Collides(p2);
+
+            if (c != null)
+            {
+                if (c.DeepestPoint.Length() > 0)
+                {
+                    if (Player.Stance == AnimationStance.Standing)//if standing, dont push player, only affect zombie
+                    {
+                        z.Position -= c.DeepestPoint - c.ContactPoint;
+                        Player.Position += c.DeepestPoint - c.ContactPoint;
+                       
+                    }
+                    else//push player back when walking
+                    {
+                        z.Position -= c.DeepestPoint - c.ContactPoint;
+                    }
+                }
+            }
+        }
+
+        //checking zombie to zombie collisions. 
+        //Model as a sphere (in reality just a cylinder but since all at same height it only checks for a circle radius around character
+        private void checkZombietoZombie(Zombie z1, Zombie z2)
+        {
+            //creating appropriate shapes
+            Sphere p1 = new Collisions.Sphere(z1.Position, z1.Velocity, z1.modelRadius);
+            Sphere p2 = new Collisions.Sphere(z2.Position, z2.Velocity, z2.modelRadius);
+
+            Contact c = p1.Collides(p2);
+
+            if (c != null)
+            {
+                if (c.DeepestPoint.Length() > 0)
+                {
+                    z1.Position -= c.DeepestPoint - c.ContactPoint;
+                    z2.Position += c.DeepestPoint - c.ContactPoint;
+                }
+            }
         }
 
         public void DoAction(Entity actionCaster, Entity objectCasted)
@@ -310,62 +391,9 @@ namespace zombies
             {
                 Item item = objectCasted as Item;
                 CastSoundWave(item.SoundRadius);
+                // TODO: perform item effect
             }
         }
-
-        //checking zombie to character
-
-        private void checkZombietoPlayer(Zombie z)
-        {
-            Collisions.Sphere p1 = new Collisions.Sphere(z.Position, z.Velocity, z.modelRadius);
-            Collisions.Sphere p2 = new Collisions.Sphere(Player.Position, Player.Velocity, Player.modelRadius);
-
-
-            Collisions.Contact c = p1.Collides(p2);
-
-
-            if (c != null)
-            {
-                if (c.DeepestPoint.Length() > 0)
-                {
-                    if (Player.animState == Entity.AnimationState.Walking)//if standing, dont push player, only affect zombie
-                    {
-                        z.Position -= c.DeepestPoint - c.ContactPoint;
-                        Player.Position += c.DeepestPoint - c.ContactPoint;
-                       
-                    }
-                    else//push player back when walking
-                    {
-                        z.Position -= c.DeepestPoint - c.ContactPoint;
-                    }
-                }
-            }
-        }
-
-
-
-        //checking zombie to zombie collisions. Model as a sphere(in reality just a cylinder but since all at same height it only checks for a circle radius around character
-        private void checkZombietoZombie(Zombie z1, Zombie z2)
-        {
-            //creating appropriate shapes
-            Collisions.Sphere p1 = new Collisions.Sphere(z1.Position,z1.Velocity ,z1.modelRadius);
-            Collisions.Sphere p2 = new Collisions.Sphere(z2.Position, z2.Velocity, z2.modelRadius);
-
-
-            Collisions.Contact c = p1.Collides(p2);
-
-            if (c!=null)
-            {
-                if (c.DeepestPoint.Length() > 0)
-                {
-                    
-                    z1.Position -= c.DeepestPoint - c.ContactPoint;
-                    z2.Position += c.DeepestPoint - c.ContactPoint;
-                }
-            }
-
-        }
-
 
         // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
         // bounding sphere will be alerted to the Hero's presence
@@ -394,7 +422,7 @@ namespace zombies
             foreach (Zombie z in zombies)
             {
                 if ((z.Position - Player.Position).Length() < radiusofsight)
-                DrawModel(z);
+                    DrawModel(z);
             }
             base.Draw(gameTime);
         }
@@ -428,7 +456,7 @@ namespace zombies
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
                     effect.World = Matrix.CreateRotationY((float) hero.Rotation) * 
-                        Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
+                            Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
 
@@ -454,7 +482,7 @@ namespace zombies
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
                     effect.World = Matrix.CreateRotationY((float)(zombie.Rotation - Math.PI)) * 
-                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                            Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
 
