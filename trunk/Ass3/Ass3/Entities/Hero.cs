@@ -62,7 +62,6 @@ namespace Entities
             : base()
         {
 
-
             this.model = model;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
@@ -91,9 +90,7 @@ namespace Entities
             for (int i = 0; i < 6; i++)
             {
                 nodes[i] = new Node();
-
             }
-
         }
 
         public void Update(GameTime gameTime)
@@ -198,35 +195,27 @@ namespace Entities
         }
 
           //adding flanking data
-
-
         private void notifyObservers()
         {
- 
             foreach (IHeroObserver i in observer)
             {
-                i.Notify(nodes[i.Targetslot()].po+Position);             
+                i.Notify(nodes[i.Targetslot()].po + Position);
             }
         }
   
-        private moveme calculateSlotPositiion(Entity z)
+        private moveme calculateSlotPositiion(Entity ent)
         {
-           
             //finding slot positions.
             moveme decision = new moveme();
         
             if (observer.Count == 0 )//if first in list, give him ideal position
             {
-                
                 //give new slot at shortest distace
-            
-         
                 decision.move = true;
-                decision.pos = Vector3.Normalize(z.Position - Position) * attackdist;
+                decision.pos = Vector3.Normalize(ent.Position - Position) * attackdist;
+                
                 //reset nodes
-
-
-                float angle = (float)Math.Atan((z.Position - Position).Z/(z.Position - Position).X);
+                float angle = (float)Math.Atan((ent.Position - Position).Z/(ent.Position - Position).X);
 
                 nodes[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle))*attackdist;
                 nodes[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle  +MathHelper.ToRadians(60))) * attackdist;
@@ -236,10 +225,8 @@ namespace Entities
                 nodes[5].po = -new Vector3((float)Math.Sin(angle +MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
                
                 //set node to right state
-
                 nodes[0].occ = true;
                 decision.slot = 0;
-
             }
             else if (observer.Count > 6)//too many zombies, refuse
             {
@@ -294,7 +281,6 @@ namespace Entities
                     //absolutely no solution get ouyt.
                     decision.move = false;
                 }
-
             }
 
             return decision;
@@ -307,25 +293,25 @@ namespace Entities
             if (decision.move)//if good value returned
             {
                 subscribe(z);
+                z.Notify(decision.pos);
                 return decision.slot;
             }
             return -1;
         }
 
-        public void releaseSlot(int slot)
+        public void releaseSlot(IHeroObserver obs, int slot)
         {
-            unsubscribe(slot);
+            nodes[slot].occ = false;
+            unsubscribe(obs);
         }
 
         private void subscribe(IHeroObserver obs)
         {
             observer.Add(obs);
         }
-        private void unsubscribe(int slot)
+        private void unsubscribe(IHeroObserver obs)
         {
-            nodes[slot].occ = false;
-            observer.RemoveAt(slot);
+            observer.Remove(obs);
         }
     }
-    
 }

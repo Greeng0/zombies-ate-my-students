@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace COMP476_Assignment_3
+namespace Collisions
 {
     //Identifies the type of Contact
     enum CollisionType
