@@ -178,7 +178,7 @@ namespace zombies
                 
 
                 healthscale = rate * playerhealth;
-                int diff = min + (int)(rate * (100 - playerhealth)/10);
+                int diff = min + (int)(rate * (100 - playerhealth));
 
                spriteBatch.Draw(healthbar, new Rectangle(healthx,  diff, healthsizex, max-diff), Color.White);
           

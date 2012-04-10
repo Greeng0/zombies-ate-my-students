@@ -210,16 +210,16 @@ namespace zombies
             #region Update hud
             HUD.ActiveHUD.p = Player.Position;
             HUD.ActiveHUD.angle = (float) Player.Rotation;
-            HUD.ActiveHUD.playerhealth = Player.HealthPoints / Player.MaxHealth * 100;
+            HUD.ActiveHUD.playerhealth = (int)((float)Player.HealthPoints / (float)Player.MaxHealth * 100);
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-            //if (mouseState.LeftButton == ButtonState.Pressed)
-            //{
-            //    Player.HealthPoints = 0;
-            //    foreach(Zombie z in zombies)
-            //    z.animState = Entity.AnimationState.Idle;
-            //}
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                Player.HealthPoints = 200;
+                foreach (Zombie z in zombies)
+                    z.animState = Entity.AnimationState.Idle;
+            }
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
