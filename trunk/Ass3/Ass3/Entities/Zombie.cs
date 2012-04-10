@@ -75,9 +75,32 @@ namespace Entities
         public EntityOrientationState OrState;  //Orientation behavior of the entity
         public BehaviourState BehaviouralState; //Beahavioural state of the entity
 
-        public AnimationPlayer animationPlayer; // This calculates the Matrices of the animation
-        public AnimationClip clip;              // This contains the keyframes of the animation
-        public SkinningData skinningData;       // This contains all the skinning data
+
+
+        //basic state
+        public AnimationPlayer animationPlayer; // main animation player
+
+        //walking state
+        public AnimationPlayer animationPlayerwalk; // This calculates the Matrices of the animation
+        public AnimationClip clipwalk;              // This contains the keyframes of the animation
+        public SkinningData skinningDatawalk;       // This contains all the skinning data
+
+        //hurt state
+        public AnimationPlayer animationPlayerhurt; // This calculates the Matrices of the animation
+        public AnimationClip cliphurt;              // This contains the keyframes of the animation
+        public SkinningData skinningDatahurt;       // This contains all the skinning data
+
+        //die
+        public AnimationPlayer animationPlayerdie; // This calculates the Matrices of the animation
+        public AnimationClip clipdie;              // This contains the keyframes of the animation
+        public SkinningData skinningDatadie;       // This contains all the skinning data
+
+        //attack
+
+        public AnimationPlayer animationPlayerattack; // This calculates the Matrices of the animation
+        public AnimationClip clipattack;              // This contains the keyframes of the animation
+        public SkinningData skinningDataattack;       // This contains all the skinning data
+
         public float scale = .1f;               // Scale at which to render the model
 
         public Action<Entity, Entity> AttackFunction;   // Callback function used when an attack is made
@@ -91,10 +114,10 @@ namespace Entities
         public float modelRadius = 1.5f;
 
 
-        public Zombie(int health, int maxHealth, ZombieType type, ref Model model, Action<Entity, Entity> attackFunction)
+        public Zombie(int health, int maxHealth, ZombieType type, ref Model modelwalk, ref Model modelatt, ref Model modelhurt, ref Model modeldie, Action<Entity, Entity> attackFunction)
             : base()
         {
-            this.model = model;
+            this.model = modelwalk;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
 
@@ -121,29 +144,93 @@ namespace Entities
             this.AttackFunction = attackFunction;
             lastAttackTime = 0;
 
-            // Look up our custom skinning information.
-            skinningData = (SkinningData)model.Tag;
+            // Look up our custom skinning information. for walking
+            skinningDatawalk = (SkinningData)modelwalk.Tag;
 
-            if (skinningData == null)
+            if (skinningDatawalk == null)
                 throw new InvalidOperationException
                     ("This model does not contain a SkinningData tag.");
 
             // Create an animation player, and start decoding an animation clip.
-            animationPlayer = new AnimationPlayer(skinningData);
-            clip = skinningData.AnimationClips["Take 001"];
-            animationPlayer.StartClip(clip);
+            animationPlayerwalk = new AnimationPlayer(skinningDatawalk);
+            clipwalk = skinningDatawalk.AnimationClips["Take 001"];
+            animationPlayerwalk.StartClip(clipwalk);
+
+
+            // Look up our custom skinning information. for dying
+            skinningDatadie = (SkinningData)modeldie.Tag;
+
+            if (skinningDatadie == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayerdie = new AnimationPlayer(skinningDatadie);
+            clipdie = skinningDatadie.AnimationClips["Take 001"];
+            animationPlayerdie.StartClip(clipdie);
+
+
+            // Look up our custom skinning information. for attacking
+            skinningDataattack = (SkinningData)modelatt.Tag;
+
+            if (skinningDataattack == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayerattack = new AnimationPlayer(skinningDataattack);
+            clipattack = skinningDataattack.AnimationClips["Take 001"];
+            animationPlayerattack.StartClip(clipattack);
+
+            // Look up our custom skinning information. for hurting
+            skinningDatahurt = (SkinningData)modelhurt.Tag;
+
+            if (skinningDatahurt == null)
+                throw new InvalidOperationException
+                    ("This model does not contain a SkinningData tag.");
+
+            // Create an animation player, and start decoding an animation clip.
+            animationPlayerhurt = new AnimationPlayer(skinningDatahurt);
+            cliphurt = skinningDatahurt.AnimationClips["Take 001"];
+            animationPlayerhurt.StartClip(cliphurt);
+
+    
+
         }
         
          //Execute entity's action
         public void Update(GameTime gameTime)
         {
             lastAttackTime += gameTime.ElapsedGameTime.Milliseconds;
-
-            if (animState == AnimationState.Walking)
-            {
+            if (animState == AnimationState.Idle)
+            { 
+                animationPlayer = animationPlayerhurt;
+                animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
-            else
+            else if (animState == AnimationState.Walking)
+            {
+                animationPlayer = animationPlayerwalk;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else if(animState == AnimationState.Attacking)//animation for attacking
+            {
+                animationPlayer = animationPlayerattack;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else if (animState == AnimationState.Hurt)//animation when hurt
+            {
+                animationPlayer = animationPlayerhurt;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+
+            }
+            else if (animState == AnimationState.Dying)//animation for dying
+            {
+
+                animationPlayer = animationPlayerdie;
+                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            }
+            else//if just standing
             {
                 animationPlayer.ResetClip();
                 animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
