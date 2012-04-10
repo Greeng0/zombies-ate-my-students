@@ -119,7 +119,6 @@
     <Compile Include="HUD.cs" />
     <Compile Include="Entities\IHeroObserver.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Dude.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Entities\Zombie.cs" />

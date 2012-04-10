@@ -13,7 +13,6 @@ using Entities;
 using Collisions;
 using SpacePartition;
 using AI;
-using Entities;
 using System.Diagnostics;
 
 namespace zombies
@@ -36,7 +35,6 @@ namespace zombies
         HUD hud;
 
         Model School;
-        Model HeroModel;
 
         //4 animations for zombies
         Model ZombieWalk;
@@ -57,13 +55,13 @@ namespace zombies
 
         Hero Player;
         List<Zombie> zombies;
+        List<Box> fireHazards;
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
         int scrollWheelHigh = 300;
 
-        int radiusofsight = 60;
-
+        const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 15;
 
         public Game1()
@@ -112,6 +110,7 @@ namespace zombies
             this.Components.Add(hud);
 
             zombies = new List<Zombie>();
+            fireHazards = new List<Box>();
 
             base.Initialize();
         }
@@ -136,7 +135,7 @@ namespace zombies
             // TODO: Initialize quad tree and insert all objects into it********************************************
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
-            Player = new Hero(1, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
+            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
 
             /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
@@ -197,9 +196,9 @@ namespace zombies
         protected override void Update(GameTime gameTime)
         {
             #region Update hud
-            HUD.ActiveHUD.playerhealth = Player.HealthPoints;
             HUD.ActiveHUD.p = Player.Position;
             HUD.ActiveHUD.angle = (float) Player.Rotation;
+            HUD.ActiveHUD.playerhealth = Player.HealthPoints / Player.MaxHealth * 100;
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
@@ -351,7 +350,7 @@ namespace zombies
             foreach (Zombie z in zombies)//update zombies
             {
                 //This checks a radius around the player to see whether or not we should be updating the zombie
-                if ((z.Position - Player.Position).Length() < radiusofsight)
+                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
                 {
                     z.Update(gameTime);
                 }
@@ -394,12 +393,12 @@ namespace zombies
             
             #endregion
 
-           /* #region Zombie collisions
+            #region Zombie collisions
 
             foreach (Zombie z in zombies)
             {
                 // Check for zombies in sight radius and zombies who are not wandering
-                if ((z.Position - Player.Position).Length() < radiusofsight || z.BehaviouralState != BehaviourState.Wander)
+                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS || z.BehaviouralState != BehaviourState.Wander)
                 {
                     Sphere zombieSphere = new Sphere(z.Position, z.Velocity, z.modelRadius);
                     List<Primitive> primitives = new List<Primitive>();
@@ -416,15 +415,15 @@ namespace zombies
             }
 
             #endregion
-            */
+            
             foreach (Zombie z1 in zombies)
             {
-                if ((z1.Position - Player.Position).Length() < radiusofsight || z1.BehaviouralState != BehaviourState.Wander)
+                if ((z1.Position - Player.Position).Length() < SIGHT_RADIUS || z1.BehaviouralState != BehaviourState.Wander)
                 {
                     checkZombietoPlayer(z1);
                     foreach (Zombie z2 in zombies)
                     {
-                        if (!z2.Equals(z1) &&((z2.Position - Player.Position).Length() < radiusofsight || z2.BehaviouralState != BehaviourState.Wander))
+                        if (!z2.Equals(z1) &&((z2.Position - Player.Position).Length() < SIGHT_RADIUS || z2.BehaviouralState != BehaviourState.Wander))
                         {
                             checkZombietoZombie(z1, z2);
                         }
@@ -464,7 +463,6 @@ namespace zombies
                     {
                         z.Position -= c.DeepestPoint - c.ContactPoint;
                         Player.Position += c.DeepestPoint - c.ContactPoint;
-                       
                     }
                     else//push player back when walking
                     {
@@ -498,113 +496,167 @@ namespace zombies
         {
             if (objectCasted is Weapon)
             {
-                Weapon weapon = objectCasted as Weapon;
-                
-                // apply silencer if possible
-                if (weapon.weaponType == Entities.WeaponType.Handgun9mm && (actionCaster as Hero).PowerupsList.Contains(Powerups.Silencer))
-                {
-                    CastSoundWave(weapon.SoundRadius / 3);
-                }
-                else
-                {
-                    CastSoundWave(weapon.SoundRadius);
-                }
-
-                switch (weapon.weaponType)
-                {
-                    case WeaponType.BareHands:
-                        {
-                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                            foreach (Zombie z in zombies)
-                            {
-                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
-                                {
-                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                    if (bs.Intersects(ray) != null)
-                                        z.TakeDamage(weapon.FirePower);
-                                }
-                            }
-                            break;
-                        }
-                    case WeaponType.Handgun9mm:
-                        {
-                            // find closest zombie, if any, in the line of fire and have him take the damage
-                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                            Zombie closestVictim = null;
-                            float closestIntersect = 100;
-                            foreach (Zombie z in zombies)
-                            {
-                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
-                                {
-                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                    float? intersection = bs.Intersects(ray);
-                                    if (intersection != null && intersection < closestIntersect)
-                                        closestVictim = z;
-                                }
-                            }
-                            if (closestVictim != null)
-                                closestVictim.TakeDamage(weapon.FirePower);
-                            break;
-                        }
-                    case WeaponType.Magnum:
-                        {
-                            // find closest zombie, if any, in the line of fire and have him take the damage
-                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                            Zombie closestVictim = null;
-                            float closestIntersect = 100;
-                            foreach (Zombie z in zombies)
-                            {
-                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
-                                {
-                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                    float? intersection = bs.Intersects(ray);
-                                    if (intersection != null && intersection < closestIntersect)
-                                        closestVictim = z;
-                                }
-                            }
-                            if (closestVictim != null)
-                            {
-                                if (closestIntersect > 20)
-                                    closestVictim.TakeDamage(weapon.FirePower / 10);
-                                else if (closestIntersect > 10)
-                                    closestVictim.TakeDamage(weapon.FirePower / 5);
-                                else
-                                    closestVictim.TakeDamage(weapon.FirePower);
-                            }
-                            break;
-                        }
-                    case WeaponType.Vomit:
-                        {
-                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                            if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
-                            {
-                                BoundingSphere bs = new BoundingSphere(actionCaster.Position, actionCaster.modelRadius);
-                                if (bs.Intersects(ray) != null)
-                                    Player.TakeDamage(weapon.FirePower);
-                            }
-                            break;
-                        }
-                    case WeaponType.ZombieHands:
-                        {
-                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                            if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
-                            {
-                                BoundingSphere bs = new BoundingSphere(actionCaster.Position, actionCaster.modelRadius);
-                                if (bs.Intersects(ray) != null)
-                                    Player.TakeDamage(weapon.FirePower);
-                            }
-                            break;
-                        }
-                }
+                DoAttack(objectCasted as Weapon, actionCaster);   
             }
             else if (objectCasted is Item)
             {
-                Item item = objectCasted as Item;
-                CastSoundWave(item.SoundRadius);
-                // TODO: perform item effect
+                CastItem(objectCasted as Item, actionCaster);   
             }
         }
 
+        private void DoAttack(Weapon weapon, Entity actionCaster)
+        {
+            // apply silencer if possible
+            if (weapon.weaponType == Entities.WeaponType.Handgun9mm && (actionCaster as Hero).PowerupsList.Contains(Powerups.Silencer))
+            {
+                CastSoundWave(weapon.SoundRadius / 3);
+            }
+            else
+            {
+                CastSoundWave(weapon.SoundRadius);
+            }
+
+            switch (weapon.weaponType)
+            {
+                case WeaponType.BareHands:
+                    {
+                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        foreach (Zombie z in zombies)
+                        {
+                            if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                            {
+                                BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                if (bs.Intersects(ray) != null)
+                                    z.TakeDamage(weapon.FirePower);
+                            }
+                        }
+                        break;
+                    }
+                case WeaponType.Handgun9mm:
+                    {
+                        // find closest zombie, if any, in the line of fire and have him take the damage
+                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        Zombie closestVictim = null;
+                        float closestIntersect = 100;
+                        foreach (Zombie z in zombies)
+                        {
+                            if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                            {
+                                BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                float? intersection = bs.Intersects(ray);
+                                if (intersection != null && intersection < closestIntersect)
+                                    closestVictim = z;
+                            }
+                        }
+                        // TODO: check if ray intersects nearby primitives from quad tree
+                        // if so, check if the Contacts are closer than the closestVictim
+                        if (closestVictim != null)
+                            closestVictim.TakeDamage(weapon.FirePower);
+                        break;
+                    }
+                case WeaponType.Magnum:
+                    {
+                        // find closest zombie, if any, in the line of fire and have him take the damage
+                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        Zombie closestVictim = null;
+                        float closestIntersect = 100;
+                        foreach (Zombie z in zombies)
+                        {
+                            if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                            {
+                                BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                float? intersection = bs.Intersects(ray);
+                                if (intersection != null && intersection < closestIntersect)
+                                    closestVictim = z;
+                            }
+                        }
+                        // TODO: check if ray intersects nearby primitives from quad tree
+                        // if so, check if the Contacts are closer than the closestVictim
+                        if (closestVictim != null)
+                        {
+                            if (closestIntersect > 20)
+                                closestVictim.TakeDamage(weapon.FirePower / 10);
+                            else if (closestIntersect > 10)
+                                closestVictim.TakeDamage(weapon.FirePower / 5);
+                            else
+                                closestVictim.TakeDamage(weapon.FirePower);
+                        }
+                        break;
+                    }
+                case WeaponType.Vomit:
+                    {
+                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
+                        {
+                            BoundingSphere bs = new BoundingSphere(Player.Position, Player.modelRadius);
+                            if (bs.Intersects(ray) != null)
+                                Player.TakeDamage(weapon.FirePower);
+                        }
+                        break;
+                    }
+                case WeaponType.ZombieHands:
+                    {
+                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
+                        {
+                            BoundingSphere bs = new BoundingSphere(Player.Position, Player.modelRadius);
+                            if (bs.Intersects(ray) != null)
+                                Player.TakeDamage(weapon.FirePower);
+                        }
+                        break;
+                    }
+            }
+        }
+
+        private void CastItem(Item item, Entity actionCaster)
+        {
+            CastSoundWave(item.SoundRadius);
+
+            switch (item.itemType)
+            {
+                case ItemType.MedPack:
+                    {
+                        // Regenerate anywhere between 25 and 75% of total health
+                        Random rand = new Random((int)DateTime.Now.Ticks);
+                        float next = rand.Next(25, 76);
+                        next /= 100;
+                        Player.Heal((int)(Player.MaxHealth * next));
+                        Player.ItemsList[item]--;
+                        break;
+                    }
+                case ItemType.Key:
+                    {
+                        //if (lock in range)
+                        //{
+                        //      unlock
+                        Player.ItemsList[item]--;
+                        //}
+                        break;
+                    }
+                case ItemType.Extinguisher:
+                    {
+                        List<Box> firesToRemove = new List<Box>();
+                        Sphere heroSphere = new Sphere(actionCaster.Position, actionCaster.Velocity, actionCaster.modelRadius);
+                        foreach (Box hazard in fireHazards)
+                        {
+                            if ((hazard.Position - Player.Position).Length() < item.Range)
+                            {
+                                if (heroSphere.ProjectPOVRay(hazard, item.Range).Count > 0)
+                                {
+                                    firesToRemove.Add(hazard);
+                                }
+                            }
+                        }
+                        // remove any intersecting fires
+                        foreach (Box toRemove in firesToRemove)
+                        {
+                            fireHazards.Remove(toRemove);
+                        }
+                        Player.ItemsList[item]--;
+                        break;
+                    }
+            }
+        }
 
         // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
         // bounding sphere will be alerted to the Hero's presence
@@ -633,7 +685,7 @@ namespace zombies
             DrawBox(CollisionBoxes[0],Color.Red);
             foreach (Zombie z in zombies)
             {
-                if ((z.Position - Player.Position).Length() < radiusofsight)
+                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
                     DrawModel(z);
             }
             base.Draw(gameTime);
