@@ -14,6 +14,7 @@ using Collisions;
 using SpacePartition;
 using AI;
 using Entities;
+using System.Diagnostics;
 
 namespace zombies
 {
@@ -29,6 +30,8 @@ namespace zombies
         private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
         public Viewport frontViewport;
         public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));
+
+        List<Box> CollisionBoxes = new List<Box>();
 
         HUD hud;
 
@@ -46,6 +49,9 @@ namespace zombies
         Model HeroHurt;
         Model HeroDie;
 
+        int ButtonTimer = 0;
+
+        BasicEffect globalEffect;
 
         QuadTree LevelQuadTree;
 
@@ -54,7 +60,7 @@ namespace zombies
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
-        int scrollWheelHigh = 30;
+        int scrollWheelHigh = 300;
 
         int radiusofsight = 60;
 
@@ -102,14 +108,6 @@ namespace zombies
             frontViewport.MinDepth = .1f;
             frontViewport.MaxDepth = .8f;
 
-
-            room[] r = new room[1];
-            for (int i = 0; i < r.Length; i++)
-            {
-                r[i] = new room(this, Content, new Vector3(0));
-                this.Components.Add(r[i]);
-            }           
-
             hud = new HUD(this, Content, graphics);
             this.Components.Add(hud);
 
@@ -139,8 +137,9 @@ namespace zombies
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
-            
-            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Player.Position = new Vector3(-15, 0, 1);
+
+            /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z2.Position = new Vector3(0, 0, -10);
@@ -173,7 +172,23 @@ namespace zombies
             zombies.Add(z8);
             zombies.Add(z9);
             zombies.Add(z10);
-            zombies.Add(z11);
+            zombies.Add(z11);*/
+
+            CollisionBoxes.Add(new Box(new Vector3(10, 0, 0), new Vector3(0), new Vector3(10, 40, 10)));
+
+
+            LevelQuadTree = new QuadTree(new Vector2(0, 0), 20, 5);
+            
+            foreach (Box box in CollisionBoxes)
+            {
+                LevelQuadTree.Insert(box);
+            }
+
+            globalEffect = new BasicEffect(GraphicsDevice);
+            globalEffect.VertexColorEnabled = true;
+            globalEffect.View = Camera.ActiveCamera.View;
+            globalEffect.World = world;
+            globalEffect.Projection = Camera.ActiveCamera.Projection;
 
             base.LoadContent();
         }
@@ -220,6 +235,54 @@ namespace zombies
                 Exit();
             }
 
+            //Rotate World with Arrow Keys
+            if (keyboard.IsKeyDown(Keys.K))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, 0.5f);
+            }
+            if (keyboard.IsKeyDown(Keys.I))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, 0.5f);
+            }
+            if (keyboard.IsKeyDown(Keys.L))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0.5f, 0, 0);
+            }
+            if (keyboard.IsKeyDown(Keys.J))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0.5f, 0, 0);
+            }
+
+            if (keyboard.IsKeyDown(Keys.Y))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0.5f, 0, 0);
+            }
+            if (keyboard.IsKeyDown(Keys.U))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0.5f, 0, 0);
+            }
+            if (keyboard.IsKeyDown(Keys.O))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, 0.5f);
+            }
+            if (keyboard.IsKeyDown(Keys.P))
+            {
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, 0.5f);
+            }
+
+            if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
+            {
+                Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + ", " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + ", " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +") , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + ", 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +")));");
+                CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
+
+                LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
+
+                CollisionBoxes.Add(new Box(new Vector3(Player.Position.X,Player.Position.Y,Player.Position.Z), new Vector3(0),new Vector3(10,20,10)));
+                ButtonTimer = 10;
+            }
+
+            if (ButtonTimer > 0)
+                ButtonTimer -= 1;
             if (keyboard.IsKeyDown(Keys.LeftShift))
                 Player.Stance = AnimationStance.Shooting;
             else
@@ -298,13 +361,18 @@ namespace zombies
 
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
-            
+            //Player.animState = Entity.AnimationState.Dying;
+
+            globalEffect.View = Camera.ActiveCamera.View;
+            globalEffect.World = world;
+            globalEffect.Projection = Camera.ActiveCamera.Projection;
+
             base.Update(gameTime);
         }
 
         private void CheckCollisions()
         {
-            /*
+            
             #region Player collisions
 
             Sphere heroSphere = new Sphere(Player.Position, Player.Velocity, Player.modelRadius);
@@ -321,7 +389,7 @@ namespace zombies
             
             #endregion
 
-            #region Zombie collisions
+           /* #region Zombie collisions
 
             foreach (Zombie z in zombies)
             {
@@ -362,8 +430,13 @@ namespace zombies
 
         private void ResolveStaticCollision(Contact contact, Entity ent, Sphere sphere)
         {
-            Vector3 closingVelocity = -contact.ContactNormal * (Vector3.Dot(-contact.ContactNormal, ent.Velocity));
-            ent.Position += -closingVelocity * sphere.Mass;
+            //-contact.ContactNormal * (Vector3.Dot(-contact.ContactNormal, ent.Velocity));
+            Vector3 closingVelocity = contact.ContactNormal * contact.PenetrationDepth;
+            
+            //The Y axis vector value of the position should always remain zero.
+            closingVelocity.Y = 0; 
+            ent.Position += closingVelocity;
+            
             if (ent is Hero)
             {
                 CastSoundWave(COLLISON_SOUND_RADIUS);
@@ -549,7 +622,10 @@ namespace zombies
             GraphicsDevice.Clear(Color.Black);
             graphics.GraphicsDevice.Viewport = frontViewport;
 
+            DrawSchool();
             DrawModel(Player);
+
+            DrawBox(CollisionBoxes[0],Color.Red);
             foreach (Zombie z in zombies)
             {
                 if ((z.Position - Player.Position).Length() < radiusofsight)
@@ -586,11 +662,9 @@ namespace zombies
             {
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation - Math.PI)) * 
-                            Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
+                    effect.World = Matrix.CreateRotationY((float)(hero.Rotation - Math.PI)) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);// 
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
-
                     effect.Projection = Camera.ActiveCamera.Projection;
 
                     effect.EnableDefaultLighting();
@@ -616,7 +690,7 @@ namespace zombies
                             Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
-
+                    effect.World = effect.World;
                     effect.Projection = Camera.ActiveCamera.Projection;
 
                     effect.EnableDefaultLighting();
@@ -626,6 +700,181 @@ namespace zombies
                 }
 
                 mesh.Draw();
+            }
+        }
+
+        public void DrawSchool()
+        {
+
+            SamplerState sample = new SamplerState();
+
+            sample.AddressU = TextureAddressMode.Wrap;
+            sample.AddressV = TextureAddressMode.Wrap;
+
+
+            //_model.CopyAbsoluteBoneTransformsTo(_boneTransforms);
+            foreach (ModelMesh mesh in School.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.Identity;
+
+
+                    effect.View = Camera.ActiveCamera.View;
+
+                    effect.Projection = Camera.ActiveCamera.Projection;
+
+                    switch (mesh.ParentBone.Parent.Name)
+                    {
+                        case "Urinals":
+                        case "Toilet":
+                        case "Computers":
+                        case "BigDesks":
+                        case "StudentDesks":
+                        case "GymCourt":
+                        case "TVHolder":
+                        case "BigTable":
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                effect.TextureEnabled = true;
+                                break;
+                            }
+                    }
+
+                    effect.EnableDefaultLighting();
+                    effect.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+
+                }
+
+                mesh.Draw();
+            }
+        }
+
+        private void DrawBox(Box box, Color color, bool OutlineOnly = false)
+        {
+            if (box != null)
+            {
+                //Draw as triangle list with potential solid display
+                if (!OutlineOnly)
+                {
+                    VertexBuffer vertexBuffer;
+
+                    VertexPositionColor[] cubeVertices = new VertexPositionColor[36];
+
+                    Vector3[] Vertices = box.GetVertices();
+
+                    //Front
+                    cubeVertices[0] = new VertexPositionColor(Vertices[0], color);
+                    cubeVertices[1] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[2] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[3] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[4] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[5] = new VertexPositionColor(Vertices[3], color);
+
+                    //Top
+                    cubeVertices[6] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[7] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[8] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[9] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[10] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[11] = new VertexPositionColor(Vertices[7], color);
+
+                    //Back
+                    cubeVertices[12] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[13] = new VertexPositionColor(Vertices[7], color);
+                    cubeVertices[14] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[15] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[16] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[17] = new VertexPositionColor(Vertices[4], color);
+
+                    //Bottom
+                    cubeVertices[18] = new VertexPositionColor(Vertices[4], color);
+                    cubeVertices[19] = new VertexPositionColor(Vertices[0], color);
+                    cubeVertices[20] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[21] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[22] = new VertexPositionColor(Vertices[0], color);
+                    cubeVertices[23] = new VertexPositionColor(Vertices[2], color);
+
+                    //Left Side
+                    cubeVertices[24] = new VertexPositionColor(Vertices[4], color);
+                    cubeVertices[25] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[26] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[27] = new VertexPositionColor(Vertices[4], color);
+                    cubeVertices[28] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[29] = new VertexPositionColor(Vertices[0], color);
+
+                    //Right Side
+                    cubeVertices[30] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[31] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[32] = new VertexPositionColor(Vertices[7], color);
+                    cubeVertices[33] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[34] = new VertexPositionColor(Vertices[7], color);
+                    cubeVertices[35] = new VertexPositionColor(Vertices[6], color);
+
+
+                    globalEffect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+                    globalEffect.CurrentTechnique.Passes[0].Apply();
+
+                    vertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionColor.VertexDeclaration, 36, BufferUsage.None);
+                    vertexBuffer.SetData<VertexPositionColor>(cubeVertices);
+
+                    GraphicsDevice.SetVertexBuffer(vertexBuffer);
+                    GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, 0, 12);
+                    vertexBuffer.Dispose();
+                }
+                else
+                {
+                    //Draw as line list for hollow display
+
+                    VertexBuffer vertexBuffer;
+
+                    VertexPositionColor[] cubeVertices = new VertexPositionColor[24];
+
+                    Vector3[] Vertices = box.GetVertices();
+
+                    //Front
+                    cubeVertices[0] = new VertexPositionColor(Vertices[0], color);
+                    cubeVertices[1] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[2] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[3] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[4] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[5] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[6] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[7] = new VertexPositionColor(Vertices[0], color);
+
+                    cubeVertices[8] = new VertexPositionColor(Vertices[0], color);
+                    cubeVertices[9] = new VertexPositionColor(Vertices[4], color);
+                    cubeVertices[10] = new VertexPositionColor(Vertices[1], color);
+                    cubeVertices[11] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[12] = new VertexPositionColor(Vertices[2], color);
+                    cubeVertices[13] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[14] = new VertexPositionColor(Vertices[3], color);
+                    cubeVertices[15] = new VertexPositionColor(Vertices[7], color);
+
+                    cubeVertices[16] = new VertexPositionColor(Vertices[4], color);
+                    cubeVertices[17] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[18] = new VertexPositionColor(Vertices[5], color);
+                    cubeVertices[19] = new VertexPositionColor(Vertices[7], color);
+                    cubeVertices[20] = new VertexPositionColor(Vertices[7], color);
+                    cubeVertices[21] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[22] = new VertexPositionColor(Vertices[6], color);
+                    cubeVertices[23] = new VertexPositionColor(Vertices[4], color);
+
+                    globalEffect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+                    globalEffect.CurrentTechnique.Passes[0].Apply();
+
+                    vertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionColor.VertexDeclaration, 24, BufferUsage.None);
+                    vertexBuffer.SetData<VertexPositionColor>(cubeVertices);
+
+                    GraphicsDevice.SetVertexBuffer(vertexBuffer);
+                    GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, 0, 12);
+                    vertexBuffer.Dispose();
+                }
             }
         }
     }
