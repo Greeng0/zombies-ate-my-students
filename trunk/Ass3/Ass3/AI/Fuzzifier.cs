@@ -136,7 +136,7 @@ namespace AI
             }
             else if (distance < DISTANCE_PROJECTILE)
             {
-                Range_Melee = (DISTANCE_PROJECTILE - distance) / DISTANCE_MELEE;
+                Range_Melee = (DISTANCE_PROJECTILE - distance) / (DISTANCE_PROJECTILE - DISTANCE_MELEE);
                 Range_Projectile = 1;
                 Range_OutOfRange = (distance - DISTANCE_MELEE) / (DISTANCE_PROJECTILE - DISTANCE_MELEE);
             }
@@ -201,38 +201,95 @@ namespace AI
             switch (fuzzyOutput)
             {
                 case FuzzyBehaviour.CloseIn:
-                    next = rand.Next(1, 6);
-                    if (next == 1 || next == 2) return BehaviourState.MeleePursue;
-                    if (next == 3 || next == 4) return BehaviourState.MeleeCreep;
-                    if (next == 5) return BehaviourState.Wander;
-                    break;
+                    {
+                        next = rand.Next(1, 8);
+                        switch (next)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                                return BehaviourState.MeleePursue;
+                            case 4:
+                            case 5:
+                            case 6:
+                                return BehaviourState.MeleeCreep;
+                            case 7:
+                                return BehaviourState.Wander;
+                        }
+                        break;
+                    }
                 case FuzzyBehaviour.Flee:
-                    next = rand.Next(1, 3);
-                    if (next == 1) return BehaviourState.Flee;
-                    if (next == 2) return BehaviourState.RangedPursue;
-                    break;
+                    {
+                        next = rand.Next(1, 5);
+                        switch (next)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                                return BehaviourState.Flee;
+                            case 4:
+                                return BehaviourState.RangedPursue;
+                        }
+                        break;
+                    }
                 case FuzzyBehaviour.MeleeFight:
-                    return BehaviourState.MeleePursue;
+                    {
+                        return BehaviourState.MeleePursue;
+                    }
                 case FuzzyBehaviour.MeleeTroll:
-                    next = rand.Next(1, 5);
-                    if (next == 1) return BehaviourState.MeleePursue;
-                    if (next == 2) return BehaviourState.RangedPursue;
-                    if (next == 3) return BehaviourState.RangedCreep;
-                    if (next == 4) return BehaviourState.Flee;
-                    break;
+                    {
+                        next = rand.Next(1, 5);
+                        switch (next)
+                        {
+                            case 1:
+                                return BehaviourState.MeleePursue;
+                            case 2:
+                                return BehaviourState.RangedPursue;
+                            case 3:
+                                return BehaviourState.RangedCreep;
+                            case 4:
+                                return BehaviourState.Flee;
+                        }
+                        break;
+                    }
                 case FuzzyBehaviour.RangedFight:
-                    next = rand.Next(1, 3);
-                    if (next == 1) return BehaviourState.RangedPursue;
-                    if (next == 2) return BehaviourState.RangedCreep;
-                    break;
+                    {
+                        next = rand.Next(1, 10);
+                        switch (next)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                                return BehaviourState.RangedPursue;
+                            case 5:
+                            case 6:
+                            case 7:
+                            case 8:
+                                return BehaviourState.RangedCreep;
+                            case 9:
+                                return BehaviourState.MeleePursue;
+                        }
+                        break;
+                    }
                 case FuzzyBehaviour.RangedTroll:
-                    next = rand.Next(1, 6);
-                    if (next == 1) return BehaviourState.MeleePursue;
-                    if (next == 2) return BehaviourState.MeleeCreep;
-                    if (next == 3) return BehaviourState.Wander;
-                    if (next == 4) return BehaviourState.Flee;
-                    if (next == 5) return BehaviourState.RangedPursue;
-                    break;
+                    {
+                        next = rand.Next(1, 6);
+                        switch (next)
+                        {
+                            case 1:
+                                return BehaviourState.MeleePursue;
+                            case 2:
+                                return BehaviourState.MeleeCreep;
+                            case 3:
+                                return BehaviourState.Wander;
+                            case 4:
+                                return BehaviourState.Flee;
+                            case 5:
+                                return BehaviourState.RangedPursue;
+                        }
+                        break;
+                    }
             }
             return BehaviourState.Flee;
         }
