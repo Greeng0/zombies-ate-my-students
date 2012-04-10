@@ -125,7 +125,7 @@ namespace zombies
             // TODO: Initialize quad tree and insert all objects into it********************************************
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
-            Player = new Hero(1000, 1000, ref HeroModel, DoAction);
+            Player = new Hero(1000, 1000, ref HeroModel, ref HeroModel, ref HeroModel, DoAction);
             
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
@@ -563,7 +563,7 @@ namespace zombies
             {
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation - Math.PI)) * 
+                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation)) * 
                             Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
