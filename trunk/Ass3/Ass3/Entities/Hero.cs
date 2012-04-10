@@ -85,7 +85,7 @@ namespace Entities
         private Vector3 ray1 = new Vector3(10,20,0);
         private Vector3 ray2 = new Vector3(0,10,10);
         private Vector3 rayHeight = new Vector3(0, 5.5f, 0);
-
+        public float raydist = 50;
 
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
@@ -184,10 +184,9 @@ namespace Entities
 
 
             //update ray positions
-
-            ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
-
-            ray[1] = new VertexPositionColor(Position + rayHeight + new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);
+        
+                ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
+                ray[1] = new VertexPositionColor(Position + rayHeight + raydist * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);
           
         }
 
