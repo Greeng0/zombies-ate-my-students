@@ -20,6 +20,7 @@ namespace Entities
         public float Speed;            // time interval, in milliseconds, at which the weapon can be used
         public int FirePower;          // damage done by the weapon
         public float SoundRadius;      // distance from the wielder at which zombies may be alerted
+        public float Range;            // distance at which the weapon can do damage
 
         public Weapon(WeaponType type)
         {
@@ -31,6 +32,7 @@ namespace Entities
                         FirePower = 10;
                         Speed = 2000;
                         SoundRadius = 20;
+                        Range = 5;
                         break;
                     }
                 case WeaponType.Handgun9mm:
@@ -38,13 +40,15 @@ namespace Entities
                         FirePower = 200;
                         Speed = 500;
                         SoundRadius = 40;
+                        Range = 40;
                         break;
                     }
                 case WeaponType.Magnum:
                     {
-                        FirePower = 1000;
+                        FirePower = 2000;
                         Speed = 2000;
                         SoundRadius = 50;
+                        Range = 40;
                         break;
                     }
                 case WeaponType.Vomit:
@@ -52,6 +56,7 @@ namespace Entities
                         FirePower = 100;
                         Speed = 2000;
                         SoundRadius = 20;
+                        Range = 15;
                         break;
                     }
                 case WeaponType.ZombieHands:
@@ -59,6 +64,7 @@ namespace Entities
                         FirePower = 100;
                         Speed = 2000;
                         SoundRadius = 20;
+                        Range = 5;
                         break;
                     }
             }
