@@ -26,18 +26,20 @@ namespace zombies
         private double lasttime;
         public Vector3 p;
         public float angle;
-        public float healthscale = 273;
-
+       
 
         //calculating scale of blood for hud info
 
 
 
         public int min = 13;
-        public int max = 286;
+        public int max = 290;
         public float rate = 2.73f;
         public int playerhealth = 100;
 
+        public float healthscale = 273;
+        public int healthx = 40;
+        public int healthsizex = 30;
 
 
 
@@ -137,17 +139,17 @@ namespace zombies
             }
           //update letter
 
-            if (playerhealth > 85)
+            if (playerhealth > 850)
                 letter = a;
-            else if (playerhealth > 65)
+            else if (playerhealth > 650)
                 letter = b;
-            else if (playerhealth > 45)
+            else if (playerhealth > 450)
                 letter = c;
-            else if (playerhealth > 30)
+            else if (playerhealth > 300)
                 letter = d;
-            else if (playerhealth > 15)
+            else if (playerhealth > 150)
                 letter = e;
-            else if (playerhealth > 0)
+            else
                 letter = f;
             base.Update(gameTime);
         }
@@ -176,9 +178,10 @@ namespace zombies
                 
 
                 healthscale = rate * playerhealth;
-                int diff = min + (int)(rate * (100 - playerhealth));
+                int diff = min + (int)(rate * (1000 - playerhealth)/10);
 
-
+               spriteBatch.Draw(healthbar, new Rectangle(healthx,  diff, healthsizex, max-diff), Color.White);
+          
                
                 
              spriteBatch.Draw(slot1, new Rectangle(390, 0, 70, 70), Color.White);
