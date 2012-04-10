@@ -40,6 +40,8 @@ namespace zombies
         int scrollWheelLow = 0;
         int scrollWheelHigh = 30;
 
+        int radiusofsight = 60;
+
         public Game1()
         {
             mouseState = new MouseState();
@@ -131,6 +133,16 @@ namespace zombies
             z7.Position = new Vector3(-10, 0, -10);
             Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z8.Position = new Vector3(-10, 0, 10);
+
+            Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z6.Position = new Vector3(0, 0, -25);
+            Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z7.Position = new Vector3(0, 0, -35);
+            Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            z8.Position = new Vector3(45, 0, -45);
+
+
+
             zombies.Add(z1);
             zombies.Add(z2);
             zombies.Add(z3);
@@ -139,6 +151,9 @@ namespace zombies
             zombies.Add(z6);
             zombies.Add(z7);
             zombies.Add(z8);
+            zombies.Add(z9);
+            zombies.Add(z10);
+            zombies.Add(z11);
             //z1.targetslot = Player.reserveSlot(z1);
             //z2.targetslot = Player.reserveSlot(z2);
             //z3.targetslot = Player.reserveSlot(z3);
@@ -241,7 +256,13 @@ namespace zombies
             Player.Update(gameTime);
             foreach (Zombie z in zombies)
             {
-                z.Update(gameTime);
+                if ((z.Position - Player.Position).Length() < radiusofsight)//This checks a radius around the player to see whether or not we should be updating the zombie
+                    z.Update(gameTime);
+                else//If zombie is out of radius, we must still check to see if it is chasing the character. if that is the case then we still need to update, but not to draw.
+                {
+                    if (z.BehaviouralState != AI.BehaviourState.Wander)
+                        z.Update(gameTime);
+                }
             }
             
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
@@ -291,6 +312,7 @@ namespace zombies
             DrawModel(Player);
             foreach (Zombie z in zombies)
             {
+                if ((z.Position - Player.Position).Length() < radiusofsight)
                 DrawModel(z);
             }
             base.Draw(gameTime);
