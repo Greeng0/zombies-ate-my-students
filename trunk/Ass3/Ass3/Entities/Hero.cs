@@ -41,6 +41,7 @@ namespace Entities
         public float moveSpeed = 0.2f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
+        public bool Dead = false;
 
         //animations
         //basic state
@@ -59,6 +60,8 @@ namespace Entities
         public SkinningData skinningDatahurt;       // This contains all the skinning data
 
         //die
+        public const int DEATH_ANIM_LENGTH = 2000;
+        public int ElapsedDeathTime = 0;
         public AnimationPlayer animationPlayerdie; // This calculates the Matrices of the animation
         public AnimationClip clipdie;              // This contains the keyframes of the animation
         public SkinningData skinningDatadie;       // This contains all the skinning data
@@ -98,7 +101,7 @@ namespace Entities
             PowerupsList = new List<Powerups>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
-            AddWeapon(new Weapon(WeaponType.BareHands));
+            AddWeapon(new Weapon(WeaponType.Handgun9mm));
 
             this.ActionFunction = actionFunction;
 
@@ -174,6 +177,17 @@ namespace Entities
             else if (animState == AnimationState.Dying)//animation for dying
             {
                 animationPlayer = animationPlayerdie;
+                ElapsedDeathTime += gameTime.ElapsedGameTime.Milliseconds;
+                if (ElapsedDeathTime < DEATH_ANIM_LENGTH)
+                {
+                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    return;
+                }
+                else
+                {
+                    Dead = true;
+                    return;
+                }
             }
             else//if just standing
             {
@@ -184,10 +198,12 @@ namespace Entities
 
 
             //update ray positions
+
+            //ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
+            //ray[1] = new VertexPositionColor(Position + rayHeight + new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * EquippedWeapon.Range, Color.GreenYellow);
         
-                ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
-                ray[1] = new VertexPositionColor(Position + rayHeight + raydist * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);
-          
+            ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
+            ray[1] = new VertexPositionColor(Position + rayHeight + raydist * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);          
         }
 
         public void DoAction()
