@@ -54,6 +54,7 @@ namespace zombies
         QuadTree LevelQuadTree;
         bool WireFrameCollisionBoxes = false;
         bool ShowQuadBoundaries = false;
+        bool ShowCollisionBoxes = false;
 
         Hero Player;
         List<Zombie> zombies;
@@ -739,9 +740,12 @@ namespace zombies
             DrawSchool();
             DrawModel(Player);
 
-            foreach (Box box in CollisionBoxes)
+            if (ShowCollisionBoxes)
             {
-                DrawBox(box, Color.Red, WireFrameCollisionBoxes);
+                foreach (Box box in CollisionBoxes)
+                {
+                    DrawBox(box, Color.Red, WireFrameCollisionBoxes);
+                }
             }
 
 
