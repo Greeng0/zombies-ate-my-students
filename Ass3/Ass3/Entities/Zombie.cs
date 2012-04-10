@@ -47,6 +47,7 @@ namespace Entities
         public int HealthPoints;
         public int MaxHealth;
         public ZombieType zombieType;
+        public bool Dead = false;
 
         public bool creep = false;              //Whether or not the Entity should move at half of MaxVelocity
         public float MaxVelocity;               //Maximum Entity Velocity
@@ -92,6 +93,8 @@ namespace Entities
         public SkinningData skinningDatahurt;       // This contains all the skinning data
 
         //die
+        public const int DEATH_ANIM_LENGTH = 2000;
+        public int ElapsedDeathTime = 0;
         public AnimationPlayer animationPlayerdie; // This calculates the Matrices of the animation
         public AnimationClip clipdie;              // This contains the keyframes of the animation
         public SkinningData skinningDatadie;       // This contains all the skinning data
@@ -225,6 +228,17 @@ namespace Entities
             else if (animState == AnimationState.Dying)//animation for dying
             {
                 animationPlayer = animationPlayerdie;
+                ElapsedDeathTime += gameTime.ElapsedGameTime.Milliseconds;
+                if (ElapsedDeathTime < DEATH_ANIM_LENGTH)
+                {
+                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    return;
+                }
+                else
+                {
+                    Dead = true;
+                    return;
+                }
             }
             else//if just standing
             {

@@ -214,12 +214,12 @@ namespace zombies
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                Player.HealthPoints = 0;
-                foreach(Zombie z in zombies)
-               z.animState = Entity.AnimationState.Idle;
-            }
+            //if (mouseState.LeftButton == ButtonState.Pressed)
+            //{
+            //    Player.HealthPoints = 0;
+            //    foreach(Zombie z in zombies)
+            //    z.animState = Entity.AnimationState.Idle;
+            //}
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
@@ -361,31 +361,36 @@ namespace zombies
             if (walk)
                 Player.animState = Entity.AnimationState.Walking;
             else if (Player.animState != Entity.AnimationState.Hurt)
-                Player.animState = Entity.AnimationState.Idle;
-            if (Player.HealthPoints <= 0 || Player.animState == Entities.Entity.AnimationState.Dying)//start dying animation
-            {
-                Player.animState = Entity.AnimationState.Dying;
-            }
-        
+                Player.animState = Entity.AnimationState.Idle;        
            
             #endregion
 
-            Player.Update(gameTime);
+            if (Player.Dead)
+            {
+                // TODO: GameOver
+            }
+            else
+                Player.Update(gameTime);
 
             //update right zombies
+            List<Zombie> deadZombies = new List<Zombie>();
             foreach (Zombie z in zombies)//update zombies
             {
                 //This checks a radius around the player to see whether or not we should be updating the zombie
-                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
-                {
-                    z.Update(gameTime);
-                }
                 //If zombie is out of radius, we must still check to see if it is chasing the character. 
                 //If that is the case then we still need to update, but not to draw.
-                else if (z.BehaviouralState != BehaviourState.Wander)
+                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS || z.BehaviouralState != BehaviourState.Wander)
                 {
-                    z.Update(gameTime);
+                    if (z.Dead)
+                        deadZombies.Add(z);
+                    else
+                        z.Update(gameTime);
                 }
+            }
+            // remove any dead zombies
+            foreach (Zombie dz in deadZombies)
+            {
+                zombies.Remove(dz);
             }
 
             CheckCollisions();
@@ -592,53 +597,12 @@ namespace zombies
                     }
                 case WeaponType.Handgun9mm:
                     {
-                        // find closest zombie, if any, in the line of fire and have him take the damage
-                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                        Zombie closestVictim = null;
-                        float closestIntersect = 100;
-                        foreach (Zombie z in zombies)
-                        {
-                            if ((z.Position - actionCaster.Position).Length() < weapon.Range)
-                            {
-                                BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                float? intersection = bs.Intersects(ray);
-                                if (intersection != null && intersection < closestIntersect)
-                                    closestVictim = z;
-                            }
-                        }
-                        // TODO: check if ray intersects nearby primitives from quad tree
-                        // if so, check if the Contacts are closer than the closestVictim
-                        if (closestVictim != null)
-                            closestVictim.TakeDamage(weapon.FirePower);
+                        DoGunAttack(weapon, actionCaster);
                         break;
                     }
                 case WeaponType.Magnum:
                     {
-                        // find closest zombie, if any, in the line of fire and have him take the damage
-                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
-                        Zombie closestVictim = null;
-                        float closestIntersect = 100;
-                        foreach (Zombie z in zombies)
-                        {
-                            if ((z.Position - actionCaster.Position).Length() < weapon.Range)
-                            {
-                                BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                float? intersection = bs.Intersects(ray);
-                                if (intersection != null && intersection < closestIntersect)
-                                    closestVictim = z;
-                            }
-                        }
-                        // TODO: check if ray intersects nearby primitives from quad tree
-                        // if so, check if the Contacts are closer than the closestVictim
-                        if (closestVictim != null)
-                        {
-                            if (closestIntersect > 20)
-                                closestVictim.TakeDamage(weapon.FirePower / 10);
-                            else if (closestIntersect > 10)
-                                closestVictim.TakeDamage(weapon.FirePower / 5);
-                            else
-                                closestVictim.TakeDamage(weapon.FirePower);
-                        }
+                        DoGunAttack(weapon, actionCaster);
                         break;
                     }
                 case WeaponType.Vomit:
@@ -663,6 +627,52 @@ namespace zombies
                         }
                         break;
                     }
+            }
+        }
+
+        private void DoGunAttack(Weapon weapon, Entity actionCaster)
+        {
+            // find closest zombie, if any, in the line of fire and have him take the damage
+            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+            Zombie closestVictim = null;
+            float closestIntersect = 100;
+            foreach (Zombie z in zombies)
+            {
+                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                {
+                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                    float? intersection = bs.Intersects(ray);
+                    if (intersection != null && intersection < closestIntersect)
+                        closestVictim = z;
+                }
+            }
+
+            // check if ray intersects nearby primitives from quad tree
+            // if so, check if the Contacts are closer than the closestVictim
+            Sphere heroSphere = new Sphere(actionCaster.Position, actionCaster.Velocity, actionCaster.modelRadius);
+            List<Primitive> primitives = new List<Primitive>();
+            LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitives);
+
+            float closestContactDistance = 100;
+            foreach (Box box in primitives)
+            {
+                List<Contact> contacts = heroSphere.ProjectPOVRay(box, weapon.Range);
+                if (contacts != null && contacts.Count > 0)
+                {
+                    Contact boxContact = contacts.Aggregate((l, r) => (l.ContactPoint - actionCaster.Position).Length() < (r.ContactPoint - actionCaster.Position).Length() ? l : r);
+                    float boxDistance = (boxContact.ContactPoint - actionCaster.Position).Length();
+                    if (boxDistance < closestContactDistance)
+                        closestContactDistance = boxDistance;
+                }
+            }
+            if (closestVictim != null && (closestVictim.Position - actionCaster.Position).Length() < closestContactDistance)
+            {
+                if (weapon.weaponType == WeaponType.Magnum && closestIntersect > 20)
+                    closestVictim.TakeDamage(weapon.FirePower / 10);
+                else if (weapon.weaponType == WeaponType.Magnum && closestIntersect > 10)
+                    closestVictim.TakeDamage(weapon.FirePower / 5);
+                else
+                    closestVictim.TakeDamage(weapon.FirePower);
             }
         }
 
