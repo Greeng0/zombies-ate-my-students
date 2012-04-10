@@ -713,11 +713,16 @@ namespace zombies
         private void DrawModel(Hero hero)
         {
             Matrix[] bones = hero.animationPlayer.GetSkinTransforms();
-           globalEffect.View = Camera.ActiveCamera.View;
-           globalEffect.Projection = Camera.ActiveCamera.Projection;
-           globalEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, Player.ray, 0, 1);
 
+
+            //draw rays if player in shooting stance
+            if (Player.Stance == AnimationStance.Shooting)
+            {
+                globalEffect.View = Camera.ActiveCamera.View;
+                globalEffect.Projection = Camera.ActiveCamera.Projection;
+                globalEffect.CurrentTechnique.Passes[0].Apply();
+                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, Player.ray, 0, 1);
+            }
 
 
             // Render the skinned mesh
