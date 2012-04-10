@@ -186,7 +186,10 @@ namespace Entities
             animState = AnimationState.Hurt;
             HealthPoints -= damage;
             if (HealthPoints <= 0)
+            {
+                HealthPoints = 0;
                 Die();
+            }
         }
 
         private void Die()
@@ -293,7 +296,7 @@ namespace Entities
             if (decision.move)//if good value returned
             {
                 subscribe(z);
-                z.Notify(decision.pos);
+                z.Notify(decision.pos + Position);
                 return decision.slot;
             }
             return -1;

@@ -599,7 +599,7 @@ namespace Entities
             BehaviouralState = fuzz.GetBehaviour();
 
             // release any reserved slot if new behaviour does not require one
-            if (!(BehaviouralState == BehaviourState.MeleeCreep || BehaviouralState == BehaviourState.MeleePursue))
+            if (BehaviouralState != BehaviourState.MeleeCreep && BehaviouralState != BehaviourState.MeleePursue)
             {
                 if (targetslot >= 0)
                 {
