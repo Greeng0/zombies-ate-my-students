@@ -13,6 +13,7 @@ using Entities;
 using Collisions;
 using SpacePartition;
 using AI;
+using Entities;
 
 namespace zombies
 {
@@ -235,23 +236,25 @@ namespace zombies
                         break;
                     case Keys.Up:
                         if (KeyboardInput.ProcessInput(key, Player))
+                        {
                             Player.MoveForward();
-                        walk = true;
+                            walk = true;
+                        }
                         break;
                     case Keys.Down:
                         if (KeyboardInput.ProcessInput(key, Player))
+                        {
                             Player.MoveBackward();
-                        walk = true;
+                            walk = true;
+                        }
                         break;
                     case Keys.Left:
                         if (KeyboardInput.ProcessInput(key, Player))
                             Player.TurnLeft();
-                        walk = true;
                         break;
                     case Keys.Right:
                         if (KeyboardInput.ProcessInput(key, Player))
                             Player.TurnRight();
-                        walk = true;
                         break;
                     case Keys.Tab:
                         Player.SwitchNextItem();
@@ -268,8 +271,9 @@ namespace zombies
 
             if (walk)
                 Player.animState = Entity.AnimationState.Walking;
-            else
+            else if (Player.animState != Entity.AnimationState.Hurt)
                 Player.animState = Entity.AnimationState.Idle;
+
             #endregion
 
             Player.Update(gameTime);
@@ -277,7 +281,6 @@ namespace zombies
             //update right zombies
             foreach (Zombie z in zombies)//update zombies
             {
-               
                 //This checks a radius around the player to see whether or not we should be updating the zombie
                 if ((z.Position - Player.Position).Length() < radiusofsight)
                 {
@@ -295,7 +298,7 @@ namespace zombies
 
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
-            Player.animState = Entity.AnimationState.Dying;
+            
             base.Update(gameTime);
         }
 
@@ -418,8 +421,17 @@ namespace zombies
             if (objectCasted is Weapon)
             {
                 Weapon weapon = objectCasted as Weapon;
-                CastSoundWave(weapon.SoundRadius);
-                // TODO: check if caster is Hero or Zombie, perform attack accordingly
+                
+                // apply silencer if possible
+                if (weapon.weaponType == Entities.WeaponType.Handgun9mm && (actionCaster as Hero).PowerupsList.Contains(Powerups.Silencer))
+                {
+                    CastSoundWave(weapon.SoundRadius / 3);
+                }
+                else
+                {
+                    CastSoundWave(weapon.SoundRadius);
+                }
+
                 switch (weapon.weaponType)
                 {
                     case WeaponType.BareHands:
@@ -522,13 +534,11 @@ namespace zombies
         {
             if (radius > 0)
             {
-                BoundingSphere soundWave = new BoundingSphere(Player.Position, radius);
+                Sphere soundSphere = new Sphere(Player.Position, new Vector3(), radius);
                 foreach (Zombie z in zombies)
                 {
-                    // ****************THIS IS JUST PLACEHOLDER FOR TESTING**************************
-                    BoundingSphere zb = z.model.Meshes[0].BoundingSphere;
-                    zb.Transform(Matrix.CreateTranslation(z.Position));
-                    if (zb.Intersects(soundWave))
+                    Sphere zs = new Sphere(z.Position, z.Velocity, z.modelRadius);
+                    if (zs.Collides(soundSphere) != null)
                         z.Alert(Player);
                 }
             }
@@ -576,7 +586,7 @@ namespace zombies
             {
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation)) * 
+                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation - Math.PI)) * 
                             Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;

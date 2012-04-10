@@ -76,7 +76,6 @@ namespace Entities
         public BehaviourState BehaviouralState; //Beahavioural state of the entity
 
 
-
         //basic state
         public AnimationPlayer animationPlayer; // main animation player
 
@@ -86,6 +85,8 @@ namespace Entities
         public SkinningData skinningDatawalk;       // This contains all the skinning data
 
         //hurt state
+        public const int DAMAGE_ANIM_LENGTH = 1000;
+        public int ElapsedDamagedTime = 0;
         public AnimationPlayer animationPlayerhurt; // This calculates the Matrices of the animation
         public AnimationClip cliphurt;              // This contains the keyframes of the animation
         public SkinningData skinningDatahurt;       // This contains all the skinning data
@@ -96,7 +97,6 @@ namespace Entities
         public SkinningData skinningDatadie;       // This contains all the skinning data
 
         //attack
-
         public AnimationPlayer animationPlayerattack; // This calculates the Matrices of the animation
         public AnimationClip clipattack;              // This contains the keyframes of the animation
         public SkinningData skinningDataattack;       // This contains all the skinning data
@@ -190,8 +190,6 @@ namespace Entities
             cliphurt = skinningDatahurt.AnimationClips["Take 001"];
             animationPlayerhurt.StartClip(cliphurt);
 
-    
-
         }
         
          //Execute entity's action
@@ -199,38 +197,41 @@ namespace Entities
         {
             lastAttackTime += gameTime.ElapsedGameTime.Milliseconds;
             if (animState == AnimationState.Idle)
-            { 
-                animationPlayer = animationPlayerhurt;
+            {
+                animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
             else if (animState == AnimationState.Walking)
             {
                 animationPlayer = animationPlayerwalk;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
             else if(animState == AnimationState.Attacking)//animation for attacking
             {
                 animationPlayer = animationPlayerattack;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
             else if (animState == AnimationState.Hurt)//animation when hurt
             {
                 animationPlayer = animationPlayerhurt;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
 
+                ElapsedDamagedTime += gameTime.ElapsedGameTime.Milliseconds;
+                if (ElapsedDamagedTime < DAMAGE_ANIM_LENGTH)
+                {
+                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    return;
+                }
+                ElapsedDamagedTime = 0;
+                animState = AnimationState.Idle;
             }
             else if (animState == AnimationState.Dying)//animation for dying
             {
-
                 animationPlayer = animationPlayerdie;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
             else//if just standing
             {
+                animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
             }
+            animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
 
             PosState = EvaluateBehaviour();
             
