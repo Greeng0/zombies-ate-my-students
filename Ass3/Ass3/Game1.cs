@@ -33,7 +33,12 @@ namespace zombies
 
         Model School;
         Model HeroModel;
-        Model ZombieModel;
+
+        //4 animations for zombies
+        Model ZombieWalk;
+        Model ZombieAttack;
+        Model ZombieHurt;
+        Model ZombieDie;
 
         QuadTree LevelQuadTree;
 
@@ -110,34 +115,37 @@ namespace zombies
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
             HeroModel = Content.Load<Model>("HeroWalk");
-            ZombieModel = Content.Load<Model>("ZombieWalk");
+            ZombieWalk = Content.Load<Model>("ZombieWalk");
+            ZombieHurt = Content.Load<Model>("ZombieHurt");
+            ZombieDie = Content.Load<Model>("ZombieDie");
+            ZombieAttack = Content.Load<Model>("ZombieAttack");
 
             // TODO: Initialize quad tree and insert all objects into it********************************************
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
             Player = new Hero(1000, 1000, ref HeroModel, DoAction);
             
-            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
-            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z2.Position = new Vector3(0, 0, -10);
-            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z3.Position = new Vector3(10, 0, 0);
-            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z4.Position = new Vector3(-10, 0, 0);
-            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z5.Position = new Vector3(15, 0, 10);
-            Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z6.Position = new Vector3(10, 0, -15);
-            Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z7.Position = new Vector3(-15, 0, -10);
-            Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z8.Position = new Vector3(-10, 0, 15);
-            Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z9.Position = new Vector3(0, 0, -25);
-            Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z10.Position = new Vector3(0, 0, -35);
-            Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
+            Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z11.Position = new Vector3(45, 0, -45);
 
             zombies.Add(z1);
@@ -156,6 +164,8 @@ namespace zombies
         }
 
 
+
+
         protected override void Update(GameTime gameTime)
         {
             #region Update hud
@@ -164,7 +174,11 @@ namespace zombies
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                foreach(Zombie z in zombies)
+               z.animState = Entity.AnimationState.Idle;
+            }
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
@@ -248,11 +262,16 @@ namespace zombies
             Player.Update(gameTime);
 
             //update right zombies
-            foreach (Zombie z in zombies)
+            foreach (Zombie z in zombies)//update zombies
             {
+               
                 //This checks a radius around the player to see whether or not we should be updating the zombie
                 if ((z.Position - Player.Position).Length() < radiusofsight)
+                {
                     z.Update(gameTime);
+              
+
+                }
                 //If zombie is out of radius, we must still check to see if it is chasing the character. 
                 //If that is the case then we still need to update, but not to draw.
                 else if (z.BehaviouralState != BehaviourState.Wander)
