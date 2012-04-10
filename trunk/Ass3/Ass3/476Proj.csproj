@@ -122,7 +122,6 @@
     <Compile Include="Dude.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="room.cs" />
     <Compile Include="Entities\Zombie.cs" />
     <Compile Include="SpacePartition\QuadTree.cs" />
   </ItemGroup>

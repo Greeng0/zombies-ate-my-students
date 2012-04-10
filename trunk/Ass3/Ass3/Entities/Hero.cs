@@ -38,7 +38,7 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public float moveSpeed = 0.1f;
+        public float moveSpeed = 0.5f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
 
@@ -88,7 +88,7 @@ namespace Entities
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
 
-            PowerupsList = new List<string>();
+            PowerupsList = new List<Powerups>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
             AddWeapon(new Weapon(WeaponType.BareHands));
