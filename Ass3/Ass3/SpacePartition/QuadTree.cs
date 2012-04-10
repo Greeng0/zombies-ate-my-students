@@ -48,66 +48,33 @@ namespace SpacePartition
         }
 
         //Insert a box element in the tree
-        public void Insert(Box box, QuadTreeNode node = null)
+        public void Insert(Box box, QuadTreeNode node = null,int DepthLevel=0)
         {
             if (node == null)
                 node = Head;
 
+            Vector3 HeadOffset = new Vector3(Head.Position.X, 0, Head.Position.Y);
             //Verifies for all 4 corners of the box including based on the rotation offset of the box
             Vector3 offsetPos = Vector3.Transform(new Vector3(box.Size.X / 2, 0, box.Size.Z / 2), box.Offset);
 
-            Vector3 corner1 = new Vector3(box.Position.X - offsetPos.Z, 0, box.Position.Z + offsetPos.X);
+            Vector3 corner1 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z + offsetPos.Z);
             Vector3 corner2 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z + offsetPos.Z);
             Vector3 corner3 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z - offsetPos.Z);
-            Vector3 corner4 = new Vector3(box.Position.X + offsetPos.Z, 0, box.Position.Z - offsetPos.X);
+            Vector3 corner4 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z - offsetPos.Z);
 
             //Verifies for all 4 sides of the box including based on the rotation offset of the box
-            offsetPos = Vector3.Transform(new Vector3(box.Size.X / 2, 0, 0), box.Offset);
+            offsetPos = Vector3.Transform(new Vector3(box.Size.X / 2, 0, box.Size.Z / 2), box.Offset);
 
-            Vector3 Side1 = new Vector3(box.Position.X - offsetPos.Z, 0, box.Position.Z + offsetPos.X);
+            Vector3 Side1 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z + offsetPos.Z);
             Vector3 Side2 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z + offsetPos.Z);
             Vector3 Side3 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z - offsetPos.Z);
-            Vector3 Side4 = new Vector3(box.Position.X + offsetPos.Z, 0, box.Position.Z - offsetPos.X);
+            Vector3 Side4 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z - offsetPos.Z);
 
             //Make sure Box is smaller than current quadrant. If yes, go deeper, otherwise add elements here
-            if (box.Size.X <= node.Size && box.Size.Z <= node.Size)
+            if (DepthLevel < this.Depth && box.Size.X <= node.Size && box.Size.Z <= node.Size)
             {
                 //Process North-West Part
                 if (node.Children[0] != null)
-                {
-                    if (corner1.X <= node.Position.X && corner1.Z >= node.Position.Y ||
-                        corner2.X <= node.Position.X && corner2.Z >= node.Position.Y ||
-                        corner3.X <= node.Position.X && corner3.Z >= node.Position.Y ||
-                        corner4.X <= node.Position.X && corner4.Z >= node.Position.Y ||
-                        Side1.X <= node.Position.X && Side1.Z >= node.Position.Y ||
-                        Side2.X <= node.Position.X && Side2.Z >= node.Position.Y ||
-                        Side3.X <= node.Position.X && Side3.Z >= node.Position.Y ||
-                        Side4.X <= node.Position.X && Side4.Z >= node.Position.Y)
-                    {
-
-                        Insert(box, node.Children[0]);
-                    }
-                }
-
-                //Process North-East Part
-                if (node.Children[1] != null)
-                {
-                    if (corner1.X >= node.Position.X && corner1.Z >= node.Position.Y ||
-                        corner2.X >= node.Position.X && corner2.Z >= node.Position.Y ||
-                        corner3.X >= node.Position.X && corner3.Z >= node.Position.Y ||
-                        corner4.X >= node.Position.X && corner4.Z >= node.Position.Y ||
-                        Side1.X >= node.Position.X && Side1.Z >= node.Position.Y ||
-                        Side2.X >= node.Position.X && Side2.Z >= node.Position.Y ||
-                        Side3.X >= node.Position.X && Side3.Z >= node.Position.Y ||
-                        Side4.X >= node.Position.X && Side4.Z >= node.Position.Y)
-                    {
-
-                        Insert(box, node.Children[1]);
-                    }
-                }
-
-                //Process South-West Part
-                if (node.Children[2] != null)
                 {
                     if (corner1.X <= node.Position.X && corner1.Z <= node.Position.Y ||
                         corner2.X <= node.Position.X && corner2.Z <= node.Position.Y ||
@@ -119,12 +86,12 @@ namespace SpacePartition
                         Side4.X <= node.Position.X && Side4.Z <= node.Position.Y)
                     {
 
-                        Insert(box, node.Children[2]);
+                        Insert(box, node.Children[0],DepthLevel+1);
                     }
                 }
 
-                //Process South-East Part
-                if (node.Children[3] != null)
+                //Process North-East Part
+                if (node.Children[1] != null)
                 {
                     if (corner1.X >= node.Position.X && corner1.Z <= node.Position.Y ||
                         corner2.X >= node.Position.X && corner2.Z <= node.Position.Y ||
@@ -136,7 +103,41 @@ namespace SpacePartition
                         Side4.X >= node.Position.X && Side4.Z <= node.Position.Y)
                     {
 
-                        Insert(box, node.Children[3]);
+                        Insert(box, node.Children[1], DepthLevel + 1);
+                    }
+                }
+
+                //Process South-West Part
+                if (node.Children[2] != null)
+                {
+                    if (corner1.X <= node.Position.X && corner1.Z >= node.Position.Y ||
+                        corner2.X <= node.Position.X && corner2.Z >= node.Position.Y ||
+                        corner3.X <= node.Position.X && corner3.Z >= node.Position.Y ||
+                        corner4.X <= node.Position.X && corner4.Z >= node.Position.Y ||
+                        Side1.X <= node.Position.X && Side1.Z >= node.Position.Y ||
+                        Side2.X <= node.Position.X && Side2.Z >= node.Position.Y ||
+                        Side3.X <= node.Position.X && Side3.Z >= node.Position.Y ||
+                        Side4.X <= node.Position.X && Side4.Z >= node.Position.Y)
+                    {
+
+                        Insert(box, node.Children[2], DepthLevel + 1);
+                    }
+                }
+
+                //Process South-East Part
+                if (node.Children[3] != null)
+                {
+                    if (corner1.X >= node.Position.X && corner1.Z >= node.Position.Y ||
+                        corner2.X >= node.Position.X && corner2.Z >= node.Position.Y ||
+                        corner3.X >= node.Position.X && corner3.Z >= node.Position.Y ||
+                        corner4.X >= node.Position.X && corner4.Z >= node.Position.Y ||
+                        Side1.X >= node.Position.X && Side1.Z >= node.Position.Y ||
+                        Side2.X >= node.Position.X && Side2.Z >= node.Position.Y ||
+                        Side3.X >= node.Position.X && Side3.Z >= node.Position.Y ||
+                        Side4.X >= node.Position.X && Side4.Z >= node.Position.Y)
+                    {
+
+                        Insert(box, node.Children[3], DepthLevel + 1);
                     }
                 }
             }
@@ -171,7 +172,7 @@ namespace SpacePartition
                 //Process North-West Part
                 if (node.Children[0] != null)
                 {
-                    if (sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z + sphere.Radius >= node.Position.Y)
+                    if (sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z + sphere.Radius <= node.Position.Y)
                     {
                         RetrieveBoundariesFromPosition(sphere, ref boxes, UpperLayerDepth, node.Children[0]);
                     }
@@ -180,7 +181,7 @@ namespace SpacePartition
                 //Process North-East Part
                 if (node.Children[1] != null)
                 {
-                    if (sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z + sphere.Radius >= node.Position.Y)
+                    if (sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z + sphere.Radius <= node.Position.Y)
                     {
 
                         RetrieveBoundariesFromPosition(sphere, ref boxes, UpperLayerDepth, node.Children[1]);
@@ -190,7 +191,7 @@ namespace SpacePartition
                 //Process South-West Part
                 if (node.Children[2] != null)
                 {
-                    if (sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z - sphere.Radius <= node.Position.Y)
+                    if (sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z - sphere.Radius >= node.Position.Y)
                     {
 
                         RetrieveBoundariesFromPosition(sphere, ref boxes, UpperLayerDepth, node.Children[2]);
@@ -200,7 +201,7 @@ namespace SpacePartition
                 //Process South-East Part
                 if (node.Children[3] != null)
                 {
-                    if (sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z - sphere.Radius <= node.Position.Y)
+                    if (sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z - sphere.Radius >= node.Position.Y)
                     {
 
                         RetrieveBoundariesFromPosition(sphere, ref boxes, UpperLayerDepth, node.Children[3]);
@@ -212,105 +213,6 @@ namespace SpacePartition
             boxes.Add(new Box(new Vector3(node.Position.X, 1.5f, node.Position.Y), new Vector3(0), new Vector3(node.Size * 2, 3, node.Size * 2)));
 
             return boxes;
-        }
-
-        //Retrieve Objects nearby given Box /*CURRENTLY UNUSED*/
-        public void RetrieveNearbyObjects(Box box, ref List<Primitive> primitivesNearby, QuadTreeNode node = null)
-        {
-            if (node == null)
-                node = Head;
-
-            //Verifies for all 4 corners of the box including based on the rotation offset of the box
-            Vector3 offsetPos = Vector3.Transform(new Vector3(box.Size.X / 2, 0, box.Size.Z / 2), box.Offset);
-
-            Vector3 corner1 = new Vector3(box.Position.X - offsetPos.Z, 0, box.Position.Z + offsetPos.X);
-            Vector3 corner2 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z + offsetPos.Z);
-            Vector3 corner3 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z - offsetPos.Z);
-            Vector3 corner4 = new Vector3(box.Position.X + offsetPos.Z, 0, box.Position.Z - offsetPos.X);
-
-            //Verifies for all 4 sides of the box including based on the rotation offset of the box
-            offsetPos = Vector3.Transform(new Vector3(box.Size.X / 2, 0, 0), box.Offset);
-
-            Vector3 Side1 = new Vector3(box.Position.X - offsetPos.Z, 0, box.Position.Z + offsetPos.X);
-            Vector3 Side2 = new Vector3(box.Position.X + offsetPos.X, 0, box.Position.Z + offsetPos.Z);
-            Vector3 Side3 = new Vector3(box.Position.X - offsetPos.X, 0, box.Position.Z - offsetPos.Z);
-            Vector3 Side4 = new Vector3(box.Position.X + offsetPos.Z, 0, box.Position.Z - offsetPos.X);
-
-            if (node.Children[0] != null)
-            {
-                if (corner1.X <= node.Position.X && corner1.Z >= node.Position.Y ||
-                    corner2.X <= node.Position.X && corner2.Z >= node.Position.Y ||
-                    corner3.X <= node.Position.X && corner3.Z >= node.Position.Y ||
-                    corner4.X <= node.Position.X && corner4.Z >= node.Position.Y ||
-                    Side1.X <= node.Position.X && Side1.Z >= node.Position.Y ||
-                    Side2.X <= node.Position.X && Side2.Z >= node.Position.Y ||
-                    Side3.X <= node.Position.X && Side3.Z >= node.Position.Y ||
-                    Side4.X <= node.Position.X && Side4.Z >= node.Position.Y)
-                {
-
-                    RetrieveNearbyObjects(box, ref primitivesNearby, node.Children[0]);
-                }
-            }
-
-            if (node.Children[1] != null)
-            {
-                if (corner1.X >= node.Position.X && corner1.Z >= node.Position.Y ||
-                    corner2.X >= node.Position.X && corner2.Z >= node.Position.Y ||
-                    corner3.X >= node.Position.X && corner3.Z >= node.Position.Y ||
-                    corner4.X >= node.Position.X && corner4.Z >= node.Position.Y ||
-                    Side1.X >= node.Position.X && Side1.Z >= node.Position.Y ||
-                    Side2.X >= node.Position.X && Side2.Z >= node.Position.Y ||
-                    Side3.X >= node.Position.X && Side3.Z >= node.Position.Y ||
-                    Side4.X >= node.Position.X && Side4.Z >= node.Position.Y)
-                {
-
-                    RetrieveNearbyObjects(box, ref primitivesNearby, node.Children[1]);
-                }
-            }
-
-            if (node.Children[2] != null)
-            {
-                if (corner1.X <= node.Position.X && corner1.Z <= node.Position.Y ||
-                    corner2.X <= node.Position.X && corner2.Z <= node.Position.Y ||
-                    corner3.X <= node.Position.X && corner3.Z <= node.Position.Y ||
-                    corner4.X <= node.Position.X && corner4.Z <= node.Position.Y ||
-                    Side1.X <= node.Position.X && Side1.Z <= node.Position.Y ||
-                    Side2.X <= node.Position.X && Side2.Z <= node.Position.Y ||
-                    Side3.X <= node.Position.X && Side3.Z <= node.Position.Y ||
-                    Side4.X <= node.Position.X && Side4.Z <= node.Position.Y)
-                {
-
-                    RetrieveNearbyObjects(box, ref primitivesNearby, node.Children[2]);
-                }
-            }
-
-            if (node.Children[3] != null)
-            {
-                if (corner1.X >= node.Position.X && corner1.Z <= node.Position.Y ||
-                    corner2.X >= node.Position.X && corner2.Z <= node.Position.Y ||
-                    corner3.X >= node.Position.X && corner3.Z <= node.Position.Y ||
-                    corner4.X >= node.Position.X && corner4.Z <= node.Position.Y ||
-                    Side1.X >= node.Position.X && Side1.Z <= node.Position.Y ||
-                    Side2.X >= node.Position.X && Side2.Z <= node.Position.Y ||
-                    Side3.X >= node.Position.X && Side3.Z <= node.Position.Y ||
-                    Side4.X >= node.Position.X && Side4.Z <= node.Position.Y)
-                {
-
-                    RetrieveNearbyObjects(box, ref primitivesNearby, node.Children[3]);
-                }
-            }
-
-            if (node.Primitives != null)
-            {
-                //Add all primitives found in the quadrant that aren't already in the list
-                foreach (Primitive prim in node.Primitives)
-                {
-                    if (!primitivesNearby.Contains(prim))
-                    {
-                        primitivesNearby.Add(prim);
-                    }
-                }
-            }
         }
 
         //Retrieve Objects nearby given Sphere in the Quad Tree and Superior layers of the quadrant if UpperLayerDepth > 0
@@ -329,7 +231,7 @@ namespace SpacePartition
             if (node.Children[0] != null)
             {
                 //If Sphere can be found inside the North West quadrant of the current quadrant or if this depth level should be covered, go inside
-                if ((sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z + sphere.Radius >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                if ((sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z + sphere.Radius <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
                 {
                     RetrieveNearbyObjects(sphere, ref primitivesNearby, UpperLayerDepth, node.Children[0], DepthCounter + 1);
                 }
@@ -339,7 +241,7 @@ namespace SpacePartition
             if (node.Children[1] != null)
             {
                 //If Sphere can be found inside the North East quadrant of the current quadrant or if this depth level should be covered, go inside
-                if ((sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z + sphere.Radius >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                if ((sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z + sphere.Radius <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
                 {
                     RetrieveNearbyObjects(sphere, ref primitivesNearby, UpperLayerDepth, node.Children[1], DepthCounter + 1);
                 }
@@ -349,7 +251,7 @@ namespace SpacePartition
             if (node.Children[2] != null)
             {
                 //If Sphere can be found inside the South West quadrant of the current quadrant or if this depth level should be covered, go inside
-                if ((sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z - sphere.Radius <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                if ((sphere.Position.X - sphere.Radius <= node.Position.X && sphere.Position.Z - sphere.Radius >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
                 {
                     RetrieveNearbyObjects(sphere, ref primitivesNearby, UpperLayerDepth, node.Children[2], DepthCounter + 1);
                 }
@@ -359,7 +261,7 @@ namespace SpacePartition
             if (node.Children[3] != null)
             {
                 //If Sphere can be found inside the South West quadrant of the current quadrant or if this depth level should be covered, go inside
-                if ((sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z - sphere.Radius <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                if ((sphere.Position.X + sphere.Radius >= node.Position.X && sphere.Position.Z - sphere.Radius >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
                 {
                     RetrieveNearbyObjects(sphere, ref primitivesNearby, UpperLayerDepth, node.Children[3], DepthCounter + 1);
                 }
@@ -555,10 +457,10 @@ namespace SpacePartition
 
             if (depth > 0)
             {
-                Vector2 NWposition = new Vector2(position.X - size, position.Y + size);
-                Vector2 NEposition = new Vector2(position.X + size, position.Y + size);
-                Vector2 SWposition = new Vector2(position.X - size, position.Y - size);
-                Vector2 SEposition = new Vector2(position.X + size, position.Y - size);
+                Vector2 NWposition = new Vector2(position.X - size, position.Y - size);
+                Vector2 NEposition = new Vector2(position.X + size, position.Y - size);
+                Vector2 SWposition = new Vector2(position.X - size, position.Y + size);
+                Vector2 SEposition = new Vector2(position.X + size, position.Y + size);
 
                 children[0] = new QuadTreeNode(NWposition, size, this, ref uID, depth - 1);
                 children[1] = new QuadTreeNode(NEposition, size, this, ref uID, depth - 1);

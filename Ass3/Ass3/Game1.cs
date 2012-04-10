@@ -31,6 +31,7 @@ namespace zombies
         public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));
 
         List<Box> CollisionBoxes = new List<Box>();
+        List<Primitive> TotalNearbyBoxes = new List<Primitive>();
 
         HUD hud;
 
@@ -50,8 +51,9 @@ namespace zombies
         int ButtonTimer = 0;
 
         BasicEffect globalEffect;
-
         QuadTree LevelQuadTree;
+        bool WireFrameCollisionBoxes = false;
+        bool ShowQuadBoundaries = false;
 
         Hero Player;
         List<Zombie> zombies;
@@ -59,7 +61,7 @@ namespace zombies
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
-        int scrollWheelHigh = 300;
+        int scrollWheelHigh = 500;
 
         const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 15;
@@ -173,10 +175,19 @@ namespace zombies
             zombies.Add(z10);
             zombies.Add(z11);
 
-            CollisionBoxes.Add(new Box(new Vector3(10, 0, 0), new Vector3(0), new Vector3(10, 40, 10)));
+            CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
+            CollisionBoxes.Add(new Box(new Vector3(29.50001f, 0f, -25.4f), new Vector3(0), new Vector3(109.2f, 20, 1.899998f)));
+            CollisionBoxes.Add(new Box(new Vector3(-25.10233f, 0f, 95.93351f), new Vector3(0), new Vector3(1.699998f, 20, 241.8056f)));
+            CollisionBoxes.Add(new Box(new Vector3(-9.79998f, 0f, 25.00006f), new Vector3(0), new Vector3(29.50007f, 20, 0.3999981f)));
+            CollisionBoxes.Add(new Box(new Vector3(17.40005f, 0f, 24.90006f), new Vector3(0), new Vector3(14.10002f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(-18.00001f, 0f, -22.40004f), new Vector3(0), new Vector3(12.60001f, 20, 3.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(24.20008f, 0f, 1.087785E-06f), new Vector3(0), new Vector3(1.299998f, 20, 48.29984f)));
+            CollisionBoxes.Add(new Box(new Vector3(10.94763f, 0f, 21.71193f), new Vector3(0), new Vector3(1.299998f, 20, 5.2f)));
+            CollisionBoxes.Add(new Box(new Vector3(25.70008f, 0f, -0.2000001f), new Vector3(0), new Vector3(2.599998f, 20, 19.80004f)));
 
 
-            LevelQuadTree = new QuadTree(new Vector2(0, 0), 20, 5);
+            CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+            LevelQuadTree = new QuadTree(new Vector2(156, 65), 185, 4);
             
             foreach (Box box in CollisionBoxes)
             {
@@ -238,41 +249,55 @@ namespace zombies
             //Rotate World with Arrow Keys
             if (keyboard.IsKeyDown(Keys.K))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, 0.5f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, 0.10f);
             }
             if (keyboard.IsKeyDown(Keys.I))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, 0.5f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, 0.10f);
             }
             if (keyboard.IsKeyDown(Keys.L))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0.5f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0.10f, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.J))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0.5f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0.10f, 0, 0);
             }
 
             if (keyboard.IsKeyDown(Keys.Y))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0.5f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0.10f, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.U))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0.5f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0.10f, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.O))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, 0.5f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, 0.10f);
             }
             if (keyboard.IsKeyDown(Keys.P))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, 0.5f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, 0.10f);
+            }
+
+            //Toggle Collision Boundaries Display
+            if (keyboard.IsKeyDown(Keys.C) && ButtonTimer <= 0)
+            {
+                WireFrameCollisionBoxes = !WireFrameCollisionBoxes;
+                ButtonTimer = 10;
+            }
+            
+            //Toggle QuadTree Boundaries Display
+            if (keyboard.IsKeyDown(Keys.B) && ButtonTimer <= 0)
+            {
+                ShowQuadBoundaries = !ShowQuadBoundaries;
+                ButtonTimer = 10;
             }
 
             if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
             {
-                Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + ", " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + ", " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +") , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + ", 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +")));");
+                Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + "f, " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + "f, " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +"f) , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + "f, 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +"f)));");
                 CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
 
                 LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
@@ -406,7 +431,14 @@ namespace zombies
 
             Sphere heroSphere = new Sphere(Player.Position, Player.Velocity, Player.modelRadius);
             List<Primitive> primitivesNearby = new List<Primitive>();
-            LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitivesNearby);
+            LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitivesNearby,2);
+
+            foreach (Primitive bx in primitivesNearby)
+            {
+                if (!TotalNearbyBoxes.Contains(bx))
+                    TotalNearbyBoxes.Add(bx);
+            }
+
             foreach (Primitive p in primitivesNearby)
             {
                 Contact c = heroSphere.Collides(p as Box);
@@ -707,7 +739,33 @@ namespace zombies
             DrawSchool();
             DrawModel(Player);
 
-            DrawBox(CollisionBoxes[0],Color.Red);
+            foreach (Box box in CollisionBoxes)
+            {
+                DrawBox(box, Color.Red, WireFrameCollisionBoxes);
+            }
+
+
+            if (ShowQuadBoundaries)
+            {
+                List<Box> QuadBoxes = new List<Box>();
+                LevelQuadTree.RetrieveBoundariesFromPosition(new Sphere(Player.Position, Player.Velocity, Player.modelRadius), ref QuadBoxes);
+
+                foreach (Box bx in QuadBoxes)
+                {
+                    DrawBox(bx, Color.White, true);
+                }
+
+                //Display all items currently being checked for collisions this frame for all characters
+
+                foreach (Box box in TotalNearbyBoxes)
+                {
+                    DrawBox(box, Color.Chartreuse, false);
+                }
+
+                TotalNearbyBoxes.Clear();
+
+            }
+
             foreach (Zombie z in zombies)
             {
                 if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
@@ -780,7 +838,7 @@ namespace zombies
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
                     effect.World = Matrix.CreateRotationY((float)(zombie.Rotation - Math.PI)) * 
-                            Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                    Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
                     effect.World = effect.World;
