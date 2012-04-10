@@ -163,12 +163,14 @@ namespace Entities
         
         public void MoveForward()
         {
-            Position -= moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            Velocity = -moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            Position += Velocity;
             notifyObservers();
         }
         public void MoveBackward()
         {
-            Position += moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
+            Position += Velocity;
             notifyObservers();
         }
         public void TurnLeft()
