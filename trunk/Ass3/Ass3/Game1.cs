@@ -329,7 +329,7 @@ namespace zombies
             {
                 if (c.DeepestPoint.Length() > 0)
                 {
-
+                    Player.Position += c.DeepestPoint - c.ContactPoint;
                     z.Position -= c.DeepestPoint - c.ContactPoint;
                 }
             }
