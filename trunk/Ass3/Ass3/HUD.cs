@@ -139,15 +139,15 @@ namespace zombies
             }
           //update letter
 
-            if (playerhealth > 850)
+            if (playerhealth > 85)
                 letter = a;
-            else if (playerhealth > 650)
+            else if (playerhealth > 65)
                 letter = b;
-            else if (playerhealth > 450)
+            else if (playerhealth > 45)
                 letter = c;
-            else if (playerhealth > 300)
+            else if (playerhealth > 30)
                 letter = d;
-            else if (playerhealth > 150)
+            else if (playerhealth > 15)
                 letter = e;
             else
                 letter = f;
@@ -178,7 +178,7 @@ namespace zombies
                 
 
                 healthscale = rate * playerhealth;
-                int diff = min + (int)(rate * (1000 - playerhealth)/10);
+                int diff = min + (int)(rate * (100 - playerhealth)/10);
 
                spriteBatch.Draw(healthbar, new Rectangle(healthx,  diff, healthsizex, max-diff), Color.White);
           

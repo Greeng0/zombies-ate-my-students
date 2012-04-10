@@ -253,6 +253,13 @@ namespace Entities
             Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
 
+        public void Heal(int health)
+        {
+            HealthPoints += health;
+            if (HealthPoints > MaxHealth)
+                HealthPoints = MaxHealth;
+        }
+
         public void TakeDamage(int damage)
         {
             animState = AnimationState.Hurt;

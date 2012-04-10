@@ -10,20 +10,37 @@ namespace Entities
     {
         Key,
         MedPack,
-        Extinguisher,
-        Handgun9mm,
-        Magnum
+        Extinguisher
     }
 
     class Item : Entity
     {
         public ItemType itemType;
         public float SoundRadius;
+        public float Range = 0;
 
         public Item(ItemType type)
         {
             itemType = type;
-            SoundRadius = 20;
+            switch (type)
+            {
+                case ItemType.Extinguisher:
+                    {
+                        SoundRadius = 30;
+                        Range = 10;
+                        break;
+                    }
+                case ItemType.Key:
+                    {
+                        SoundRadius = 15;
+                        break;
+                    }
+                case ItemType.MedPack:
+                    {
+                        SoundRadius = 10;
+                        break;
+                    }
+            }
         }
 
         public override bool Equals(object obj)
