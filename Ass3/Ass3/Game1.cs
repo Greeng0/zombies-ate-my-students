@@ -126,20 +126,20 @@ namespace zombies
             Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z4.Position = new Vector3(-10, 0, 0);
             Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z5.Position = new Vector3(10, 0, 10);
+            z5.Position = new Vector3(15, 0, 10);
             Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z6.Position = new Vector3(10, 0, -10);
+            z6.Position = new Vector3(10, 0, -15);
             Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z7.Position = new Vector3(-10, 0, -10);
+            z7.Position = new Vector3(-15, 0, -10);
             Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z8.Position = new Vector3(-10, 0, 10);
+            z8.Position = new Vector3(-10, 0, 15);
 
             Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z6.Position = new Vector3(0, 0, -25);
             Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
             z7.Position = new Vector3(0, 0, -35);
             Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieModel, DoAction);
-            z8.Position = new Vector3(45, 0, -45);
+            z8.Position = new Vector3(5, 0, -45);
 
 
 
@@ -254,14 +254,41 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Idle;
 
             Player.Update(gameTime);
+
+
+            //update right zombies
+
+
             foreach (Zombie z in zombies)
             {
-                if ((z.Position - Player.Position).Length() < radiusofsight)//This checks a radius around the player to see whether or not we should be updating the zombie
+                if ((z.Position - Player.Position).Length() < radiusofsight)
+                {//This checks a radius around the player to see whether or not we should be updating the zombie
                     z.Update(gameTime);
+
+
+                    //check col against player
+
+                    checkZombietoPlayer(z);
+
+                    //need to call function to check zombie collision with other apparent zombies
+                    foreach (Zombie z2 in zombies)
+                    {
+                        if (z != z2)//check to make sure zombies dont check against themselves
+                        {
+                            if ((z2.Position - Player.Position).Length() < radiusofsight)
+                            {
+                                checkZombietoZombie(z, z2);
+                            }
+                        }
+                    }
+                }
                 else//If zombie is out of radius, we must still check to see if it is chasing the character. if that is the case then we still need to update, but not to draw.
                 {
-                    if (z.BehaviouralState != AI.BehaviourState.Wander)
+                    if (z.BehaviouralState != AI.BehaviourState.Wander)//if nto wandering
+                    {
                         z.Update(gameTime);
+                        //no need to check collisions against others since out of camera
+                    }
                 }
             }
             
@@ -285,6 +312,61 @@ namespace zombies
                 CastSoundWave(item.SoundRadius);
             }
         }
+
+        //checking zombie to character
+
+        private void checkZombietoPlayer(Zombie z)
+        {
+            Collisions.Sphere p1 = new Collisions.Sphere(z.Position, z.Velocity, z.modelRadius);
+            Collisions.Sphere p2 = new Collisions.Sphere(Player.Position, Player.Velocity, Player.modelRadius);
+
+
+            Collisions.Contact c = p1.Collides(p2);
+
+
+
+            if (c != null)
+            {
+                if (c.DeepestPoint.Length() > 0)
+                {
+
+                    z.Position -= c.DeepestPoint - c.ContactPoint;
+                }
+            }
+        }
+
+
+
+        //checking zombie to zombie collisions. Model as a sphere(in reality just a cylinder but since all at same height it only checks for a circle radius around character
+        private void checkZombietoZombie(Zombie z1, Zombie z2)
+        {
+            //creating appropriate shapes
+            Collisions.Sphere p1 = new Collisions.Sphere(z1.Position,z1.Velocity ,z1.modelRadius);
+            Collisions.Sphere p2 = new Collisions.Sphere(z2.Position, z2.Velocity, z2.modelRadius);
+
+
+            Collisions.Contact c = p1.Collides(p2);
+
+
+
+            if (c!=null)
+            {
+                if (c.DeepestPoint.Length() > 0)
+                {
+
+                    z1.Position -= c.DeepestPoint - c.ContactPoint;
+                    z2.Position += c.DeepestPoint - c.ContactPoint;
+                }
+            }
+       
+            /*
+            //test code here
+            if ((z1.Position - z2.Position).Length() < 3)
+            {//assuming 1.5 unit radius each zombies
+                
+            }*/
+        }
+
 
         // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
         // bounding sphere will be alerted to the Hero's presence
