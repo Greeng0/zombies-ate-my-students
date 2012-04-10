@@ -77,7 +77,7 @@ namespace Entities
         //collision data
         public float modelRadius = 1.5f;
 
-        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model modelhurt, ref Model modeldie, Action<Entity, Entity> actionFunction)
+        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
         {
 
@@ -95,6 +95,7 @@ namespace Entities
 
             //get animations
             // Look up our custom skinning information. for walking
+
             skinningDatawalk = (SkinningData)modelwalk.Tag;
 
             if (skinningDatawalk == null)
@@ -132,6 +133,8 @@ namespace Entities
             cliphurt = skinningDatahurt.AnimationClips["Take 001"];
             animationPlayerhurt.StartClip(cliphurt);
 
+          
+     
             //adding flanking info
             for (int i = 0; i < 6; i++)
             {
@@ -141,34 +144,37 @@ namespace Entities
 
         public void Update(GameTime gameTime)
         {
+
             if (animState == AnimationState.Idle)
             {
-                animationPlayer = animationPlayerhurt;
+                animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+               
             }
             else if (animState == AnimationState.Walking)
             {
                 animationPlayer = animationPlayerwalk;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+              
             }
             else if (animState == AnimationState.Hurt)//animation when hurt
             {
                 animationPlayer = animationPlayerhurt;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+              
 
             }
             else if (animState == AnimationState.Dying)//animation for dying
             {
 
                 animationPlayer = animationPlayerdie;
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+               
             }
             else//if just standing
             {
+                animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+             
             }
+            animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
         }
 
         public void DoAction()

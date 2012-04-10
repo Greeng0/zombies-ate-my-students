@@ -40,6 +40,12 @@ namespace zombies
         Model ZombieHurt;
         Model ZombieDie;
 
+        //3 animations for zombies
+        Model HeroWalk;
+        Model HeroHurt;
+        Model HeroDie;
+
+
         QuadTree LevelQuadTree;
 
         Hero Player;
@@ -116,16 +122,22 @@ namespace zombies
 
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
-            HeroModel = Content.Load<Model>("HeroWalk");
+          
+            //zombie animations
             ZombieWalk = Content.Load<Model>("ZombieWalk");
             ZombieHurt = Content.Load<Model>("ZombieHurt");
             ZombieDie = Content.Load<Model>("ZombieDie");
             ZombieAttack = Content.Load<Model>("ZombieAttack");
 
+            //hero animations
+            HeroWalk = Content.Load<Model>("HeroWalk");
+            HeroHurt = Content.Load<Model>("HeroHurt");
+            HeroDie = Content.Load<Model>("HeroDead");
+          
             // TODO: Initialize quad tree and insert all objects into it********************************************
             //QuadTree = new QuadTree(centerPosition, size, depth);
 
-            Player = new Hero(1000, 1000, ref HeroModel, ref HeroModel, ref HeroModel, DoAction);
+            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
@@ -176,6 +188,7 @@ namespace zombies
             mouseState = Mouse.GetState();
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
+             
                 foreach(Zombie z in zombies)
                z.animState = Entity.AnimationState.Idle;
             }
@@ -282,7 +295,7 @@ namespace zombies
 
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
-            
+            Player.animState = Entity.AnimationState.Dying;
             base.Update(gameTime);
         }
 
