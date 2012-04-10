@@ -58,7 +58,6 @@ namespace Entities
         private Node[] nodes = new Node[6];
         //collision data
         public float modelRadius = 1.5f;
-
  
         public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
             : base()
