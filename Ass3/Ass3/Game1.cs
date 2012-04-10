@@ -37,6 +37,8 @@ namespace zombies
         List<Zombie> zombies;
 
         int scrollWheel = 0;
+        int scrollWheelLow = 0;
+        int scrollWheelHigh = 30;
 
         public Game1()
         {
@@ -158,13 +160,21 @@ namespace zombies
 
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
-                Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
+                if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
+                {
+                    Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
+                   
+                }
                 scrollWheel = mouseState.ScrollWheelValue;
             }
 
             if (mouseState.ScrollWheelValue > scrollWheel)
             {
-                Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
+                if (Camera.ActiveCamera.CameraZoom.Length() > scrollWheelLow)
+                {
+                    Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
+                   
+                }
                 scrollWheel = mouseState.ScrollWheelValue;
             }
             //end updatehud
