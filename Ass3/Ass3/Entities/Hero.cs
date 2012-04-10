@@ -80,6 +80,13 @@ namespace Entities
         //add nodes
         private Node[] nodes = new Node[6];
 
+        //adding line to show where aiming info
+        public VertexPositionColor[] ray = new VertexPositionColor[2];
+        private Vector3 ray1 = new Vector3(10,20,0);
+        private Vector3 ray2 = new Vector3(0,10,10);
+        private Vector3 rayHeight = new Vector3(0, 5.5f, 0);
+
+
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
         {
@@ -174,6 +181,14 @@ namespace Entities
                 animationPlayer.ResetClip();
             }
             animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+
+
+            //update ray positions
+
+            ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
+
+            ray[1] = new VertexPositionColor(Position + rayHeight + new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);
+          
         }
 
         public void DoAction()
