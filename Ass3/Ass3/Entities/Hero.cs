@@ -56,8 +56,6 @@ namespace Entities
         private List<IHeroObserver> observer = new List<IHeroObserver>();
         //add nodes
         private Node[] nodes = new Node[6];
-        //collision data
-        public float modelRadius = 1.5f;
  
         public Hero(int health, int maxHealth, ref Model model, Action<Entity, Entity> actionFunction)
             : base()
@@ -163,25 +161,25 @@ namespace Entities
         
         public void MoveForward()
         {
-            Velocity = -moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
             Position += Velocity;
             notifyObservers();
         }
         public void MoveBackward()
         {
-            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
-            Position += Velocity;
+            Position -= Velocity;
             notifyObservers();
         }
         public void TurnLeft()
         {
             Rotation += rotationSpeed;
             Rotation %= Math.PI * 2;
+            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
         public void TurnRight()
         {
             Rotation -= rotationSpeed;
             Rotation %= Math.PI * 2;
+            Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
 
         public void TakeDamage(int damage)

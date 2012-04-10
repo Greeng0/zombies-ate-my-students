@@ -51,6 +51,8 @@ namespace zombies
 
         int radiusofsight = 60;
 
+        const float COLLISON_SOUND_RADIUS = 15;
+
         public Game1()
         {
             mouseState = new MouseState();
@@ -164,8 +166,6 @@ namespace zombies
         }
 
 
-
-
         protected override void Update(GameTime gameTime)
         {
             #region Update hud
@@ -269,8 +269,6 @@ namespace zombies
                 if ((z.Position - Player.Position).Length() < radiusofsight)
                 {
                     z.Update(gameTime);
-              
-
                 }
                 //If zombie is out of radius, we must still check to see if it is chasing the character. 
                 //If that is the case then we still need to update, but not to draw.
@@ -350,6 +348,10 @@ namespace zombies
         {
             Vector3 closingVelocity = -contact.ContactNormal * (Vector3.Dot(-contact.ContactNormal, ent.Velocity));
             ent.Position += -closingVelocity * sphere.Mass;
+            if (ent is Hero)
+            {
+                CastSoundWave(COLLISON_SOUND_RADIUS);
+            }
         }
 
         //checking zombie to character
@@ -405,6 +407,92 @@ namespace zombies
                 Weapon weapon = objectCasted as Weapon;
                 CastSoundWave(weapon.SoundRadius);
                 // TODO: check if caster is Hero or Zombie, perform attack accordingly
+                switch (weapon.weaponType)
+                {
+                    case WeaponType.BareHands:
+                        {
+                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                            foreach (Zombie z in zombies)
+                            {
+                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                                {
+                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                    if (bs.Intersects(ray) != null)
+                                        z.TakeDamage(weapon.FirePower);
+                                }
+                            }
+                            break;
+                        }
+                    case WeaponType.Handgun9mm:
+                        {
+                            // find closest zombie, if any, in the line of fire and have him take the damage
+                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                            Zombie closestVictim = null;
+                            float closestIntersect = 100;
+                            foreach (Zombie z in zombies)
+                            {
+                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                                {
+                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                    float? intersection = bs.Intersects(ray);
+                                    if (intersection != null && intersection < closestIntersect)
+                                        closestVictim = z;
+                                }
+                            }
+                            if (closestVictim != null)
+                                closestVictim.TakeDamage(weapon.FirePower);
+                            break;
+                        }
+                    case WeaponType.Magnum:
+                        {
+                            // find closest zombie, if any, in the line of fire and have him take the damage
+                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                            Zombie closestVictim = null;
+                            float closestIntersect = 100;
+                            foreach (Zombie z in zombies)
+                            {
+                                if ((z.Position - actionCaster.Position).Length() < weapon.Range)
+                                {
+                                    BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
+                                    float? intersection = bs.Intersects(ray);
+                                    if (intersection != null && intersection < closestIntersect)
+                                        closestVictim = z;
+                                }
+                            }
+                            if (closestVictim != null)
+                            {
+                                if (closestIntersect > 20)
+                                    closestVictim.TakeDamage(weapon.FirePower / 10);
+                                else if (closestIntersect > 10)
+                                    closestVictim.TakeDamage(weapon.FirePower / 5);
+                                else
+                                    closestVictim.TakeDamage(weapon.FirePower);
+                            }
+                            break;
+                        }
+                    case WeaponType.Vomit:
+                        {
+                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                            if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
+                            {
+                                BoundingSphere bs = new BoundingSphere(actionCaster.Position, actionCaster.modelRadius);
+                                if (bs.Intersects(ray) != null)
+                                    Player.TakeDamage(weapon.FirePower);
+                            }
+                            break;
+                        }
+                    case WeaponType.ZombieHands:
+                        {
+                            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                            if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
+                            {
+                                BoundingSphere bs = new BoundingSphere(actionCaster.Position, actionCaster.modelRadius);
+                                if (bs.Intersects(ray) != null)
+                                    Player.TakeDamage(weapon.FirePower);
+                            }
+                            break;
+                        }
+                }
             }
             else if (objectCasted is Item)
             {
@@ -413,6 +501,7 @@ namespace zombies
                 // TODO: perform item effect
             }
         }
+
 
         // Creates a bounding sphere with the specified radius. Any Zombie intersecting the
         // bounding sphere will be alerted to the Hero's presence
@@ -474,7 +563,7 @@ namespace zombies
             {
                 foreach (SkinnedEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY((float) hero.Rotation) * 
+                    effect.World = Matrix.CreateRotationY((float) (hero.Rotation - Math.PI)) * 
                             Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);
                     effect.SetBoneTransforms(bones);
                     effect.View = Camera.ActiveCamera.View;
