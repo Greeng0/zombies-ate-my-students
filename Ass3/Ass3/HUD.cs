@@ -73,10 +73,10 @@ namespace zombies
         Rectangle slot4rec = new Rectangle(510, 10, 70, 70);
         Rectangle slot5rec = new Rectangle(630, 10, 70, 70);
 
-        bool drawfire = false;
-        bool drawmed = false;
+        int fires = 0;
+        int meds = 0;
 
-        bool drawkeys = false;
+        int keyss = 0;
     
 
         //powerups
@@ -243,6 +243,12 @@ namespace zombies
 
             //choosing items
 
+        
+
+        fires = p.extinguishers;
+          meds=  p.meds;
+         keyss= p.keys;
+
 
             drawselectedeq = false;
             if (p.SelectedItem != null)
@@ -251,28 +257,39 @@ namespace zombies
 
             // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
 
-                if (p.SelectedItem.itemType == Entities.ItemType.Extinguisher)
+                if (fires > 0)
                 {
                     selectedeqrec.X = slot3rec.X - 10;
                     selectedeqrec.Y = slot3rec.Y - 10;
                     slot3 = fire;
-                    drawfire = true;
-                }
 
-                if (p.SelectedItem.itemType == Entities.ItemType.Key)
+                }
+                else
+                {
+                    slot3 = empty;
+                }
+                if (keyss > 0)
                 {
                     selectedeqrec.X = slot4rec.X - 10;
                     selectedeqrec.Y = slot4rec.Y - 10;
                     slot4 = keys;
-                    drawkeys = true;
+                 
                 }
-              if (p.SelectedItem.itemType == Entities.ItemType.MedPack)
+                else
+                {
+                    slot4 = empty;
+                }
+              if (meds > 0)
                 {
                     selectedeqrec.X = slot5rec.X - 10;
                     selectedeqrec.Y = slot5rec.Y - 10;
                     slot5 = med;
-                    drawmed = true;
+                  
                 }
+              else
+              {
+                  slot5 = empty;
+              }
             
 
             }
@@ -354,11 +371,14 @@ namespace zombies
             out2 += "\n\n\nAngle";
             out2 += "\n" + MathHelper.ToDegrees(angle);
             out2 += "\n\n\nFps";
-            out2 += "\n" + fps;
+            out2 += "\n" + fps ;
 
 
             Vector2 pos2 = new Vector2(200, 100);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
+
+
+
 
 
 
@@ -371,6 +391,22 @@ namespace zombies
             spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
             spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
 
+
+
+            //numbers
+
+
+
+
+
+            out2 += "\n" + fires;
+    
+            out2 += "\n" + meds;
+          out2 += "\n" + keyss;
+
+
+         pos2 = new Vector2(400, 100);
+            spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
 
             //draw slots

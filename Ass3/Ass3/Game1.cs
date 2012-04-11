@@ -136,6 +136,8 @@ namespace zombies
         //sound
         Sounds.Sounds sound;
 
+
+
         public Game1()
         {
             mouseState = new MouseState();
@@ -184,7 +186,7 @@ namespace zombies
             zombies = new List<Zombie>();
             fireHazards = new List<Box>();
             PickupableObjects = new List<Entity>();
-
+         
             base.Initialize();
         }
       
@@ -223,10 +225,10 @@ namespace zombies
             magnumModel = Content.Load<Model>("Magnum");
             handgunModel = Content.Load<Model>("socom9mm");
             silencerModel = Content.Load<Model>("Silencer");
-            //medkitModel = Content.Load<Model>("medkit");
-            //keyModel = Content.Load<Model>("key");
-            //extinguisherModel = Content.Load<Model>("fireextinguisher");
-            //sneakerModel = Content.Load<Model>("sneaker");
+            medkitModel = Content.Load<Model>("medkit");
+            keyModel = Content.Load<Model>("key");
+            extinguisherModel = Content.Load<Model>("key");
+            sneakerModel = Content.Load<Model>("key");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
             magnum.Position = new Vector3(239.8962f, 0, 66.52339f);
@@ -3432,21 +3434,21 @@ namespace zombies
             FireEmitter.particleGroups[0].controller.Alpha = 0.8f;
             FireEmitter.particleGroups[0].controller.MaxParticles = 100;
             FireEmitter4.position = new Vector3(332, 0, -6);
-
+ 
             FireEmitter.Start();
             FireEmitter2.Start();
             FireEmitter3.Start();
             FireEmitter4.Start();
 
-            /*
+          
 
             //testing code
             medkit1 = new Item(ItemType.MedPack);
-            Player.AddWeapon(socom);
-            Player.AddItem(medkit1);
+            medkit1.model = Content.Load<Model>("MedKit");
+            medkit1.Position = Player.Position;
+            PickupableObjects.Add(medkit1);
 
-
-            */
+         
          
 
             base.LoadContent();
@@ -3484,8 +3486,6 @@ namespace zombies
 
         protected override void Update(GameTime gameTime)
         {
-
-          
 
             #region Update hud
             HUD.ActiveHUD.chooseslots(ref Player);
@@ -4069,40 +4069,46 @@ namespace zombies
 
             if(PickupableObjects.Count > 0){
             //check for collisions with map items
-                foreach (Entity p in PickupableObjects)
-                {
-                    if ((p.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
+               for(int i = 0; i < PickupableObjects.Count(); i ++){
+                   Entity p = PickupableObjects.ElementAt(i);
+
+                   if ((p.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
                     {
+
                         if (p.model == extinguisherModel)
                         {
                             Player.extinguishers += 10;
+                            PickupableObjects.Remove(p);
                         }
-                      
+                        
                         else if (p.model == medkitModel)
                         {
                             Player.meds++;
+                            PickupableObjects.Remove(p);
                         }
 
                         else if (p.model == keyModel)
                         {
                             Player.keys++;
+                            PickupableObjects.Remove(p);
                         }
                         else if (p.model == sneakerModel)
                         {
                             Player.PowerupsList.Add(sneakers);
-
+                            PickupableObjects.Remove(p);
                         }
 
-                        else if (p.model == silencerModel)
+                        else if (p.model== silencerModel)
                         {
                             Player.PowerupsList.Add(silencer);
-
+                            PickupableObjects.Remove(p);
                         }
 
-                        
-                    }
-                   // PickupableObjects.Remove(p);
+                  
 
+                    }
+               
+                  
 
                 }
            
