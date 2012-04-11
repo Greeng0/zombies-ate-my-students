@@ -4395,7 +4395,7 @@ namespace zombies
                         {
                             fireHazards.Remove(toRemove);
                         }
-                        Player.ItemsList[item]--;
+                        
                         break;
                     }
             }
