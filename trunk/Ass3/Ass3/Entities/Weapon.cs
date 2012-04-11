@@ -83,6 +83,8 @@ namespace Entities
 
         public override bool Equals(object obj)
         {
+            if (!(obj is Weapon))
+                return false;
             return weaponType.Equals((obj as Weapon).weaponType);
         }
         public override int GetHashCode()
