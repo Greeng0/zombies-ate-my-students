@@ -73,7 +73,7 @@ namespace zombies
 
 
 
-
+        bool drawselectedwep = false;
         Texture2D selectedwep;
         Rectangle selectedweprec  = new Rectangle(0, 0, 90,90);
 
@@ -151,7 +151,7 @@ namespace zombies
         }
         public void chooseslots(ref Entities.Hero p)
         {
-
+            drawselectedwep = true;
             if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
             {
                 //draw both pictures
@@ -198,6 +198,7 @@ namespace zombies
                 slot2 = empty;
                 selectedweprec.X = slot1rec.X - 5;
                 selectedweprec.Y = slot1rec.Y - 5;
+                drawselectedwep = false;
             } 
         }
     
@@ -272,9 +273,10 @@ namespace zombies
              Rectangle newrec = selectedweprec;
              newrec.X -= 5;
              newrec.Y -= 5;
-
-             spriteBatch.Draw(selectedwep, newrec, Color.White);
-              
+             if (drawselectedwep)
+             {
+                 spriteBatch.Draw(selectedwep, newrec, Color.White);
+             }
             
 
 
