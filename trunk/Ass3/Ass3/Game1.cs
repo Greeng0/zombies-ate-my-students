@@ -3855,8 +3855,14 @@ namespace zombies
                 switch (key)
                 {
                     case Keys.W:
-                        Player.SwitchNextWeapon();
-                        break;
+                        {
+                            if (ButtonTimer <= 0)
+                            {
+                                Player.SwitchNextWeapon();
+                                ButtonTimer = 10;
+                            }
+                            break;
+                        }
                     case Keys.LeftShift:
                         break;
                     case Keys.Up:
