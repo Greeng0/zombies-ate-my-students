@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Microsoft.Xna.Framework;
 namespace Entities
 {
     public enum WeaponType
@@ -21,6 +21,8 @@ namespace Entities
         public int FirePower;          // damage done by the weapon
         public float SoundRadius;      // distance from the wielder at which zombies may be alerted
         public float Range;            // distance at which the weapon can do damage
+        public Vector3 offset = new Vector3(0);
+
         
         public Weapon(WeaponType type)
         {
@@ -41,6 +43,7 @@ namespace Entities
                         Speed = 500;
                         SoundRadius = 40;
                         Range = 40;
+                        offset = new Vector3(-2.3f, 4.5f, -1f);
                         break;
                     }
                 case WeaponType.Magnum:
@@ -49,6 +52,8 @@ namespace Entities
                         Speed = 2000;
                         SoundRadius = 50;
                         Range = 40;
+                        offset = new Vector3(-1.8f, 4.5f, -1f);
+                        
                         break;
                     }
                 case WeaponType.Vomit:

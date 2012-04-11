@@ -64,9 +64,8 @@ namespace zombies
         List<Weapon> weapons;
         //weapon models
         Weapon magnum;
-        Weapon Silencer;
         Weapon socom;
-        Weapon socomsilencer;
+        Model Silencer;
 
 
         int scrollWheel = 0;
@@ -158,16 +157,12 @@ namespace zombies
             magnum.model = Content.Load<Model>("Magnum");
 
             socom = new Weapon(WeaponType.Handgun9mm);
-            socom.model = Content.Load<Model>("Silencer");
+            socom.model = Content.Load<Model>("socom9mm");
 
-           /* magnum = new Weapon(WeaponType.Magnum);
-            magnum.model = Content.Load<Model>("Magnum");
-
-            magnum = new Weapon(WeaponType.Magnum);
-            magnum.model = Content.Load<Model>("Magnum");
-           */
-
-
+            
+           
+            Silencer = Content.Load<Model>("socom9mmsilencer");
+           
            
           
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
@@ -177,6 +172,9 @@ namespace zombies
             Player.AddWeapon(magnum);
             Player.AddWeapon(socom);
             Player.EquippedWeapon = socom;
+            Powerups silence = new Powerups();
+            silence = Powerups.Silencer;
+            Player.PowerupsList.Add(silence);
 
 
 
@@ -1093,7 +1091,7 @@ namespace zombies
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.World = Matrix.CreateTranslation(hero.weaponoffset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateTranslation(hero.Position);// 
+                        effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateTranslation(hero.Position);// 
 
                         effect.View = Camera.ActiveCamera.View;
                         effect.Projection = Camera.ActiveCamera.Projection;
@@ -1105,6 +1103,33 @@ namespace zombies
                     }
 
                     mesh.Draw();
+                }
+
+
+              //  if it has a silencer
+
+                if (Player.PowerupsList.Contains(Powerups.Silencer))
+                {
+                    // Render the skinned mesh
+                    foreach (ModelMesh mesh in Silencer.Meshes)
+                    {
+                        foreach (BasicEffect effect in mesh.Effects)
+                        {
+                            effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateScale(1) * Matrix.CreateTranslation(hero.Position);// 
+
+                            effect.View = Camera.ActiveCamera.View;
+                            effect.Projection = Camera.ActiveCamera.Projection;
+
+                            effect.EnableDefaultLighting();
+
+                            effect.SpecularColor = new Vector3(0.25f);
+                            effect.SpecularPower = 16;
+                        }
+
+                        mesh.Draw();
+
+
+                    }
                 }
             }
 
