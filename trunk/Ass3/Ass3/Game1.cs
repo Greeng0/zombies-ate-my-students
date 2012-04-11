@@ -171,12 +171,13 @@ namespace zombies
             //add weapons
             Player.AddWeapon(magnum);
             Player.AddWeapon(socom);
-            Player.EquippedWeapon = socom;
+            Player.EquippedWeapon = magnum;
+            
             Powerups silence = new Powerups();
             silence = Powerups.Silencer;
             Player.PowerupsList.Add(silence);
 
-
+            
 
 
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
@@ -586,6 +587,9 @@ namespace zombies
             {
                 switch (key)
                 {
+                    case Keys.W:
+                        Player.SwitchNextWeapon();
+                        break;
                     case Keys.LeftShift:
                         break;
                     case Keys.Up:
@@ -613,9 +617,7 @@ namespace zombies
                     case Keys.Tab:
                         Player.SwitchNextItem();
                         break;
-                    case Keys.W:
-                        Player.SwitchNextWeapon();
-                        break;
+                  
                     case Keys.Space:
                         if (KeyboardInput.ProcessInput(key, Player))
                             Player.DoAction();
@@ -1084,7 +1086,7 @@ namespace zombies
                 heroRotation = (float)(hero.Rotation - Math.PI);
             }
 
-            if (Player.Stance == AnimationStance.Shooting)
+            if (Player.Stance == AnimationStance.Shooting && Player.animState == Entity.AnimationState.Idle)
             {
                 // Render the skinned mesh
                 foreach (ModelMesh mesh in hero.EquippedWeapon.model.Meshes)
@@ -1108,7 +1110,7 @@ namespace zombies
 
               //  if it has a silencer
 
-                if (Player.PowerupsList.Contains(Powerups.Silencer))
+                if (Player.PowerupsList.Contains(Powerups.Silencer) && hero.EquippedWeapon == socom)
                 {
                     // Render the skinned mesh
                     foreach (ModelMesh mesh in Silencer.Meshes)
