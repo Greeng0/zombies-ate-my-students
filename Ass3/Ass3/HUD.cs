@@ -97,6 +97,9 @@ namespace zombies
         Texture2D selectedeq;
         Rectangle selectedeqrec = new Rectangle(0, 0, 90, 90);
 
+        public int selecteditem = 0;
+
+        
         Texture2D temp;
      
 
@@ -249,10 +252,10 @@ namespace zombies
         fires = p.extinguishers;
           meds=  p.meds;
          keyss= p.keys;
-
+    int current = p.current;
 
             //drawselectedeq = false;
-            if (p.SelectedItem != null)
+            if (fires + meds + keyss > 0)
             {
                 drawselectedeq = true;
             }
@@ -260,8 +263,11 @@ namespace zombies
 
                 if (fires > 0)
                 {
-                    selectedeqrec.X = slot3rec.X - 10;
-                    selectedeqrec.Y = slot3rec.Y - 10;
+                    if (current % 3 == 0)
+                    {
+                        selectedeqrec.X = slot3rec.X - 10;
+                        selectedeqrec.Y = slot3rec.Y - 10;
+                    }
                     slot3 = fire;
 
                 }
@@ -271,8 +277,11 @@ namespace zombies
                 }
                 if (keyss > 0)
                 {
-                    selectedeqrec.X = slot4rec.X - 10;
-                    selectedeqrec.Y = slot4rec.Y - 10;
+                    if (current % 3 == 1)
+                    {
+                        selectedeqrec.X = slot4rec.X - 10;
+                        selectedeqrec.Y = slot4rec.Y - 10;
+                    }
                     slot4 = keys;
                  
                 }
@@ -282,8 +291,11 @@ namespace zombies
                 }
               if (meds > 0)
                 {
-                    selectedeqrec.X = slot5rec.X - 10;
-                    selectedeqrec.Y = slot5rec.Y - 10;
+                    if (current % 3 == 2)
+                    {
+                        selectedeqrec.X = slot5rec.X - 10;
+                        selectedeqrec.Y = slot5rec.Y - 10;
+                    }
                     slot5 = med;
                   
                 }
