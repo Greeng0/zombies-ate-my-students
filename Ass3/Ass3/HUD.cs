@@ -75,7 +75,7 @@ namespace zombies
 
 
         Texture2D selectedwep;
-        Rectangle selectedweprec  = new Rectangle(0, 0, 80,80);
+        Rectangle selectedweprec  = new Rectangle(0, 0, 90,90);
 
 
         Texture2D letter;
@@ -146,6 +146,7 @@ namespace zombies
             slot3 = med;
             slot4 = keys;
             slot5 = fire;
+
             base.LoadContent();
         }
         public void chooseslots(ref Entities.Hero p)
@@ -268,7 +269,11 @@ namespace zombies
              spriteBatch.Draw(slot5, slot5rec, Color.White);
 
 
-             spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
+             Rectangle newrec = selectedweprec;
+             newrec.X -= 5;
+             newrec.Y -= 5;
+
+             spriteBatch.Draw(selectedwep, newrec, Color.White);
               
             
 
