@@ -97,6 +97,7 @@ namespace zombies
         Texture2D selectedeq;
         Rectangle selectedeqrec = new Rectangle(0, 0, 90, 90);
 
+        Texture2D temp;
      
 
         Texture2D letter;
@@ -250,11 +251,11 @@ namespace zombies
          keyss= p.keys;
 
 
-            drawselectedeq = false;
+            //drawselectedeq = false;
             if (p.SelectedItem != null)
             {
                 drawselectedeq = true;
-
+            }
             // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
 
                 if (fires > 0)
@@ -292,9 +293,9 @@ namespace zombies
               }
             
 
-            }
+            
 
-
+           
 
 
 
@@ -435,14 +436,18 @@ namespace zombies
 
 
   //draw powerups
-             if (drawsilencer)
-           
-            spriteBatch.Draw(silencer, silencerrec, Color.White);
+            if (drawsilencer)
+                temp = silencer;
+            else
+              temp = empty ;
+            spriteBatch.Draw(temp, silencerrec, Color.White);
 
              if (drawshoes)
-            spriteBatch.Draw(shoes, shoerec, Color.White);
-
-
+                 temp = shoes;
+             else
+                 temp = empty;
+                 spriteBatch.Draw(temp, shoerec, Color.White);
+           
 
 
 
