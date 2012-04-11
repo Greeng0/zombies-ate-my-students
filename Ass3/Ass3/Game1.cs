@@ -91,7 +91,15 @@ namespace zombies
 
         List<Entity> PickupableObjects;
 
-        //weapon models
+        //weapon/item/powerup models
+        Model handgunModel;
+        Model magnumModel;
+        Model medkitModel;
+        Model extinguisherModel;
+        Model keyModel;
+        Model silencerModel;
+        Model sneakerModel;
+
         Weapon magnum;
         Weapon socom;
         Powerup silencer;
@@ -99,6 +107,9 @@ namespace zombies
         Item medkit1;
         Item medkit2;
         Item medkit3;
+        Item extinguisher;
+        Item key1;
+        Item key2;
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
@@ -184,26 +195,52 @@ namespace zombies
             HeroWalk = Content.Load<Model>("HeroWalk");
             HeroHurt = Content.Load<Model>("HeroHurt");
             HeroDie = Content.Load<Model>("HeroDead");
-            //weapon models
 
+            
             NodeModel = Content.Load<Model>("Pyramid");
             StartNode = Content.Load<Model>("SPyramid");
             EndNode = Content.Load<Model>("EPyramid");
             
-
-            magnum = new Weapon(WeaponType.Magnum);
-            magnum.model = Content.Load<Model>("Magnum");
-
-            socom = new Weapon(WeaponType.Handgun9mm);
-            socom.model = Content.Load<Model>("socom9mm");
-            
-            
+            //weapon/item/powerup models
             Silenced9mm = Content.Load<Model>("socom9mmsilencer");
-           // silencer.model = Content.Load<Model>("Silencer");
+            magnumModel = Content.Load<Model>("Magnum");
+            handgunModel = Content.Load<Model>("socom9mm");
+            silencerModel = Content.Load<Model>("Silencer");
+            //medkitModel = Content.Load<Model>("medkit");
+            //keyModel = Content.Load<Model>("key");
+            //extinguisherModel = Content.Load<Model>("fireextinguisher");
+            //sneakerModel = Content.Load<Model>("sneaker");
+
+            magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
+            magnum.Position = new Vector3(239.8962f, 0, 66.52339f);
+            socom = new Weapon(WeaponType.Handgun9mm, ref handgunModel);
+            socom.Position = new Vector3(293.3976f, 0, 123.4541f);
+            silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
+            silencer.Position = new Vector3(-6.841653f, 0, 191.983f);
+            //sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
+            //sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
+            //medkit1 = new Item(ItemType.MedPack, ref medkitModel);
+            //medkit1.Position = new Vector3(335.4893f, 0, -14.48104f);
+            //medkit2 = new Item(ItemType.MedPack, ref medkitModel);
+            //medkit2.Position = new Vector3(18.04729f,0,-14.43179f);
+            //medkit3 = new Item(ItemType.MedPack, ref medkitModel);
+            //medkit3.Position = new Vector3(60.17641f,0,206.8075f);
+            //key1 = new Item(ItemType.Key, ref keyModel);
+            //key1.Position = new Vector3(323.8057f, 0, -8.779925f);
+            //key2 = new Item(ItemType.Key, ref keyModel);
+            //extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
+            //extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
 
             PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
+            //PickupableObjects.Add(sneakers);
+            //PickupableObjects.Add(medkit1);
+            //PickupableObjects.Add(medkit2);
+            //PickupableObjects.Add(medkit3);
+            //PickupableObjects.Add(key1);
+            //PickupableObjects.Add(key2);
+            //PickupableObjects.Add(extinguisher);
 
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
@@ -4126,6 +4163,17 @@ namespace zombies
                 if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
                     DrawModel(z);
             }
+
+
+            foreach (Entity ent in PickupableObjects)
+            {
+                if (ent is Item)
+                    DrawModel(ent as Item);
+                else if (ent is Weapon)
+                    DrawModel(ent as Weapon);
+                else if (ent is Powerup)
+                    DrawModel(ent as Powerup);
+            }
             base.Draw(gameTime);
         }
 
@@ -4160,6 +4208,72 @@ namespace zombies
                     effect.Projection = projection;
 
                     effect.TextureEnabled = true;
+                }
+
+                mesh.Draw();
+            }
+        }
+
+        private void DrawModel(Item ent)
+        {
+            // Render the skinned mesh
+            foreach (ModelMesh mesh in ent.model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.CreateTranslation(ent.Position);
+                    effect.View = Camera.ActiveCamera.View;
+
+                    effect.Projection = Camera.ActiveCamera.Projection;
+
+                    effect.EnableDefaultLighting();
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
+                }
+
+                mesh.Draw();
+            }
+        }
+
+        private void DrawModel(Weapon ent)
+        {
+            // Render the skinned mesh
+            foreach (ModelMesh mesh in ent.model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.CreateTranslation(ent.Position);
+                    effect.View = Camera.ActiveCamera.View;
+
+                    effect.Projection = Camera.ActiveCamera.Projection;
+
+                    effect.EnableDefaultLighting();
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
+                }
+
+                mesh.Draw();
+            }
+        }
+
+        private void DrawModel(Powerup ent)
+        {
+            // Render the skinned mesh
+            foreach (ModelMesh mesh in ent.model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = Matrix.CreateTranslation(ent.Position);
+                    effect.View = Camera.ActiveCamera.View;
+
+                    effect.Projection = Camera.ActiveCamera.Projection;
+
+                    effect.EnableDefaultLighting();
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
                 }
 
                 mesh.Draw();
