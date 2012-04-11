@@ -3511,10 +3511,10 @@ namespace zombies
           
             
             //testing code
-            medkit1 = new Item(ItemType.Key);
-            medkit1.model = Content.Load<Model>("MedKit");
-            medkit1.Position = Player.Position- new Vector3(10,0,20);
-            PickupableObjects.Add(medkit1);
+           Item medkit10 = new Item(ItemType.Extinguisher);
+            medkit10.model = Content.Load<Model>("Extinguisher");
+            medkit10.Position = Player.Position- new Vector3(10,0,20);
+            PickupableObjects.Add(medkit10);
            
            
          
