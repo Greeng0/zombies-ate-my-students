@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 namespace Entities
 {
     public enum WeaponType
@@ -23,7 +24,12 @@ namespace Entities
         public float Range;            // distance at which the weapon can do damage
         public Vector3 offset = new Vector3(0);
 
-        
+        public Weapon(WeaponType type, ref Model model)
+            : this(type)
+        {
+            this.model = model;
+        }
+
         public Weapon(WeaponType type)
         {
             weaponType = type;

@@ -47,6 +47,7 @@ namespace zombies
         Model HeroWalk;
         Model HeroHurt;
         Model HeroDie;
+        Model Silenced9mm;
 
         int ButtonTimer = 0;
         int zCounter = 1;
@@ -61,13 +62,16 @@ namespace zombies
         List<Zombie> zombies;
         List<Box> fireHazards;
 
+        List<Entity> PickupableObjects;
 
-        List<Weapon> weapons;
         //weapon models
         Weapon magnum;
         Weapon socom;
-        Model Silencer;
-
+        Powerup silencer;
+        Powerup sneakers;
+        Item medkit1;
+        Item medkit2;
+        Item medkit3;
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
@@ -127,6 +131,7 @@ namespace zombies
 
             zombies = new List<Zombie>();
             fireHazards = new List<Box>();
+            PickupableObjects = new List<Entity>();
 
             base.Initialize();
         }
@@ -159,24 +164,23 @@ namespace zombies
 
             socom = new Weapon(WeaponType.Handgun9mm);
             socom.model = Content.Load<Model>("socom9mm");
-
             
-           
-            Silencer = Content.Load<Model>("socom9mmsilencer");
-           
-           
-          
+            
+            Silenced9mm = Content.Load<Model>("socom9mmsilencer");
+            silencer.model = Content.Load<Model>("Silencer");
+
+            PickupableObjects.Add(socom);
+            PickupableObjects.Add(magnum);
+            PickupableObjects.Add(silencer);
+
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
-            Player.AddWeapon(magnum);
-            Player.AddWeapon(socom);
-            Player.EquippedWeapon = magnum;
+            //Player.AddWeapon(magnum);
+            //Player.AddWeapon(socom);
+            //Player.EquippedWeapon = magnum;
             
-            Powerups silence = new Powerups();
-            silence = Powerups.Silencer;
-            //Player.PowerupsList.Add(silence);
 
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(301.519f, 0, 145.7045f);
@@ -1271,10 +1275,10 @@ namespace zombies
 
               //  if it has a silencer
 
-                if (Player.selectedPowerup == Powerups.Silencer && hero.EquippedWeapon == socom)
+                if (Player.PowerupsList.Contains(silencer) && hero.EquippedWeapon == socom)
                 {
                     // Render the skinned mesh
-                    foreach (ModelMesh mesh in Silencer.Meshes)
+                    foreach (ModelMesh mesh in Silenced9mm.Meshes)
                     {
                         foreach (BasicEffect effect in mesh.Effects)
                         {

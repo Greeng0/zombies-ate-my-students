@@ -15,12 +15,6 @@ namespace Entities
         Shooting
     }
 
-    public enum Powerups
-    {
-        Sneakers,
-        Silencer
-    }
-
     public struct moveme
     {
         public bool move;
@@ -68,12 +62,12 @@ namespace Entities
         
         public float scale = .1f;                   // Scale at which to render the model
 
-        public List<Powerups> PowerupsList;           // List of powerups obtained by the Hero
+        public List<Powerup> PowerupsList;           // List of powerups obtained by the Hero
         public Dictionary<Item, int> ItemsList;     // List of items obtained by the Hero
         public Dictionary<Weapon, int> WeaponsList; // List of weapons obtained by the Hero
         public Item SelectedItem;                   // Item which will be used when UseItem is called
         public Weapon EquippedWeapon;
-        public Powerups selectedPowerup;
+        public Powerup selectedPowerup;
         public int TimeSinceLastFire = 0;
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
@@ -105,7 +99,7 @@ namespace Entities
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
 
-            PowerupsList = new List<Powerups>();
+            PowerupsList = new List<Powerup>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
          //   AddWeapon(new Weapon(WeaponType.Handgun9mm));
@@ -302,7 +296,7 @@ namespace Entities
 
         public void MoveForward()
         {
-            Position += (PowerupsList.Contains(Powerups.Sneakers)) ? 2 * Velocity : Velocity;
+            Position += (PowerupsList.Contains(new Powerup(PowerupType.Sneakers))) ? 2 * Velocity : Velocity;
             notifyObservers();
         }
         public void MoveBackward()
