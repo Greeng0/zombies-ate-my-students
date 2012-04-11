@@ -67,7 +67,6 @@ namespace Entities
         public Dictionary<Weapon, int> WeaponsList; // List of weapons obtained by the Hero
         public Item SelectedItem;                   // Item which will be used when UseItem is called
         public Weapon EquippedWeapon;
-        public Powerup selectedPowerup;
         public int TimeSinceLastFire = 0;
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
