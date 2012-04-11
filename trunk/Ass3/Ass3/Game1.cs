@@ -288,8 +288,6 @@ namespace zombies
             z54.Position = new Vector3(110.1617f, 0, -78.243f);
             Zombie z55 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z55.Position = new Vector3(98.60985f, 0, -99.87992f);
-            Zombie z56 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z56.Position = new Vector3(125.8402f, 0, -105.1298f);
             Zombie z57 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z57.Position = new Vector3(154.5468f, 0, -104.6467f);
             Zombie z58 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
@@ -302,6 +300,9 @@ namespace zombies
             z61.Position = new Vector3(107.2373f, 0, -69.5914f);
             Zombie z62 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z62.Position = new Vector3(158.4751f, 0, -46.98093f);
+            // BOSS
+            Zombie z56 = new Zombie(500, 500, ZombieType.Boss, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z56.Position = new Vector3(125.8402f, 0, -105.1298f);
             zombies.Add(z1);
             zombies.Add(z1);
             zombies.Add(z2);

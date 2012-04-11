@@ -122,6 +122,11 @@ namespace Entities
 
             this.MaxVelocity = 0.04f;
             this.MaxAcceleration = 0.04f;
+            if (type == ZombieType.Boss)
+            {
+                this.MaxVelocity = 0.08f;
+                this.MaxAcceleration = 0.08f;
+            }
             ArriveRadius = 1;
             FleeRadius = 30;
             TimeToTarget = 0.070f;
@@ -140,6 +145,11 @@ namespace Entities
             zombieType = type;
             MeleeAttack = new Weapon(WeaponType.ZombieHands);
             RangedAttack = new Weapon(WeaponType.Vomit);
+            if (type == ZombieType.Boss)
+            {
+                MeleeAttack.FirePower *= 2;
+                RangedAttack.FirePower *= 2;
+            }
             this.AttackFunction = attackFunction;
             lastAttackTime = 0;
 
