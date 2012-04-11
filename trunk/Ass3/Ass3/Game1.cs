@@ -79,6 +79,7 @@ namespace zombies
 
         BasicEffect globalEffect;
         QuadTree LevelQuadTree;
+
         bool WireFrameCollisionBoxes = false;
         bool ShowQuadBoundaries = false;
         bool ShowCollisionBoxes = false;
@@ -947,6 +948,7 @@ namespace zombies
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(149.799f, 0f, -108.095f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(114.5107f, 0f, -106.8997f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(92.51266f, 0f, -107.1725f)));
+
             #endregion
 
             #region PathFinding Links
@@ -3358,7 +3360,7 @@ namespace zombies
         PathFindingNodes[283].Links.Add(new Link(PathFindingNodes[282]));
 
             #endregion
-        RecalculateNodes();
+            RecalculateNodes();
            
             #endregion
 
@@ -3369,6 +3371,11 @@ namespace zombies
             foreach (Box box in CollisionBoxes)
             {
                 LevelQuadTree.Insert(box);
+            }
+
+            foreach (PathFinding.Node node in PathFindingNodes)
+            {
+                LevelQuadTree.Insert(node);
             }
 
             globalEffect = new BasicEffect(GraphicsDevice);
