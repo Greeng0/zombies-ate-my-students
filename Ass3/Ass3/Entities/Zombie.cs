@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Entities;
 using SkinnedModel;
 using AI;
+using PathFinding;
 
 namespace Entities
 {
@@ -65,8 +66,9 @@ namespace Entities
         public float MaxRotationAcceleration;   //Maximum rotation acceleration for the Align behavior
         public float InterpolationSpeed;        //Speed at which the orientation occurs
         
-        public Hero Target;                   //Entity Target used for seeking, arriving, pursuing and such behaviors  
-        public Vector3 GroundTarget;            //Target used for wandering behavior and slot assignment.
+        public Hero Target;                     //Entity Target used for seeking, arriving, pursuing and such behaviors  
+        public Vector3 SlotTarget;              //Target used for slot assignment
+        public Vector3 GroundTarget;            //Target used for wandering behavior and pathfinding.
 
         public Weapon MeleeAttack;              //Weapon used for melee attacks
         public Weapon RangedAttack;             //Weapon used for ranged attacks
@@ -112,10 +114,18 @@ namespace Entities
         public int Targetslot() { return targetslot; }
         public int targetslot = -1;
 
+        //pathfinding
+        public List<PathFinding.Node> path = new List<PathFinding.Node>();
+        public bool onPath = false;
+        public Func<Vector3, Vector3, PathFinding.Node> astarGetter;
+        public AStar astar = new AStar();
+        public const int MIN_PATHFINDING_IDLE = 3000;
+        public int timeSinceAstar = 3000;
 
-        public Zombie(int health, int maxHealth, ZombieType type, ref Model modelwalk, ref Model modelatt, ref Model modelhurt, ref Model modeldie, Action<Entity, Entity> attackFunction)
+        public Zombie(int health, int maxHealth, ZombieType type, ref Model modelwalk, ref Model modelatt, ref Model modelhurt, ref Model modeldie, Action<Entity, Entity> attackFunction, Func<Vector3, Vector3, PathFinding.Node> astarGetter)
             : base()
         {
+            this.astarGetter = astarGetter;
             this.model = modelwalk;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
@@ -209,7 +219,9 @@ namespace Entities
         public void Update(GameTime gameTime)
         {
             lastAttackTime += gameTime.ElapsedGameTime.Milliseconds;
+            timeSinceAstar += gameTime.ElapsedGameTime.Milliseconds;
 
+            #region Animations
             if (animState == AnimationState.Idle)
             {
                 animationPlayer = animationPlayerwalk;
@@ -265,6 +277,7 @@ namespace Entities
                 animationPlayer.ResetClip();
             }
             animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+            #endregion
 
             PosState = EvaluateBehaviour();
             
@@ -289,6 +302,32 @@ namespace Entities
                     }
                 case EntityPositionState.SteeringArrive:
                     {
+                        if (onPath)
+                        {
+                            // see if we can get to second node in path
+                            if (path.Count > 1 && astarGetter(Position, path[1].position).Equals(Vector3.Zero))
+                            {
+                                GroundTarget = path[1].position;
+                                path.RemoveAt(0);
+                            }
+                            else if (path.Count > 0)
+                            {
+                                if (!astarGetter(Position, GroundTarget).Equals(Vector3.Zero))
+                                    GroundTarget = path[0].position;
+                                else
+                                    onPath = false;
+                            }
+                        }
+                        else if (!onPath) // try to get path
+                        {
+                            if (timeSinceAstar > MIN_PATHFINDING_IDLE)
+                            {
+                                path = GetAStarPath(GroundTarget);
+                                if (path != null)
+                                    onPath = true;
+                                timeSinceAstar = 0;
+                            }
+                        }
                         SteeringArrive(creep);
                         animState = AnimationState.Walking;
                         Position += Velocity;
@@ -301,6 +340,7 @@ namespace Entities
                             SteeringFlee(creep);
                             animState = AnimationState.Walking;
                             Position += Velocity;
+                            onPath = false;
                         }
                         break;
                     }
@@ -309,6 +349,7 @@ namespace Entities
                         SteeringWander();
                         animState = AnimationState.Walking;
                         Position += Velocity;
+                        onPath = false;
                         break;
                     }
                 case EntityPositionState.Attack:
@@ -319,6 +360,7 @@ namespace Entities
                             Attack(MeleeAttack);
                             lastAttackTime = 0;
                         }
+                        onPath = false;
                         break;
                     }
                 case EntityPositionState.RangedAttack:
@@ -329,6 +371,7 @@ namespace Entities
                             Attack(RangedAttack);
                             lastAttackTime = 0;
                         }
+                        onPath = false;
                         break;
                     }
                 default:
@@ -380,7 +423,7 @@ namespace Entities
                         if (targetslot >= 0)
                         {
                             // check if close enough to slot to start attacking
-                            if ((Position - GroundTarget).Length() < ArriveRadius)
+                            if ((Position - SlotTarget).Length() < ArriveRadius)
                             {
                                 return EntityPositionState.Attack;
                             }
@@ -390,6 +433,7 @@ namespace Entities
                                 Target.releaseSlot(this, targetslot);
                                 targetslot = -1;
                             }
+                            GroundTarget = SlotTarget;
                             return EntityPositionState.SteeringArrive;
                         }
                         // zombie has no slot, try to attack or reserve a slot
@@ -401,6 +445,7 @@ namespace Entities
                         if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
                         {
                             targetslot = Target.reserveSlot(this);
+                            GroundTarget = Target.Position;
                             return EntityPositionState.SteeringArrive;
                         }
                         
@@ -413,7 +458,7 @@ namespace Entities
                         if (targetslot >= 0)
                         {
                             // check if close enough to slot to start attacking
-                            if ((Position - GroundTarget).Length() < ArriveRadius)
+                            if ((Position - SlotTarget).Length() < ArriveRadius)
                             {
                                 return EntityPositionState.Attack;
                             }
@@ -423,6 +468,8 @@ namespace Entities
                                 Target.releaseSlot(this, targetslot);
                                 targetslot = -1;
                             }
+                            GroundTarget = SlotTarget;
+                            creep = true;
                             return EntityPositionState.SteeringArrive;
                         }
                         // zombie has no slot, try to attack or reserve a slot
@@ -434,6 +481,7 @@ namespace Entities
                         if ((Position - Target.Position).Length() < MAX_PROJECTILE_DISTANCE)
                         {
                             targetslot = Target.reserveSlot(this);
+                            GroundTarget = Target.Position;
                             return EntityPositionState.SteeringArrive;
                         }
 
@@ -750,10 +798,28 @@ namespace Entities
             }
         }
 
+        // Get A* path. If anything at all is wrong, ABORT
+        private List<PathFinding.Node> GetAStarPath(Vector3 destination)
+        {
+            if (astarGetter(Position, destination).Equals(Vector3.Zero))
+            {
+                return null;
+            }
+            
+            astar.Destination = astarGetter(destination, Vector3.Up);
+            if (astar.Destination == null)
+                return null;
+            PathFinding.Node o = astarGetter(Position, Vector3.Up);
+            if (o == null)
+                return null;
+            astar.Origin = o;
+            return astar.GetShortestPath();
+        }
+
         //code for flanking
         public void Notify(Vector3 value)
         {
-            GroundTarget = value;
+            SlotTarget = value;
         }
     }
 }

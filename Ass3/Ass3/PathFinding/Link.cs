@@ -7,7 +7,7 @@ using System.Text;
 namespace PathFinding
 {
     //Link class used to join nodes together
-    class Link
+    public class Link
     {
         public Node node; //Linked node
         public float weight;//Weight value for this link
