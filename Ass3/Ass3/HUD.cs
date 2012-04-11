@@ -400,13 +400,13 @@ namespace zombies
 
 
 
-            out2 += "\n" + fires;
-    
-            out2 += "\n" + meds;
-          out2 += "\n" + keyss;
+            out2 = "    " + fires;
+
+            out2 += "            " + meds;
+            out2 += "            " + keyss;
 
 
-         pos2 = new Vector2(400, 100);
+         pos2 = new Vector2(400, 80);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
 
