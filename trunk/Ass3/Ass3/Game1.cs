@@ -137,7 +137,7 @@ namespace zombies
         //sound
         Sounds.Sounds sound;
 
-
+        int fireDamageDelay = 0;
         bool released = true;
 
 
@@ -3929,7 +3929,7 @@ namespace zombies
             }
 
 
-            if (keyboard.IsKeyDown(Keys.Space))
+            if (keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 CheckCollisions(true);
             }
@@ -3957,7 +3957,7 @@ namespace zombies
             FireEmitter3.UpdateEmitter(gameTime);
             FireEmitter4.UpdateEmitter(gameTime);
 
-            if (keyboard.IsKeyDown(Keys.Space))
+            if (keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 sound.playExtinguisher();
                 ChemicalsEmitter.Start();            
@@ -3969,7 +3969,8 @@ namespace zombies
                 ChemicalsEmitter.Stop();
             }
 
-
+            if (fireDamageDelay > 0)
+                fireDamageDelay -= 1;
 
             ChemicalsEmitter.UpdateEmitter(gameTime);
             ChemicalsEmitter.particleGroups[0].controller.Velocity = Player.Velocity / (Player.Velocity.Length() * 16f);
@@ -4003,9 +4004,13 @@ namespace zombies
                 if (c != null)
                 {
                     ResolveStaticCollision(c, Player, heroSphere);
-                    if(((Box)p).Tag == "Fire1" || ((Box)p).Tag == "Fire2" || ((Box)p).Tag == "Fire3" || ((Box)p).Tag == "Fire4")
+                    if(fireDamageDelay <=0)
                     {
-                        Player.TakeDamage(25);
+                        if(((Box)p).Tag == "Fire1" || ((Box)p).Tag == "Fire2" || ((Box)p).Tag == "Fire3" || ((Box)p).Tag == "Fire4")
+                        {
+                            Player.TakeDamage(25);
+                            fireDamageDelay = 5;
+                        }
                     }
                 }
             }
