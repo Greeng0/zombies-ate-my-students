@@ -214,12 +214,12 @@ namespace zombies
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                Player.HealthPoints = 200;
-                foreach (Zombie z in zombies)
-                    z.animState = Entity.AnimationState.Idle;
-            }
+            //if (mouseState.LeftButton == ButtonState.Pressed)
+            //{
+            //    Player.HealthPoints = 200;
+            //    foreach (Zombie z in zombies)
+            //        z.animState = Entity.AnimationState.Idle;
+            //}
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
@@ -395,13 +395,11 @@ namespace zombies
 
             CheckCollisions();
 
-
             if (Player.Stance == AnimationStance.Shooting)//if shooting, check ray collisison
             {
                 CheckRayCollisions();
             }
             
-
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
            
@@ -589,7 +587,7 @@ namespace zombies
                             if ((z.Position - actionCaster.Position).Length() < weapon.Range)
                             {
                                 BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                                if (bs.Intersects(ray) != null)
+                                if (ray.Intersects(bs) != null)
                                     z.TakeDamage(weapon.FirePower);
                             }
                         }
@@ -611,7 +609,7 @@ namespace zombies
                         if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
                         {
                             BoundingSphere bs = new BoundingSphere(Player.Position, Player.modelRadius);
-                            if (bs.Intersects(ray) != null)
+                            if (ray.Intersects(bs) != null)
                                 Player.TakeDamage(weapon.FirePower);
                         }
                         break;
@@ -633,17 +631,20 @@ namespace zombies
         private void DoGunAttack(Weapon weapon, Entity actionCaster)
         {
             // find closest zombie, if any, in the line of fire and have him take the damage
-            Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+            Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
             Zombie closestVictim = null;
-            float closestIntersect = 100;
+            float? closestIntersect = 100;
             foreach (Zombie z in zombies)
             {
                 if ((z.Position - actionCaster.Position).Length() < weapon.Range)
                 {
                     BoundingSphere bs = new BoundingSphere(z.Position, z.modelRadius);
-                    float? intersection = bs.Intersects(ray);
+                    float? intersection = ray.Intersects(bs);
                     if (intersection != null && intersection < closestIntersect)
+                    {
+                        closestIntersect = intersection;
                         closestVictim = z;
+                    }
                 }
             }
 
