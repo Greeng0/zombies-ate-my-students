@@ -233,7 +233,7 @@ namespace zombies
             //sneakerModel = Content.Load<Model>("key");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
-            magnum.Position = new Vector3(239.8962f, 0, 46.52339f);
+            magnum.Position = new Vector3(200f, 0, 0);
             socom = new Weapon(WeaponType.Handgun9mm, ref handgunModel);
             socom.Position = new Vector3(293.3976f, 0, 123.4541f);
             silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
