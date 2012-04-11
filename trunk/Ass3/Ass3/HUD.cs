@@ -64,10 +64,7 @@ namespace zombies
         Texture2D slot4;
         Texture2D slot5;
 
-        Texture2D silencer;
-        Texture2D shoes;
-
-
+     
         //adding their rectangles
 
         Rectangle slot1rec = new Rectangle(150, 10, 70, 70);
@@ -76,9 +73,16 @@ namespace zombies
         Rectangle slot4rec = new Rectangle(510, 10, 70, 70);
         Rectangle slot5rec = new Rectangle(630, 10, 70, 70);
 
+
+        //powerups
+        Texture2D silencer;
+        Texture2D shoes;
+
         Rectangle silencerrec = new Rectangle(750, 0, 70, 70);
         Rectangle shoerec = new Rectangle(750, 70, 70, 70);
 
+        bool drawsilencer = false;
+        bool drawshoes = false;
 
         bool drawselectedwep = false;
         Texture2D selectedwep;
@@ -266,6 +270,39 @@ namespace zombies
 
 
 
+
+
+            //choose to draw special weapons
+
+            if (p.PowerupsList.Count >= 2)
+            {
+                //draw both
+
+                drawshoes = true;
+                drawsilencer = true;
+
+            }
+            else if (p.PowerupsList.Count == 1)
+            {
+                //find out which to draw
+
+                if (p.PowerupsList.First().Type == Entities.PowerupType.Silencer)
+                {
+                    drawsilencer = true;
+                    drawshoes = false;
+                }
+                else
+                {
+                    drawshoes = true;
+                    drawsilencer = false;
+                }
+            }
+            else{
+
+                drawshoes = false;
+                drawsilencer = false;
+            }
+
         }
 
 
@@ -345,8 +382,11 @@ namespace zombies
                 spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
             }
   //draw powerups
-
+             if (drawsilencer)
+           
             spriteBatch.Draw(silencer, silencerrec, Color.White);
+
+             if (drawshoes)
             spriteBatch.Draw(shoes, shoerec, Color.White);
 
 

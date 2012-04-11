@@ -3380,7 +3380,7 @@ namespace zombies
 
 
 
-
+/*
 
             //testing code
             medkit1 = new Item(ItemType.MedPack);
@@ -3388,9 +3388,8 @@ namespace zombies
             Player.AddItem(medkit1);
 
 
-
-
-
+            */
+         
 
             base.LoadContent();
         }
@@ -3427,6 +3426,8 @@ namespace zombies
 
         protected override void Update(GameTime gameTime)
         {
+      
+
             #region Update hud
             HUD.ActiveHUD.chooseslots(ref Player);
             HUD.ActiveHUD.p = Player.Position;
