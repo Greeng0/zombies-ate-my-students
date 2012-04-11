@@ -227,7 +227,7 @@ namespace zombies
             silencerModel = Content.Load<Model>("Silencer");
             medkitModel = Content.Load<Model>("medkit");
             keyModel = Content.Load<Model>("Key");
-            extinguisherModel = Content.Load<Model>("Key");
+            extinguisherModel = Content.Load<Model>("Extinguisher");
             //sneakerModel = Content.Load<Model>("key");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
@@ -249,8 +249,8 @@ namespace zombies
             key2 = new Item(ItemType.Key, ref keyModel);
             extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
             extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
-
-          /*  PickupableObjects.Add(socom);
+/*
+            PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
             PickupableObjects.Add(sneakers);
@@ -260,8 +260,8 @@ namespace zombies
             PickupableObjects.Add(key1);
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
-            */
-            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
+         
+          */  Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
@@ -3441,14 +3441,14 @@ namespace zombies
             FireEmitter4.Start();
 
           
-            /*
+            
             //testing code
             medkit1 = new Item(ItemType.Key);
             medkit1.model = Content.Load<Model>("MedKit");
             medkit1.Position = Player.Position- new Vector3(10,0,20);
             PickupableObjects.Add(medkit1);
            
-            */
+           
          
  /*
 
@@ -4474,7 +4474,7 @@ namespace zombies
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(400) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
+                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(4) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
