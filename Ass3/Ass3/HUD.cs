@@ -160,14 +160,14 @@ namespace zombies
            
             if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm)
             {
-                selectedweprec.X = slot1rec.X-5;
-                selectedweprec.Y = slot1rec.Y-5;
+                selectedweprec.X = slot1rec.X-10;
+                selectedweprec.Y = slot1rec.Y-10;
             }
             else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
             {
                 //inset green outline on second slot
-                selectedweprec.X = slot2rec.X - 5;
-                selectedweprec.Y = slot2rec.Y - 5;
+                selectedweprec.X = slot2rec.X - 10;
+                selectedweprec.Y = slot2rec.Y - 10;
             }
         
             }
@@ -178,8 +178,8 @@ namespace zombies
 
            if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm )
            {
-               selectedweprec.X = slot1rec.X - 5;
-               selectedweprec.Y = slot1rec.Y - 5;
+               selectedweprec.X = slot1rec.X - 10;
+               selectedweprec.Y = slot1rec.Y - 10;
                 slot1 = gun;
                 slot2 = empty;
 
@@ -188,16 +188,16 @@ namespace zombies
             {
                 slot1 = empty;
                 slot2 = gun2;
-                selectedweprec.X = slot2rec.X-5;
-                selectedweprec.Y = slot2rec.Y-5;
+                selectedweprec.X = slot2rec.X-10;
+                selectedweprec.Y = slot2rec.Y-10;
             }
             }
                 else
             {
                 slot1 = empty;
                 slot2 = empty;
-                selectedweprec.X = slot1rec.X - 5;
-                selectedweprec.Y = slot1rec.Y - 5;
+                selectedweprec.X = slot1rec.X - 10;
+                selectedweprec.Y = slot1rec.Y - 10;
                 drawselectedwep = false;
             } 
         }
@@ -270,12 +270,10 @@ namespace zombies
              spriteBatch.Draw(slot5, slot5rec, Color.White);
 
 
-             Rectangle newrec = selectedweprec;
-             newrec.X -= 5;
-             newrec.Y -= 5;
+          
              if (drawselectedwep)
              {
-                 spriteBatch.Draw(selectedwep, newrec, Color.White);
+                 spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
              }
             
 

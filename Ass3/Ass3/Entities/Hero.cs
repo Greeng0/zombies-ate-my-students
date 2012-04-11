@@ -267,7 +267,7 @@ namespace Entities
 
         public void SwitchNextWeapon()
         {
-            if (WeaponsList != null)
+            if (EquippedWeapon != null)
             {
                 if (EquippedWeapon == WeaponsList.First().Key)
                 {
