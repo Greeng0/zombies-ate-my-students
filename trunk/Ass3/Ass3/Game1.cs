@@ -225,7 +225,7 @@ namespace zombies
             magnumModel = Content.Load<Model>("Magnum");
             handgunModel = Content.Load<Model>("socom9mm");
             silencerModel = Content.Load<Model>("Silencer");
-            medkitModel = Content.Load<Model>("medkit");
+            medkitModel = Content.Load<Model>("MedKit");
             keyModel = Content.Load<Model>("Key");
             extinguisherModel = Content.Load<Model>("Extinguisher");
             //sneakerModel = Content.Load<Model>("key");
@@ -249,19 +249,19 @@ namespace zombies
             key2 = new Item(ItemType.Key, ref keyModel);
             extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
             extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
-/*
+
             PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
-            PickupableObjects.Add(sneakers);
+            //PickupableObjects.Add(sneakers);
             PickupableObjects.Add(medkit1);
             PickupableObjects.Add(medkit2);
             PickupableObjects.Add(medkit3);
             PickupableObjects.Add(key1);
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
-         
-          */  Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
+            
+            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
@@ -4615,12 +4615,21 @@ namespace zombies
 
         private void DrawModel(Item ent)
         {
+            float scale = 1;
+
+            if (ent.itemType == ItemType.Extinguisher)
+                scale = 4;
+            else if (ent.itemType == ItemType.Key)
+                scale = 2;
+            else if (ent.itemType == ItemType.MedPack)
+                scale = 400;
+
             // Render the skinned mesh
             foreach (ModelMesh mesh in ent.model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(4) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
+                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(scale) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
