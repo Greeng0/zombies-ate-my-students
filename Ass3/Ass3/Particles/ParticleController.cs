@@ -186,6 +186,7 @@ namespace Particles
 
             newCtrl = (ParticleController)this.MemberwiseClone();
 
+            newCtrl.lifeSpan = this.lifeSpan;
             newCtrl.directionOffset = new Vector3(this.directionOffset.X, this.directionOffset.Y, this.directionOffset.Z);
             newCtrl.directionRange = new Vector3(this.directionRange.X, this.directionRange.Y, this.directionRange.Z);
             newCtrl.InitialPositionOffset = new Vector3(this.InitialPositionOffset.X, this.InitialPositionOffset.Y, this.InitialPositionOffset.Z);
