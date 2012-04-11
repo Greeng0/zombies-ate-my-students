@@ -37,8 +37,6 @@ namespace zombies
 
         #region PathFinding
 
-        bool DrawPFNodes = true;
-
         List<PathFinding.Node> PathFindingNodes = new List<PathFinding.Node>();
         VertexPositionColor[] vpc;
         //Total Link counts for graph nodes
@@ -84,6 +82,7 @@ namespace zombies
         bool WireFrameCollisionBoxes = false;
         bool ShowQuadBoundaries = false;
         bool ShowCollisionBoxes = false;
+        bool ShowPathFindingGraph = false;
 
         Hero Player;
         List<Zombie> zombies;
@@ -165,7 +164,7 @@ namespace zombies
             frontViewport.MaxDepth = .8f;
 
             hud = new HUD(this, Content, graphics);
-            //this.Components.Add(hud);
+            this.Components.Add(hud);
 
             zombies = new List<Zombie>();
             fireHazards = new List<Box>();
@@ -659,6 +658,8 @@ namespace zombies
 
             #region Tile Graph Node Positions & Links
 
+            #region PathFinding Nodes
+            
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(-15.35164f, 0, -16.44704f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(0.09557578f, 0f, -20.07885f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(14.09468f, 0f, -18.19448f)));
@@ -943,7 +944,9 @@ namespace zombies
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(149.799f, 0f, -108.095f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(114.5107f, 0f, -106.8997f)));
             PathFindingNodes.Add(new PathFinding.Node(new Vector3(92.51266f, 0f, -107.1725f)));
+            #endregion
 
+            #region PathFinding Links
             PathFindingNodes[0].Links.Add(new Link(PathFindingNodes[1]));
             PathFindingNodes[1].Links.Add(new Link(PathFindingNodes[0]));
             PathFindingNodes[0].Links.Add(new Link(PathFindingNodes[2]));
@@ -3351,6 +3354,7 @@ namespace zombies
         PathFindingNodes[282].Links.Add(new Link(PathFindingNodes[283]));
         PathFindingNodes[283].Links.Add(new Link(PathFindingNodes[282]));
 
+            #endregion
         RecalculateNodes();
            
             #endregion
@@ -3454,10 +3458,10 @@ namespace zombies
 
             if(keyboard.IsKeyDown(Keys.RightShift))
             {
-                //modifier = 10;
+                modifier = 10;
             }
                         
-            //Rotate World with Arrow Keys
+            /*//Rotate World with Arrow Keys
             /*if (keyboard.IsKeyDown(Keys.K))
             {
                 CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, modifier);
@@ -3512,6 +3516,11 @@ namespace zombies
             }
              */
 
+            #endregion
+            #region PathFindingNodeControls
+
+
+            /*//PathFinding Node Controls
             if (keyboard.IsKeyDown(Keys.Y) && (ButtonTimer <= 0 || keyboard.IsKeyDown(Keys.RightShift)))
             {
                 currentNode -= modifier;
@@ -3548,7 +3557,7 @@ namespace zombies
                 ButtonTimer = 7;
             }
 
-            /*//Creation new PathFinding Nodes
+            //Creation new PathFinding Nodes
             if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
             {
 
@@ -3558,7 +3567,7 @@ namespace zombies
 
                 RecalculateNodes();
                 ButtonTimer = 10;
-            }*/
+            }
 
             //Creation new PathFinding Nodes
             if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
@@ -3573,8 +3582,12 @@ namespace zombies
                 RecalculateNodes();
                 ButtonTimer = 10;
             }
+            */
 
             #endregion
+
+            
+
             //Toggle Collision Boundaries Display
             if (keyboard.IsKeyDown(Keys.C) && ButtonTimer <= 0)
             {
@@ -3586,6 +3599,13 @@ namespace zombies
             if (keyboard.IsKeyDown(Keys.B) && ButtonTimer <= 0)
             {
                 ShowQuadBoundaries = !ShowQuadBoundaries;
+                ButtonTimer = 10;
+            }
+
+            //Toggle PathFinding Graph Display
+            if (keyboard.IsKeyDown(Keys.P) && ButtonTimer <= 0)
+            {
+                ShowPathFindingGraph = !ShowPathFindingGraph;
                 ButtonTimer = 10;
             }
 
@@ -4066,7 +4086,7 @@ namespace zombies
             #region Path Finding Helpers
 
 
-            if (DrawPFNodes)
+            if (ShowPathFindingGraph)
             {
                 for (int i = 0; i < PathFindingNodes.Count; i++)
                 {
@@ -4074,7 +4094,6 @@ namespace zombies
                     DrawPathFindingNode(NodeModel, Matrix.CreateTranslation(PathFindingNodes[i].position) * world, globalEffect.View, globalEffect.Projection);
                 }
 
-                RecalculateNodes();
                 globalEffect.LightingEnabled = false;
                 globalEffect.CurrentTechnique.Passes[0].Apply();
                 //Draw Links between nodes
@@ -4084,7 +4103,7 @@ namespace zombies
                 VertexDeclaration VertexDecl = new VertexDeclaration(new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0), new VertexElement(12, VertexElementFormat.Color, VertexElementUsage.Color, 0));
                 VertexBuffer vertexBuffer;
 
-                /*if (LinkLines.Length > 0)
+                if (LinkLines.Length > 0)
                 {
                     vertexBuffer = new VertexBuffer(GraphicsDevice, VertexDecl, LinkLines.Length, BufferUsage.None);
                     vertexBuffer.SetData<VertexPositionColor>(LinkLines);
@@ -4093,9 +4112,12 @@ namespace zombies
                     GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, 0, LinkLines.Length);
 
                     vertexBuffer.Dispose();
-                }*/
+                }
 
-                //Determine set of lines to draw for Graph Links
+                #region PathFinding links helper drawings
+                
+                
+                /*//Determine set of lines to draw for Graph Links
                 vpc = new VertexPositionColor[PathFindingNodes[currentNode].Links.Count * 2];
 
                 int vIndex = 0;
@@ -4138,9 +4160,9 @@ namespace zombies
                     vertexBuffer.Dispose();
                 }
 
-                vpc = null;
-                DrawPathFindingNode(StartNode, Matrix.CreateTranslation(PathFindingNodes[currentNode].position) * world, globalEffect.View, globalEffect.Projection,6);
-                DrawPathFindingNode(EndNode, Matrix.CreateTranslation(PathFindingNodes[DestinationNode].position) * world, globalEffect.View, globalEffect.Projection,6);
+                //DrawPathFindingNode(StartNode, Matrix.CreateTranslation(PathFindingNodes[currentNode].position) * world, globalEffect.View, globalEffect.Projection,6);
+                //DrawPathFindingNode(EndNode, Matrix.CreateTranslation(PathFindingNodes[DestinationNode].position) * world, globalEffect.View, globalEffect.Projection,6);
+                
 
                 BlendState blend = GraphicsDevice.BlendState;
                 DepthStencilState depthState = GraphicsDevice.DepthStencilState;
@@ -4154,6 +4176,8 @@ namespace zombies
 
                 GraphicsDevice.BlendState = blend;
                 GraphicsDevice.DepthStencilState = depthState;
+                */
+                #endregion
             }
 
             #endregion
