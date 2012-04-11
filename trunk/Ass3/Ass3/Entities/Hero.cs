@@ -97,6 +97,8 @@ namespace Entities
         public int meds = 0;
         public int keys = 0;
 
+        public int current = 0;
+
 
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
@@ -291,13 +293,18 @@ namespace Entities
         {
             if (SelectedItem != null)
             {
-                if (SelectedItem == ItemsList.First().Key)
+                if (SelectedItem.itemType == ItemType.Extinguisher)
                 {
-                    SelectedItem = ItemsList.Last().Key;
+                    current = 1;
                 }
-                else
+                else if (SelectedItem.itemType == ItemType.Key)
                 {
-                    SelectedItem = ItemsList.First().Key;
+                    current = 2;
+                }
+
+                else if (SelectedItem.itemType == ItemType.MedPack)
+                {
+                    current = 0;
                 }
             }
         }
