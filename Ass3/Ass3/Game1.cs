@@ -271,11 +271,6 @@ namespace zombies
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction, ref fireext);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
-            //add weapons
-            Player.AddWeapon(magnum);
-            Player.AddWeapon(socom);
-            //Player.EquippedWeapon = magnum;
-
             #region Zombie placement
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z1.Position = new Vector3(301.519f, 0, 145.7045f);
