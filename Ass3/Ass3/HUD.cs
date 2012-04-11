@@ -73,6 +73,11 @@ namespace zombies
         Rectangle slot4rec = new Rectangle(510, 10, 70, 70);
         Rectangle slot5rec = new Rectangle(630, 10, 70, 70);
 
+        bool drawfire = false;
+        bool drawmed = false;
+
+        bool drawkeys = false;
+    
 
         //powerups
         Texture2D silencer;
@@ -92,7 +97,7 @@ namespace zombies
         Texture2D selectedeq;
         Rectangle selectedeqrec = new Rectangle(0, 0, 90, 90);
 
-
+     
 
         Texture2D letter;
         Texture2D a;
@@ -164,9 +169,9 @@ namespace zombies
             //fill slots with inventory
             slot1 = gun;
             slot2 = gun2;
-            slot3 = med;
+            slot3 = fire;
             slot4 = keys;
-            slot5 = fire;
+            slot5 = med;
 
 
 
@@ -244,27 +249,31 @@ namespace zombies
             {
                 drawselectedeq = true;
 
+            // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
+
                 if (p.SelectedItem.itemType == Entities.ItemType.Extinguisher)
                 {
                     selectedeqrec.X = slot3rec.X - 10;
                     selectedeqrec.Y = slot3rec.Y - 10;
                     slot3 = fire;
+                    drawfire = true;
                 }
 
-                else if (p.SelectedItem.itemType == Entities.ItemType.Key)
+                if (p.SelectedItem.itemType == Entities.ItemType.Key)
                 {
                     selectedeqrec.X = slot4rec.X - 10;
                     selectedeqrec.Y = slot4rec.Y - 10;
                     slot4 = keys;
+                    drawkeys = true;
                 }
-                else if (p.SelectedItem.itemType == Entities.ItemType.MedPack)
+              if (p.SelectedItem.itemType == Entities.ItemType.MedPack)
                 {
                     selectedeqrec.X = slot5rec.X - 10;
                     selectedeqrec.Y = slot5rec.Y - 10;
                     slot5 = med;
+                    drawmed = true;
                 }
-                else
-                    drawselectedeq = false;
+            
 
             }
 
@@ -381,6 +390,14 @@ namespace zombies
             {
                 spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
             }
+
+
+
+
+
+
+
+
   //draw powerups
              if (drawsilencer)
            
