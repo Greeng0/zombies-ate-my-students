@@ -220,7 +220,12 @@ namespace Entities
                 ElapsedDamagedTime += gameTime.ElapsedGameTime.Milliseconds;
                 if (ElapsedDamagedTime < DAMAGE_ANIM_LENGTH)
                 {
-                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    if (animationPlayer.currentKeyframe < animationPlayer.CurrentClip.Keyframes.Count() - 1)
+                    {
+                        animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    }
+                    else
+                        animationPlayer.ResetClip();
                     return;
                 }
                 ElapsedDamagedTime = 0;
@@ -232,7 +237,10 @@ namespace Entities
                 ElapsedDeathTime += gameTime.ElapsedGameTime.Milliseconds;
                 if (ElapsedDeathTime < DEATH_ANIM_LENGTH)
                 {
-                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    if (animationPlayer.currentKeyframe < animationPlayer.CurrentClip.Keyframes.Count() - 1)
+                    {
+                        animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    }
                     return;
                 }
                 else
@@ -689,7 +697,14 @@ namespace Entities
         // Executes procedure for performing an attack
         private void Attack(Weapon weapon)
         {
-            SetOrientation(Position - Target.Position);
+            // Set velocity only as a direction vector
+            Velocity = Target.Position - Position;
+            Velocity.Normalize();
+            // Face towards target with no heuristic
+            EntityOrientationState originalState = OrState;
+            OrState = EntityOrientationState.None;
+            SetOrientation(Target.Position - Position);
+            OrState = originalState;
 
             if (lastAttackTime > weapon.Speed)
             {

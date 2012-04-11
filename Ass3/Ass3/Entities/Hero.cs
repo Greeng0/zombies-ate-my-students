@@ -160,7 +160,7 @@ namespace Entities
             TimeSinceLastFire += gameTime.ElapsedGameTime.Milliseconds;
             TimeSinceLastUse += gameTime.ElapsedGameTime.Milliseconds;
 
-           if (animState == AnimationState.Idle)
+            if (animState == AnimationState.Idle)
             {
                 animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
@@ -176,7 +176,12 @@ namespace Entities
                 ElapsedDamagedTime += gameTime.ElapsedGameTime.Milliseconds;
                 if (ElapsedDamagedTime < DAMAGE_ANIM_LENGTH)
                 {
-                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    if (animationPlayer.currentKeyframe < animationPlayer.CurrentClip.Keyframes.Count() - 1)
+                    {
+                        animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    }
+                    else
+                        animationPlayer.ResetClip();
                     return;
                 }
                 ElapsedDamagedTime = 0;
@@ -188,7 +193,10 @@ namespace Entities
                 ElapsedDeathTime += gameTime.ElapsedGameTime.Milliseconds;
                 if (ElapsedDeathTime < DEATH_ANIM_LENGTH)
                 {
-                    animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    if (animationPlayer.currentKeyframe < animationPlayer.CurrentClip.Keyframes.Count() - 1)
+                    {
+                        animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                    }
                     return;
                 }
                 else

@@ -139,16 +139,14 @@ namespace zombies
             }
           //update letter
 
-            if (playerhealth > 85)
+            if (playerhealth > 75)
                 letter = a;
-            else if (playerhealth > 65)
+            else if (playerhealth > 50)
                 letter = b;
-            else if (playerhealth > 45)
+            else if (playerhealth > 25)
                 letter = c;
-            else if (playerhealth > 30)
-                letter = d;
             else if (playerhealth > 15)
-                letter = e;
+                letter = d;
             else
                 letter = f;
             base.Update(gameTime);
