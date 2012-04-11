@@ -120,8 +120,8 @@ namespace Entities
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
 
-            this.MaxVelocity = 0.02f;
-            this.MaxAcceleration = 0.02f;
+            this.MaxVelocity = 0.04f;
+            this.MaxAcceleration = 0.04f;
             ArriveRadius = 1;
             FleeRadius = 30;
             TimeToTarget = 0.070f;
