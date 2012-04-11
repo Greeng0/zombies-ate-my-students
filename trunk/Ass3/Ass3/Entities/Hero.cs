@@ -158,15 +158,7 @@ namespace Entities
             TimeSinceLastFire += gameTime.ElapsedGameTime.Milliseconds;
             TimeSinceLastUse += gameTime.ElapsedGameTime.Milliseconds;
 
-            if (Stance == AnimationStance.Shooting)
-            {
-                animationPlayer = animationPlayerhurt;
-
-                animationPlayer.ResetClip();
-
-                animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
-            }
-            else if (animState == AnimationState.Idle)
+           if (animState == AnimationState.Idle)
             {
                 animationPlayer = animationPlayerwalk;
                 animationPlayer.ResetClip();
