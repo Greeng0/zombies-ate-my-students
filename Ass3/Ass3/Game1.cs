@@ -1269,7 +1269,7 @@ namespace zombies
 
               //  if it has a silencer
 
-                if (Player.PowerupsList.Contains(Powerups.Silencer) && hero.EquippedWeapon == socom)
+                if (Player.selectedPowerup == Powerups.Silencer && hero.EquippedWeapon == socom)
                 {
                     // Render the skinned mesh
                     foreach (ModelMesh mesh in Silencer.Meshes)

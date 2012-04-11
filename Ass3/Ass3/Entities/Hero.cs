@@ -73,10 +73,12 @@ namespace Entities
         public Dictionary<Weapon, int> WeaponsList; // List of weapons obtained by the Hero
         public Item SelectedItem;                   // Item which will be used when UseItem is called
         public Weapon EquippedWeapon;
+        public Powerups selectedPowerup;
         public int TimeSinceLastFire = 0;
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
        
+        
 
 
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
@@ -282,7 +284,14 @@ namespace Entities
         }
         public void SwitchNextItem()
         {
-           
+            if (SelectedItem == ItemsList.First().Key)
+            {
+                SelectedItem = ItemsList.Last().Key;
+            }
+            else
+            {
+                SelectedItem = ItemsList.First().Key;
+            }
         }
 
         public void MoveForward()
