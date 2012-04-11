@@ -14,7 +14,7 @@ namespace Sounds
     
       //soundeffects
         private SoundEffect gun ;
-     
+        SoundEffectInstance guninst;
 
         private ContentManager content;
 
@@ -28,10 +28,11 @@ namespace Sounds
     
         public void playgun()
         {
-            
-                SoundEffectInstance g = gun.CreateInstance();
-                g.Play();
-              
+            if (guninst == null || guninst.State == SoundState.Stopped)
+            {
+            guninst = gun.CreateInstance();
+            guninst.Play();
+            }
         }
 
 
