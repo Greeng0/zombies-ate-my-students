@@ -67,6 +67,10 @@ namespace zombies
         const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 15;
 
+
+        //sound
+        Sounds.Sounds sound;
+
         public Game1()
         {
             mouseState = new MouseState();
@@ -120,6 +124,12 @@ namespace zombies
       
         protected override void LoadContent()
         {
+            //sounds
+       
+            sound = new Sounds.Sounds(this, Content);
+            sound.LoadSounds();
+            this.Components.Add(sound);
+
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
           
@@ -417,6 +427,7 @@ namespace zombies
             mouseState = Mouse.GetState();
             if (mouseState.LeftButton == ButtonState.Pressed)
            {
+               sound.playgun();
                Player.HealthPoints = 0;
                 foreach (Zombie z in zombies)
                     z.animState = Entity.AnimationState.Attacking;
@@ -828,6 +839,15 @@ namespace zombies
 
         private void DoGunAttack(Weapon weapon, Entity actionCaster)
         {
+
+            //do soundeffect attached
+            if (weapon.weaponType == WeaponType.Handgun9mm)
+            { 
+                //need to check the time
+                    sound.playgun();
+            }
+           
+   
             // find closest zombie, if any, in the line of fire and have him take the damage
             Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
             Zombie closestVictim = null;
