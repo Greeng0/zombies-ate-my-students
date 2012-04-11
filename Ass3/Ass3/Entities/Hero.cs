@@ -271,11 +271,11 @@ namespace Entities
 
         public void SwitchNextWeapon()
         {
-            // TODO
+            EquippedWeapon = WeaponsList.Last().Key;
         }
         public void SwitchNextItem()
         {
-            // TODO
+            EquippedWeapon = WeaponsList.First().Key;
         }
 
         public void MoveForward()

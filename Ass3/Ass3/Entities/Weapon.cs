@@ -52,7 +52,7 @@ namespace Entities
                         Speed = 2000;
                         SoundRadius = 50;
                         Range = 40;
-                        offset = new Vector3(-1.8f, 4.5f, -1f);
+                        offset = new Vector3(-2.3f, 4.5f, -1f);
                         
                         break;
                     }
