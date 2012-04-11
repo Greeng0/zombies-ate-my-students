@@ -458,7 +458,7 @@ namespace Entities
         private void Die()
         {
             animState = AnimationState.Dying;
-            if (targetslot >= 0)
+            if (Target != null && targetslot >= 0)
                 Target.releaseSlot(this, targetslot);
         }
 
