@@ -21,7 +21,7 @@ namespace Entities
         public int FirePower;          // damage done by the weapon
         public float SoundRadius;      // distance from the wielder at which zombies may be alerted
         public float Range;            // distance at which the weapon can do damage
-
+       
         public Weapon(WeaponType type)
         {
             weaponType = type;

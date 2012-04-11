@@ -104,7 +104,7 @@ namespace Entities
             PowerupsList = new List<Powerups>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
-            AddWeapon(new Weapon(WeaponType.Handgun9mm));
+         //   AddWeapon(new Weapon(WeaponType.Handgun9mm));
 
             this.ActionFunction = actionFunction;
 

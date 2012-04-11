@@ -60,6 +60,15 @@ namespace zombies
         List<Zombie> zombies;
         List<Box> fireHazards;
 
+
+        List<Weapon> weapons;
+        //weapon models
+        Weapon magnum;
+        Weapon Silencer;
+        Weapon socom;
+        Weapon socomsilencer;
+
+
         int scrollWheel = 0;
         int scrollWheelLow = 0;
         int scrollWheelHigh = 500;
@@ -143,9 +152,34 @@ namespace zombies
             HeroWalk = Content.Load<Model>("HeroWalk");
             HeroHurt = Content.Load<Model>("HeroHurt");
             HeroDie = Content.Load<Model>("HeroDead");
+            //weapon models
 
+            magnum = new Weapon(WeaponType.Magnum);
+            magnum.model = Content.Load<Model>("Magnum");
+
+            socom = new Weapon(WeaponType.Handgun9mm);
+            socom.model = Content.Load<Model>("Silencer");
+
+           /* magnum = new Weapon(WeaponType.Magnum);
+            magnum.model = Content.Load<Model>("Magnum");
+
+            magnum = new Weapon(WeaponType.Magnum);
+            magnum.model = Content.Load<Model>("Magnum");
+           */
+
+
+           
+          
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
+
+            //add weapons
+            Player.AddWeapon(magnum);
+            Player.AddWeapon(socom);
+            Player.EquippedWeapon = magnum;
+
+
+
 
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
@@ -1033,7 +1067,7 @@ namespace zombies
         private void DrawModel(Hero hero)
         {
             Matrix[] bones = hero.animationPlayer.GetSkinTransforms();
-
+            
 
             //draw rays if player in shooting stance
             if (Player.Stance == AnimationStance.Shooting)
@@ -1046,6 +1080,31 @@ namespace zombies
              
 
             }
+            if (Player.EquippedWeapon != null)
+            {
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in hero.EquippedWeapon.model.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float)(hero.Rotation + Math.PI/2)) * Matrix.CreateScale(1) * Matrix.CreateTranslation(hero.Position);// 
+                      
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+
+
+                }
+            }
+
+
 
                 // Render the skinned mesh
                 foreach (ModelMesh mesh in hero.model.Meshes)
