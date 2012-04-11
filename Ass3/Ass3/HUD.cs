@@ -413,9 +413,8 @@ namespace zombies
 
             
               Vector2 pos2 = new Vector2(200, 100);
-           String out2 = " ";
-            if(fires>0)
-            out2 +=fires;
+           String out2 = "    ";
+     
 
             out2 += "            ";
             if(meds>0)
