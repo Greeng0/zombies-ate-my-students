@@ -176,7 +176,7 @@ namespace zombies
             //add weapons
             Player.AddWeapon(magnum);
             Player.AddWeapon(socom);
-            Player.EquippedWeapon = magnum;
+            Player.EquippedWeapon = socom;
 
 
 
@@ -1155,6 +1155,32 @@ namespace zombies
         {
             Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
             if (zombie.animationPlayer == zombie.animationPlayerattack)
+            {
+
+
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in zombie.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+
+                        effect.World = Matrix.CreateRotationY((float)(zombie.Rotation)) *
+                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.World = effect.World;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
+            }
+            else if (zombie.animationPlayer == zombie.animationPlayerhurt)
             {
 
 
