@@ -590,12 +590,14 @@ namespace zombies
                         break;
                 }
             }
-
-            if (walk)
-                Player.animState = Entity.AnimationState.Walking;
-            else if (Player.animState != Entity.AnimationState.Hurt)
-                Player.animState = Entity.AnimationState.Idle;        
            
+            if (walk)
+                    Player.animState = Entity.AnimationState.Walking;
+          
+            else if (Player.animState != Entity.AnimationState.Hurt)
+                Player.animState = Entity.AnimationState.Idle;
+           
+
             #endregion
          
             if (Player.Dead)
@@ -1040,26 +1042,49 @@ namespace zombies
                 globalEffect.Projection = Camera.ActiveCamera.Projection;
                 globalEffect.CurrentTechnique.Passes[0].Apply();
                 GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, Player.ray, 0, 1);
-            }
 
-
-            // Render the skinned mesh
-            foreach (ModelMesh mesh in hero.model.Meshes)
-            {
-                foreach (SkinnedEffect effect in mesh.Effects)
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in hero.model.Meshes)
                 {
-                    effect.World = Matrix.CreateRotationY((float)(hero.Rotation - Math.PI)) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);// 
-                    effect.SetBoneTransforms(bones);
-                    effect.View = Camera.ActiveCamera.View;
-                    effect.Projection = Camera.ActiveCamera.Projection;
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float)(hero.Rotation)) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);// 
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.Projection = Camera.ActiveCamera.Projection;
 
-                    effect.EnableDefaultLighting();
+                        effect.EnableDefaultLighting();
 
-                    effect.SpecularColor = new Vector3(0.25f);
-                    effect.SpecularPower = 16;
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
                 }
 
-                mesh.Draw();
+            }
+
+            else
+            {
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in hero.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float)(hero.Rotation - Math.PI)) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);// 
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
+
             }
         }
 
