@@ -268,132 +268,132 @@ namespace zombies
             Player.AddWeapon(magnum);
             Player.AddWeapon(socom);
             //Player.EquippedWeapon = magnum;
-            
 
-            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            #region Zombie placement
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z1.Position = new Vector3(301.519f, 0, 145.7045f);
-            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z2.Position = new Vector3(269.3711f, 0, 190.6429f);
-            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z3.Position = new Vector3(261.2204f, 0, 93.19714f);
-            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z4.Position = new Vector3(336.6563f, 0, 97.20895f);
-            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z5.Position = new Vector3(336.6563f, 0, 97.20895f);
-            Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z6.Position = new Vector3(329.1409f, 0, 131.5164f);
-            Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z7.Position = new Vector3(301.1594f, 0, 65.94746f);
-            Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z8.Position = new Vector3(328.5325f, 0, 25.91457f);
-            Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z9.Position = new Vector3(303.7029f, 0, 9.12639f);
-            Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z10.Position = new Vector3(317.9062f, 0, -3.754462f);
-            Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z11.Position = new Vector3(249.0774f, 0, 8.751559f);
-            Zombie z12 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z12 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z12.Position = new Vector3(249.0774f, 0, 8.751559f);
-            Zombie z13 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z13 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z13.Position = new Vector3(247.3187f, 0, -14.76119f);
-            Zombie z14 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z14 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z14.Position = new Vector3(258.4365f, 0, -18.24927f);
-            Zombie z15 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z15 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z15.Position = new Vector3(258.4365f, 0, -18.24927f);
-            Zombie z16 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z16 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z16.Position = new Vector3(239.0731f, 0, 60.01192f);
-            Zombie z17 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z17 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z17.Position = new Vector3(232.3299f, 0, -7.815142f);
-            Zombie z18 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z18 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z18.Position = new Vector3(183.7789f, 0, -19.10403f);
-            Zombie z19 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z19 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z19.Position = new Vector3(187.8999f, 0, -4.894011f);
-            Zombie z20 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z20 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z20.Position = new Vector3(188.1283f, 0, 9.704206f);
-            Zombie z21 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z21 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z21.Position = new Vector3(200.033f, 0, 2.194498f);
-            Zombie z22 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z22 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z22.Position = new Vector3(196.9581f, 0, 9.796185f);
-            Zombie z23 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z23 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z23.Position = new Vector3(185.8409f, 0, 99.64986f);
-            Zombie z24 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z24 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z24.Position = new Vector3(180.9995f, 0, 169.6039f);
-            Zombie z25 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z25 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z25.Position = new Vector3(167.7615f, 0, 172.059f);
-            Zombie z26 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z26 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z26.Position = new Vector3(122.0838f, 0, 144.119f);
-            Zombie z27 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z27 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z27.Position = new Vector3(123.5005f, 0, 176.1559f);
-            Zombie z28 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z28 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z28.Position = new Vector3(213.768f, 0, 135.7222f);
-            Zombie z29 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z29 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z29.Position = new Vector3(246.0834f, 0, 138.0532f);
-            Zombie z30 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z30 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z30.Position = new Vector3(214.1074f, 0, 171.7199f);
-            Zombie z31 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z31 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z31.Position = new Vector3(206.5015f, 0, 175.7075f);
-            Zombie z32 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z32 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z32.Position = new Vector3(165.1259f, 0, 88.55122f);
-            Zombie z33 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z33 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z33.Position = new Vector3(145.6952f, 0, 103.8975f);
-            Zombie z34 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z34 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z34.Position = new Vector3(135.175f, 0, 91.71438f);
-            Zombie z35 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z35 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z35.Position = new Vector3(208.605f, 0, 123.8601f);
-            Zombie z36 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z36 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z36.Position = new Vector3(62.17467f, 0, 206.7475f);
-            Zombie z37 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z37 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z37.Position = new Vector3(41.59457f, 0, 193.5849f);
-            Zombie z38 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z38 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z38.Position = new Vector3(28.12794f, 0, 176.6967f);
-            Zombie z39 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z39 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z39.Position = new Vector3(-5.158183f, 0, 177.9941f);
-            Zombie z40 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z40 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z40.Position = new Vector3(-19.26436f, 0, 180.8879f);
-            Zombie z41 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z41 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z41.Position = new Vector3(-18.53246f, 0, 204.0769f);
-            Zombie z42 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z42 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z42.Position = new Vector3(-8.234371f, 0, 206.5888f);
-            Zombie z43 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z43 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z43.Position = new Vector3(41.16431f, 0, 142.7086f);
-            Zombie z44 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z44 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z44.Position = new Vector3(24.07458f, 0, 113.5347f);
-            Zombie z45 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z45 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z45.Position = new Vector3(-13.25363f, 0, 102.294f);
-            Zombie z46 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z46 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z46.Position = new Vector3(-10.16963f, 0, 68.20435f);
-            Zombie z47 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z47 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z47.Position = new Vector3(57.56277f, 0, 78.36703f);
-            Zombie z48 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z48 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z48.Position = new Vector3(33.51163f, 0, 4.10241f);
-            Zombie z49 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z49 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z49.Position = new Vector3(64.64824f, 0, -2.653803f);
-            Zombie z50 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z50 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z50.Position = new Vector3(11.22738f, 0, -0.01383802f);
-            Zombie z51 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z51 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z51.Position = new Vector3(-5.455381f, 0, -17.11485f);
-            Zombie z52 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z52 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z52.Position = new Vector3(-12.90771f, 0, 3.014349f);
-            Zombie z53 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z53 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z53.Position = new Vector3(135.701f, 0, -78.65513f);
-            Zombie z54 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z54 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z54.Position = new Vector3(110.1617f, 0, -78.243f);
-            Zombie z55 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z55 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z55.Position = new Vector3(98.60985f, 0, -99.87992f);
-            Zombie z57 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z57 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z57.Position = new Vector3(154.5468f, 0, -104.6467f);
-            Zombie z58 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z58 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z58.Position = new Vector3(164.7363f, 0, -92.75577f);
-            Zombie z59 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z59 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z59.Position = new Vector3(166.331f, 0, -70.69667f);
-            Zombie z60 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z60 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z60.Position = new Vector3(136.4978f, 0, -66.72479f);
-            Zombie z61 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z61 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z61.Position = new Vector3(107.2373f, 0, -69.5914f);
-            Zombie z62 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z62 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z62.Position = new Vector3(158.4751f, 0, -46.98093f);
             // BOSS
-            Zombie z56 = new Zombie(500, 500, ZombieType.Boss, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z56 = new Zombie(500, 500, ZombieType.Boss, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);
             z56.Position = new Vector3(125.8402f, 0, -105.1298f);
             zombies.Add(z1);
             zombies.Add(z1);
@@ -458,7 +458,7 @@ namespace zombies
             zombies.Add(z60);
             zombies.Add(z61);
             zombies.Add(z62);
-            
+            #endregion
 
             #region Level Collision Detection
             CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
@@ -3494,6 +3494,74 @@ namespace zombies
             }
         }
 
+        // get closest feasible pathfinding node to the given position
+        public PathFinding.Node GetPathfindingNode(Vector3 position, Vector3 destination)
+        {
+            // perform super secret second purpose
+            if (destination != Vector3.Up)
+            {
+                // if path between positions is clear, return origin, else return up vector
+                if (CheckObstructions(position, destination))
+                    return new PathFinding.Node(Vector3.Up);
+                else
+                    return new PathFinding.Node(Vector3.Zero);
+            }
+            List<PathFinding.Node> possibleMatches = new List<PathFinding.Node>();
+            PathFinding.Node reachableNode = null;
+            float distanceToNode = 100;
+
+            LevelQuadTree.RetrieveNearbyObjects(position, ref possibleMatches, 2, null, 2);
+            foreach (PathFinding.Node node in possibleMatches)
+            {
+                float separatingDistance = (node.position - position).Length();
+                bool clearPath = true;
+
+                Ray ray = new Ray(position, Vector3.Normalize(node.position - position));
+                Sphere sphere = new Sphere(position, Vector3.Zero, 1);
+                List<Primitive> primitives = new List<Primitive>();
+                LevelQuadTree.RetrieveNearbyObjects(sphere, ref primitives);
+
+                foreach (Box box in primitives)
+                {
+                    BoundingBox bbox = new BoundingBox(
+                        new Vector3(box.Position.X - box.Size.X / 2, box.Position.Y - box.Size.Y / 2, box.Position.Z - box.Size.Z / 2),
+                        new Vector3(box.Position.X + box.Size.X / 2, box.Position.Y + box.Size.Y / 2, box.Position.Z + box.Size.Z / 2)
+                    );
+                    if (ray.Intersects(bbox) != null && ray.Intersects(bbox) < separatingDistance)
+                    {
+                        clearPath = false;
+                        break;
+                    }
+                }
+                if (clearPath && distanceToNode > separatingDistance)
+                {
+                    distanceToNode = separatingDistance;
+                    reachableNode = node;
+                }
+            }
+            return reachableNode;
+        }
+
+        // returns if there are any static obstructions between the two positions
+        private bool CheckObstructions(Vector3 position, Vector3 destination)
+        {
+            Ray ray = new Ray(position, Vector3.Normalize(destination - position));
+            Sphere sphere = new Sphere(position, Vector3.Zero, 1);
+            List<Primitive> primitives = new List<Primitive>();
+            LevelQuadTree.RetrieveNearbyObjects(sphere, ref primitives);
+
+            foreach (Box box in primitives)
+            {
+                BoundingBox bbox = new BoundingBox(
+                    new Vector3(box.Position.X - box.Size.X / 2, box.Position.Y - box.Size.Y / 2, box.Position.Z - box.Size.Z / 2),
+                    new Vector3(box.Position.X + box.Size.X / 2, box.Position.Y + box.Size.Y / 2, box.Position.Z + box.Size.Z / 2)
+                );
+                if (ray.Intersects(bbox) != null)
+                    return true;
+            }
+            return false;
+        }
+
         protected override void Update(GameTime gameTime)
         {
 
@@ -3859,6 +3927,8 @@ namespace zombies
                         Contact c = zombieSphere.Collides(p as Box);
                         if (c != null)
                         {
+                            if (z.BehaviouralState == BehaviourState.Wander)
+                                z.Velocity = Vector3.Cross( z.Velocity, Vector3.Up);
                             ResolveStaticCollision(c, z, zombieSphere);
                         }
                     }

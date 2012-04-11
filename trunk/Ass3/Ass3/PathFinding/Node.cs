@@ -9,7 +9,7 @@ using System.Collections;
 namespace PathFinding
 {
     //Vertex of a graph class
-    class Node
+    public class Node
     {
         public static int CurrentID;
         public Vector3 position; //Position of the vertex/Node
