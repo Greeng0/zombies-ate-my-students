@@ -1080,7 +1080,7 @@ namespace zombies
              
 
             }
-            if (Player.EquippedWeapon != null)
+            if (Player.Stance == AnimationStance.Shooting)
             {
                 // Render the skinned mesh
                 foreach (ModelMesh mesh in hero.EquippedWeapon.model.Meshes)
@@ -1104,8 +1104,31 @@ namespace zombies
                 }
             }
 
+            if (Player.animState == Entity.AnimationState.Hurt)
+            {
+
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in hero.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY((float)(hero.Rotation)) * Matrix.CreateScale(hero.scale) * Matrix.CreateTranslation(hero.Position);// 
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
 
 
+                }
+            }
+            else{
                 // Render the skinned mesh
                 foreach (ModelMesh mesh in hero.model.Meshes)
                 {
@@ -1123,8 +1146,8 @@ namespace zombies
                     }
 
                     mesh.Draw();
-                
 
+                }
             }
         }
 
