@@ -70,7 +70,9 @@ namespace Entities
         public int TimeSinceLastFire = 0;
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
-       
+
+
+        Item fireext;
         
 
 
@@ -100,19 +102,20 @@ namespace Entities
         public int current = 0;
 
 
-        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
+        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction,ref Item fire)
             : base()
         {
             this.model = modelwalk;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
+            fireext = fire;
 
             PowerupsList = new List<Powerup>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
          //   AddWeapon(new Weapon(WeaponType.Handgun9mm));
-
+            AddItem(fire);
             this.ActionFunction = actionFunction;
 
             //get animations
@@ -295,20 +298,23 @@ namespace Entities
             {
                 if (SelectedItem.itemType == ItemType.Extinguisher)
                 {
+                    SelectedItem.itemType = ItemType.Key;
                     current = 1;
                 }
-                else if (SelectedItem.itemType == ItemType.Key&& keys > 0)
+                else if (SelectedItem.itemType == ItemType.Key)
                 {
+                    SelectedItem.itemType = ItemType.MedPack;
                     current = 2;
                 }
 
-                else if (SelectedItem.itemType == ItemType.MedPack && meds > 0)
+                else if (SelectedItem.itemType == ItemType.MedPack )
                 {
+                    SelectedItem.itemType = ItemType.Extinguisher;
                     current = 0;
                 }
                 else
                 {
-                    current = 1; 
+                    current = 0; 
                 }
             }
         }
