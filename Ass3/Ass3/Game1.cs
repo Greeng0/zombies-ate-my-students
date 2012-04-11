@@ -226,9 +226,9 @@ namespace zombies
             handgunModel = Content.Load<Model>("socom9mm");
             silencerModel = Content.Load<Model>("Silencer");
             medkitModel = Content.Load<Model>("medkit");
-            keyModel = Content.Load<Model>("key");
-            extinguisherModel = Content.Load<Model>("key");
-            sneakerModel = Content.Load<Model>("key");
+            keyModel = Content.Load<Model>("Key");
+            extinguisherModel = Content.Load<Model>("Key");
+            //sneakerModel = Content.Load<Model>("key");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
             magnum.Position = new Vector3(239.8962f, 0, 66.52339f);
@@ -236,8 +236,8 @@ namespace zombies
             socom.Position = new Vector3(293.3976f, 0, 123.4541f);
             silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
             silencer.Position = new Vector3(-6.841653f, 0, 191.983f);
-            sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
-            sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
+            //sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
+           // sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
             medkit1 = new Item(ItemType.MedPack, ref medkitModel);
             medkit1.Position = new Vector3(335.4893f, 0, -14.48104f);
             medkit2 = new Item(ItemType.MedPack, ref medkitModel);
@@ -250,7 +250,7 @@ namespace zombies
             extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
             extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
 
-            PickupableObjects.Add(socom);
+          /*  PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
             PickupableObjects.Add(sneakers);
@@ -260,13 +260,13 @@ namespace zombies
             PickupableObjects.Add(key1);
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
-
+            */
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
-            //Player.AddWeapon(magnum);
-            //Player.AddWeapon(socom);
+            Player.AddWeapon(magnum);
+            Player.AddWeapon(socom);
             //Player.EquippedWeapon = magnum;
             
 
@@ -3441,16 +3441,16 @@ namespace zombies
             FireEmitter4.Start();
 
           
-
+            /*
             //testing code
             medkit1 = new Item(ItemType.Key);
             medkit1.model = Content.Load<Model>("MedKit");
-            medkit1.Position = Player.Position;
+            medkit1.Position = Player.Position- new Vector3(10,0,20);
             PickupableObjects.Add(medkit1);
            
-            
+            */
          
- 
+ /*
 
 
             //testing code
@@ -3458,7 +3458,7 @@ namespace zombies
             medkit12.model = Content.Load<Model>("Silencer");
             medkit12.Position = Player.Position;
             PickupableObjects.Add(medkit12);
-       
+       */
          
 
             base.LoadContent();
@@ -4088,32 +4088,32 @@ namespace zombies
                         if (p.model == extinguisherModel)
                         {
                             Player.extinguishers += 10;
-                            PickupableObjects.Remove(p);
+                          
                         }
                         
                         else if (p.model == medkitModel)
                         {
                             Player.meds++;
-                            PickupableObjects.Remove(p);
+                       
                         }
 
                         else if (p.model == keyModel)
                         {
                             Player.keys++;
-                            PickupableObjects.Remove(p);
+                           
                         }
                         else if (p.model == sneakerModel)
                         {
                             Player.PowerupsList.Add(sneakers);
-                            PickupableObjects.Remove(p);
+                           
                         }
 
                         else if (p.model== silencerModel)
                         {
                             Player.PowerupsList.Add(silencer);
-                            PickupableObjects.Remove(p);
+               
                         }
-
+                        PickupableObjects.Remove(p);
                   
 
                     }
@@ -4349,6 +4349,7 @@ namespace zombies
                     DrawModel(ent as Weapon);
                 else if (ent is Powerup)
                     DrawModel(ent as Powerup);
+             
             }
 
             
@@ -4403,7 +4404,7 @@ namespace zombies
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(4) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
+                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(400) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
