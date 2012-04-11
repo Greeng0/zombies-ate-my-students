@@ -263,12 +263,10 @@ namespace zombies
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
 
-            Item fireext = new Item(ItemType.Extinguisher);
-            fireext.model = extinguisherModel;
-           
+        
 
 
-            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction, ref fireext);
+            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             #region Zombie placement
