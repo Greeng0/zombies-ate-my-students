@@ -236,30 +236,30 @@ namespace zombies
             socom.Position = new Vector3(293.3976f, 0, 123.4541f);
             silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
             silencer.Position = new Vector3(-6.841653f, 0, 191.983f);
-            //sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
-            //sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
-            //medkit1 = new Item(ItemType.MedPack, ref medkitModel);
-            //medkit1.Position = new Vector3(335.4893f, 0, -14.48104f);
-            //medkit2 = new Item(ItemType.MedPack, ref medkitModel);
-            //medkit2.Position = new Vector3(18.04729f,0,-14.43179f);
-            //medkit3 = new Item(ItemType.MedPack, ref medkitModel);
-            //medkit3.Position = new Vector3(60.17641f,0,206.8075f);
-            //key1 = new Item(ItemType.Key, ref keyModel);
-            //key1.Position = new Vector3(323.8057f, 0, -8.779925f);
-            //key2 = new Item(ItemType.Key, ref keyModel);
-            //extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
-            //extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
+            sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
+            sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
+            medkit1 = new Item(ItemType.MedPack, ref medkitModel);
+            medkit1.Position = new Vector3(335.4893f, 0, -14.48104f);
+            medkit2 = new Item(ItemType.MedPack, ref medkitModel);
+            medkit2.Position = new Vector3(18.04729f,0,-14.43179f);
+            medkit3 = new Item(ItemType.MedPack, ref medkitModel);
+            medkit3.Position = new Vector3(60.17641f,0,206.8075f);
+            key1 = new Item(ItemType.Key, ref keyModel);
+            key1.Position = new Vector3(323.8057f, 0, -8.779925f);
+            key2 = new Item(ItemType.Key, ref keyModel);
+            extinguisher = new Item(ItemType.Extinguisher, ref extinguisherModel);
+            extinguisher.Position = new Vector3(-21.04327f, 0, 79.15403f);
 
             PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
-            //PickupableObjects.Add(sneakers);
-            //PickupableObjects.Add(medkit1);
-            //PickupableObjects.Add(medkit2);
-            //PickupableObjects.Add(medkit3);
-            //PickupableObjects.Add(key1);
-            //PickupableObjects.Add(key2);
-            //PickupableObjects.Add(extinguisher);
+            PickupableObjects.Add(sneakers);
+            PickupableObjects.Add(medkit1);
+            PickupableObjects.Add(medkit2);
+            PickupableObjects.Add(medkit3);
+            PickupableObjects.Add(key1);
+            PickupableObjects.Add(key2);
+            PickupableObjects.Add(extinguisher);
 
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
@@ -3443,12 +3443,22 @@ namespace zombies
           
 
             //testing code
-            medkit1 = new Item(ItemType.MedPack);
+            medkit1 = new Item(ItemType.Key);
             medkit1.model = Content.Load<Model>("MedKit");
             medkit1.Position = Player.Position;
             PickupableObjects.Add(medkit1);
-
+           
+            
          
+ 
+
+
+            //testing code
+           Powerup medkit12 = new Powerup(PowerupType.Silencer);
+            medkit12.model = Content.Load<Model>("Silencer");
+            medkit12.Position = Player.Position;
+            PickupableObjects.Add(medkit12);
+       
          
 
             base.LoadContent();
@@ -3539,7 +3549,7 @@ namespace zombies
                 modifier = 10;
             }
                         
-            /*//Rotate World with Arrow Keys
+            //Rotate World with Arrow Keys
             /*if (keyboard.IsKeyDown(Keys.K))
             {
                 CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, modifier);
