@@ -76,7 +76,7 @@ namespace Entities
         public int TimeSinceLastFire = 0;
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
-        public Vector3 weaponoffset = new Vector3(-2.2f,4.5f,-1f);
+        public Vector3 weaponoffset = new Vector3(-2.3f,4.5f,-1f);
 
 
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
