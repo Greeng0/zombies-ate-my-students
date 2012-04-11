@@ -35,7 +35,6 @@ namespace zombies
         List<Box> CollisionBoxes = new List<Box>();
         List<Primitive> TotalNearbyBoxes = new List<Primitive>();
 
-
         #region PathFinding
 
         List<PathFinding.Node> PathFindingNodes = new List<PathFinding.Node>();
@@ -62,6 +61,8 @@ namespace zombies
         ParticleEmitter FireEmitter2;
         ParticleEmitter FireEmitter3;
         ParticleEmitter FireEmitter4;
+        ParticleEmitter ChemicalsEmitter;
+
         Texture2D fire;
         Texture2D smoke;
         #endregion
@@ -211,7 +212,6 @@ namespace zombies
             HeroWalk = Content.Load<Model>("HeroWalk");
             HeroHurt = Content.Load<Model>("HeroHurt");
             HeroDie = Content.Load<Model>("HeroDead");
-
             
             NodeModel = Content.Load<Model>("Pyramid");
             StartNode = Content.Load<Model>("SPyramid");
@@ -460,6 +460,16 @@ namespace zombies
             zombies.Add(z62);
             #endregion
 
+
+            fireHazards.Add(new Box(new Vector3(90, 0f, 32f), new Vector3(0), new Vector3(15, 20, 15)));
+            fireHazards[fireHazards.Count - 1].Tag = "Fire1";
+            fireHazards.Add(new Box(new Vector3(284f, 0f, 48f), new Vector3(0), new Vector3(15, 20, 15)));
+            fireHazards[fireHazards.Count - 1].Tag = "Fire2";
+            fireHazards.Add(new Box(new Vector3(87, 0f, 193f), new Vector3(0), new Vector3(15, 20, 15)));
+            fireHazards[fireHazards.Count - 1].Tag = "Fire3";
+            fireHazards.Add(new Box(new Vector3(332, 0, -11), new Vector3(0), new Vector3(25, 20, 25)));
+            fireHazards[fireHazards.Count - 1].Tag = "Fire4";
+
             #region Level Collision Detection
             CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
             CollisionBoxes.Add(new Box(new Vector3(29.50001f, 0f, -25.4f), new Vector3(0), new Vector3(109.2f, 20, 1.899998f)));
@@ -674,6 +684,7 @@ namespace zombies
             CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 113.1667f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
             CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 91.06671f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
             CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 69.16705f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
+
             #endregion  
 
             #region Tile Graph Node Positions & Links
@@ -3410,7 +3421,31 @@ namespace zombies
             FireEffect.Texture = fire;
             FireEffect.Alpha = 0.6f;
 
+            BasicEffect ChemicalEffect = new BasicEffect(GraphicsDevice);
+            ChemicalEffect = new BasicEffect(GraphicsDevice);
+            ChemicalEffect.View = Camera.ActiveCamera.View;
+            ChemicalEffect.TextureEnabled = true;
+            ChemicalEffect.Projection = Camera.ActiveCamera.Projection;
+            ChemicalEffect.World = world;
+            ChemicalEffect.Texture = smoke;
+            ChemicalEffect.Alpha = 1.0f;
+
+
+            ChemicalsEmitter = new ParticleEmitter(new Vector3(320, 0, 202), new Vector3(0), 0, 0, 1);
+            ChemicalsEmitter.particleGroups.Add(new ParticleGroup("Chemicals", BlendState.Additive, DepthStencilState.DepthRead, ChemicalEffect));
+            ChemicalsEmitter.particleGroups[0].controller.Alpha = 0.8f;
+            ChemicalsEmitter.particleGroups[0].controller.MaxParticles = 800;
+            ChemicalsEmitter.particleGroups[0].controller.ParticlePerEmission = 10;
+            ChemicalsEmitter.particleGroups[0].controller.LifeSpan = 1000;
+            ChemicalsEmitter.particleGroups[0].controller.Size = 6f;
+            ChemicalsEmitter.particleGroups[0].controller.Velocity = new Vector3(0.04f, 0.36f, 0.04f);
+            ChemicalsEmitter.particleGroups[0].controller.directionRange = new Vector3(10f, 0, 10f);
+            ChemicalsEmitter.particleGroups[0].controller.directionOffset = new Vector3(2.5f, 0, 2.5f);
+            ChemicalsEmitter.particleGroups[0].controller.RandomizeDirection = true;
+            ChemicalsEmitter.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
+            ChemicalsEmitter.particleGroups[0].controller.RandomizeRotation = true;
             
+
             FireEmitter = new ParticleEmitter(new Vector3(92,0,35), new Vector3(0), 0, 0, 1);
             FireEmitter.particleGroups.Add(new ParticleGroup("FireFlames", BlendState.Additive, DepthStencilState.DepthRead, FireEffect));
             FireEmitter.particleGroups[0].controller.MaxParticles = 50;
@@ -3424,21 +3459,54 @@ namespace zombies
             FireEmitter.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
             FireEmitter.particleGroups[0].controller.RandomizeRotation = true;
 
-            FireEmitter2 = FireEmitter.Clone();
-            FireEmitter2.position = new Vector3(284, 0, 53);
+            FireEmitter2 = new ParticleEmitter(new Vector3(284, 0, 53), new Vector3(0), 0, 0, 1);
+            FireEmitter2.particleGroups.Add(new ParticleGroup("FireFlames", BlendState.Additive, DepthStencilState.DepthRead, FireEffect));
+            FireEmitter2.particleGroups[0].controller.MaxParticles = 50;
+            FireEmitter2.particleGroups[0].controller.ParticlePerEmission = 1;
+            FireEmitter2.particleGroups[0].controller.LifeSpan = 1000;
+            FireEmitter2.particleGroups[0].controller.Size = 12f;
+            FireEmitter2.particleGroups[0].controller.Velocity = new Vector3(0.04f, 0.36f, 0.04f);
+            FireEmitter2.particleGroups[0].controller.directionRange = new Vector3(6f, 1, 2f);
+            FireEmitter2.particleGroups[0].controller.directionOffset = new Vector3(-3f, 0, -3f);
+            FireEmitter2.particleGroups[0].controller.RandomizeDirection = true;
+            FireEmitter2.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
+            FireEmitter2.particleGroups[0].controller.RandomizeRotation = true;
 
-            FireEmitter3 = FireEmitter.Clone();
-            FireEmitter3.position = new Vector3(88, 0, 200);
-            
-            FireEmitter4 = FireEmitter.Clone();
-            FireEmitter.particleGroups[0].controller.Alpha = 0.8f;
-            FireEmitter.particleGroups[0].controller.MaxParticles = 100;
-            FireEmitter4.position = new Vector3(332, 0, -6);
+            FireEmitter3 = new ParticleEmitter(new Vector3(88, 0, 200), new Vector3(0), 0, 0, 1);
+            FireEmitter3.particleGroups.Add(new ParticleGroup("FireFlames", BlendState.Additive, DepthStencilState.DepthRead, FireEffect));
+            FireEmitter3.particleGroups[0].controller.MaxParticles = 50;
+            FireEmitter3.particleGroups[0].controller.ParticlePerEmission = 1;
+            FireEmitter3.particleGroups[0].controller.LifeSpan = 1000;
+            FireEmitter3.particleGroups[0].controller.Size = 12f;
+            FireEmitter3.particleGroups[0].controller.Velocity = new Vector3(0.04f, 0.36f, 0.04f);
+            FireEmitter3.particleGroups[0].controller.directionRange = new Vector3(6f, 1, 2f);
+            FireEmitter3.particleGroups[0].controller.directionOffset = new Vector3(-3f, 0, -3f);
+            FireEmitter3.particleGroups[0].controller.RandomizeDirection = true;
+            FireEmitter3.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
+            FireEmitter3.particleGroups[0].controller.RandomizeRotation = true;
+
+
+            FireEmitter4 = new ParticleEmitter(new Vector3(332, 0, -6), new Vector3(0), 0, 0, 1);
+            FireEmitter4.particleGroups.Add(new ParticleGroup("FireFlames", BlendState.Additive, DepthStencilState.DepthRead, FireEffect));
+            FireEmitter4.particleGroups[0].controller.MaxParticles = 50;
+            FireEmitter4.particleGroups[0].controller.ParticlePerEmission = 1;
+            FireEmitter4.particleGroups[0].controller.LifeSpan = 1000;
+            FireEmitter4.particleGroups[0].controller.Size = 12f;
+            FireEmitter4.particleGroups[0].controller.Velocity = new Vector3(0.04f, 0.36f, 0.04f);
+            FireEmitter4.particleGroups[0].controller.directionRange = new Vector3(6f, 1, 2f);
+            FireEmitter4.particleGroups[0].controller.directionOffset = new Vector3(-3f, 0, -3f);
+            FireEmitter4.particleGroups[0].controller.RandomizeDirection = true;
+            FireEmitter4.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
+            FireEmitter4.particleGroups[0].controller.RandomizeRotation = true;
+            FireEmitter4.particleGroups[0].controller.Alpha = 0.8f;
+            FireEmitter4.particleGroups[0].controller.MaxParticles = 100;
+ 
  
             FireEmitter.Start();
             FireEmitter2.Start();
             FireEmitter3.Start();
             FireEmitter4.Start();
+            ChemicalsEmitter.Start();
 
           
             
@@ -3860,7 +3928,16 @@ namespace zombies
                 zombies.Remove(dz);
             }
 
-            CheckCollisions();
+
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                CheckCollisions(true);
+            }
+            else
+            {
+                CheckCollisions(false);
+
+            }
             
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
@@ -3874,10 +3951,28 @@ namespace zombies
             FireEmitter2.particleGroups[0].effect.View = Camera.ActiveCamera.View;
             FireEmitter3.particleGroups[0].effect.View = Camera.ActiveCamera.View;
             FireEmitter4.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+            ChemicalsEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
             FireEmitter.UpdateEmitter(gameTime);
             FireEmitter2.UpdateEmitter(gameTime);
             FireEmitter3.UpdateEmitter(gameTime);
             FireEmitter4.UpdateEmitter(gameTime);
+
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                ChemicalsEmitter.Start();            
+
+            }
+            else
+            {
+                ChemicalsEmitter.Stop();
+            }
+
+
+
+            ChemicalsEmitter.UpdateEmitter(gameTime);
+            ChemicalsEmitter.particleGroups[0].controller.Velocity = Player.Velocity / (Player.Velocity.Length() * 16f);
+            ChemicalsEmitter.position = Player.Position + new Vector3(0, 5, 0); ;
+            ChemicalsEmitter.particleGroups[0].controller.InitialPositionOffset = (Player.Velocity / Player.Velocity.Length())*2;
 
             ItemRotation += 0.01f % ((float)Math.PI*2);
             ItemHeight = (float)Math.Cos(ItemRotation*4);
@@ -3885,7 +3980,7 @@ namespace zombies
             base.Update(gameTime);
         }        
 
-        private void CheckCollisions()
+        private void CheckCollisions(bool Extinguisher)
         {
             #region Player collisions
 
@@ -3906,6 +4001,57 @@ namespace zombies
                 if (c != null)
                 {
                     ResolveStaticCollision(c, Player, heroSphere);
+                }
+            }
+
+            if (Extinguisher)
+            {
+                Sphere ExtSphere = new Sphere(Player.Position + (Player.Velocity / Player.Velocity.Length()) * 20, Vector3.One, 10);
+
+                for (int i = 0; i < fireHazards.Count;i++)
+                {
+                    Sphere boxSphere = new Sphere(fireHazards[i].Position, Vector3.One, fireHazards[i].Size.X / 2);
+
+                    Contact contact = ExtSphere.Collides(boxSphere);
+                    if (contact != null)
+                    {
+                        if (fireHazards[i].Tag == "Fire1")
+                        {
+                            FireEmitter.particleGroups[0].controller.LifeSpan -= 5;
+                            if (FireEmitter.particleGroups[0].controller.LifeSpan <= 0)
+                            {
+                                FireEmitter.Stop();
+                                fireHazards.Remove(fireHazards[i]);
+                            }
+                        }
+                        if (fireHazards[i].Tag == "Fire2")
+                        {
+                            FireEmitter2.particleGroups[0].controller.LifeSpan -= 5;
+                            if (FireEmitter2.particleGroups[0].controller.LifeSpan <= 0)
+                            {
+                                FireEmitter2.Stop();
+                                fireHazards.Remove(fireHazards[i]);
+                            }
+                        }
+                        if (fireHazards[i].Tag == "Fire3")
+                        {
+                            FireEmitter3.particleGroups[0].controller.LifeSpan -= 5;
+                            if (FireEmitter3.particleGroups[0].controller.LifeSpan <= 0)
+                            {
+                                FireEmitter3.Stop();
+                                fireHazards.Remove(fireHazards[i]);
+                            }
+                        }
+                        if (fireHazards[i].Tag == "Fire4")
+                        {
+                            FireEmitter4.particleGroups[0].controller.LifeSpan -= 5;
+                            if (FireEmitter4.particleGroups[0].controller.LifeSpan <= 0)
+                            {
+                                FireEmitter4.Stop();
+                                fireHazards.Remove(fireHazards[i]);
+                            }
+                        }
+                    }
                 }
             }
             
@@ -4422,11 +4568,12 @@ namespace zombies
              
             }
 
-            
             EmitterDraw(FireEmitter);
             EmitterDraw(FireEmitter2);
             EmitterDraw(FireEmitter3);
             EmitterDraw(FireEmitter4);
+            EmitterDraw(ChemicalsEmitter);
+
             base.Draw(gameTime);
         }
 
@@ -4454,13 +4601,12 @@ namespace zombies
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.EnableDefaultLighting();
+                   
 
                     effect.World = world;
                     effect.View = view;
                     effect.Projection = projection;
-
-                    effect.TextureEnabled = true;
+                    effect.AmbientLightColor = new Vector3(1, 1, 1);
                 }
 
                 mesh.Draw();

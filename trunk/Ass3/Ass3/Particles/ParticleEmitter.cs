@@ -81,7 +81,7 @@ namespace Particles
             newPE.position = new Vector3(this.position.X, this.position.Y, this.position.Z);
             newPE.velocity = new Vector3(this.velocity.X, this.velocity.Y, this.velocity.Z);
             newPE.acceleration = this.acceleration;
-            newPE.lifeSpan = this.lifeSpan;
+            newPE.lifeSpan =  this.lifeSpan;
             newPE.size = this.size;
             newPE.Emitting = this.Emitting;
             newPE.particleGroups = new List<ParticleGroup>();

@@ -943,6 +943,15 @@ namespace Collisions
             set { size = value; }
         }
 
+        private string tag;
+
+        public string Tag
+        {
+            get { return tag; }
+            set { tag = value; }
+        }
+
+
         //Vertices and face Normals
         Vector3[] vertices = new Vector3[8];
         Vector3[] normals = new Vector3[6];
