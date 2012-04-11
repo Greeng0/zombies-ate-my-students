@@ -93,7 +93,7 @@ namespace Entities
         public SkinningData skinningDatahurt;       // This contains all the skinning data
 
         //die
-        public const int DEATH_ANIM_LENGTH = 2000;
+        public const int DEATH_ANIM_LENGTH = 700;
         public int ElapsedDeathTime = 0;
         public AnimationPlayer animationPlayerdie; // This calculates the Matrices of the animation
         public AnimationClip clipdie;              // This contains the keyframes of the animation
