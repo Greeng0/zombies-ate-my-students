@@ -15,6 +15,10 @@ namespace Entities
     {
         public PowerupType Type;
 
+        public Powerup(PowerupType type)
+        {
+            this.Type = type;
+        }
         public Powerup(PowerupType type, ref Model model)
         {
             this.model = model;
