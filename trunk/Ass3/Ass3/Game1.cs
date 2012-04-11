@@ -141,7 +141,7 @@ namespace zombies
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
 
-            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z2.Position = new Vector3(0, 0, -10);
@@ -174,8 +174,9 @@ namespace zombies
             zombies.Add(z8);
             zombies.Add(z9);
             zombies.Add(z10);
-            zombies.Add(z11);
+            zombies.Add(z11);*/
 
+            #region Level Collision Detection
             CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
             CollisionBoxes.Add(new Box(new Vector3(29.50001f, 0f, -25.4f), new Vector3(0), new Vector3(109.2f, 20, 1.899998f)));
             CollisionBoxes.Add(new Box(new Vector3(-25.10233f, 0f, 95.93351f), new Vector3(0), new Vector3(1.699998f, 20, 241.8056f)));
@@ -185,7 +186,211 @@ namespace zombies
             CollisionBoxes.Add(new Box(new Vector3(24.20008f, 0f, 1.087785E-06f), new Vector3(0), new Vector3(1.299998f, 20, 48.29984f)));
             CollisionBoxes.Add(new Box(new Vector3(10.94763f, 0f, 21.71193f), new Vector3(0), new Vector3(1.299998f, 20, 5.2f)));
             CollisionBoxes.Add(new Box(new Vector3(25.70008f, 0f, -0.2000001f), new Vector3(0), new Vector3(2.599998f, 20, 19.80004f)));
-
+            CollisionBoxes.Add(new Box(new Vector3(34.60007f, 0f, 24.90006f), new Vector3(0), new Vector3(20.70004f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(62.59964f, 0f, 25.00006f), new Vector3(0), new Vector3(24.60006f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(54.59976f, 0f, 4.599998f), new Vector3(0), new Vector3(0.9999982f, 20, 38.99998f)));
+            CollisionBoxes.Add(new Box(new Vector3(50.93958f, 0f, 22.31446f), new Vector3(0), new Vector3(1.099998f, 20, 4.799996f)));
+            CollisionBoxes.Add(new Box(new Vector3(52.17354f, 0f, -22.68555f), new Vector3(0), new Vector3(5.599995f, 20, 4.899996f)));
+            CollisionBoxes.Add(new Box(new Vector3(79.09613f, 0f, -23.12064f), new Vector3(0), new Vector3(10.1f, 20, 3.799997f)));
+            CollisionBoxes.Add(new Box(new Vector3(61.59824f, 0f, -4.24892f), new Vector3(0), new Vector3(3.099998f, 20, 8.499994f)));
+            CollisionBoxes.Add(new Box(new Vector3(71.67612f, 0f, -4.251044f), new Vector3(0), new Vector3(2.999998f, 20, 8.599995f)));
+            CollisionBoxes.Add(new Box(new Vector3(61.67628f, 0f, 12.74897f), new Vector3(0), new Vector3(3.099998f, 20, 8.499994f)));
+            CollisionBoxes.Add(new Box(new Vector3(71.77612f, 0f, 12.84897f), new Vector3(0), new Vector3(3.199997f, 20, 8.199993f)));
+            CollisionBoxes.Add(new Box(new Vector3(84.38277f, 0f, -46.47377f), new Vector3(0), new Vector3(1.299998f, 20, 143.6996f)));
+            CollisionBoxes.Add(new Box(new Vector3(82.01137f, 0f, 22.5932f), new Vector3(0), new Vector3(4.499996f, 20, 5.299995f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.89927f, 0f, 24.90006f), new Vector3(0), new Vector3(3.599997f, 20, 0.8999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(138.759f, 0f, 24.91656f), new Vector3(0), new Vector3(88.59922f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(131.5181f, 0f, -118.0334f), new Vector3(0), new Vector3(95.29912f, 20, 0.5999981f)));
+            CollisionBoxes.Add(new Box(new Vector3(179.0806f, 0f, -47.45309f), new Vector3(0), new Vector3(0.9999982f, 20, 143.8996f)));
+            CollisionBoxes.Add(new Box(new Vector3(134.2582f, 0f, -97.64594f), new Vector3(0), new Vector3(2.599998f, 20, 4.099997f)));
+            CollisionBoxes.Add(new Box(new Vector3(134.5582f, 0f, 8.853141f), new Vector3(0), new Vector3(2.999998f, 20, 4.499996f)));
+            CollisionBoxes.Add(new Box(new Vector3(87.38562f, 0f, -71.61339f), new Vector3(0), new Vector3(5.899995f, 20, 54.29974f)));
+            CollisionBoxes.Add(new Box(new Vector3(87.78561f, 0f, -12.91392f), new Vector3(0), new Vector3(5.799995f, 20, 54.59974f)));
+            CollisionBoxes.Add(new Box(new Vector3(175.5789f, 0f, -72.12956f), new Vector3(0), new Vector3(5.999995f, 20, 54.49974f)));
+            CollisionBoxes.Add(new Box(new Vector3(175.6515f, 0f, -13.14863f), new Vector3(0), new Vector3(5.399995f, 20, 53.99975f)));
+            CollisionBoxes.Add(new Box(new Vector3(260.2218f, 0f, -24.30155f), new Vector3(0), new Vector3(160.9006f, 20, 1.899998f)));
+            CollisionBoxes.Add(new Box(new Vector3(184.9245f, 0f, -22.25403f), new Vector3(0), new Vector3(10.8f, 20, 3.299997f)));
+            CollisionBoxes.Add(new Box(new Vector3(191.5249f, 0f, -4.253981f), new Vector3(0), new Vector3(2.899998f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(191.4634f, 0f, 12.71193f), new Vector3(0), new Vector3(2.899998f, 20, 7.899993f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.9757f, 0f, -4.188081f), new Vector3(0), new Vector3(2.899998f, 20, 7.899993f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.8757f, 0f, 12.61193f), new Vector3(0), new Vector3(2.899998f, 20, 7.899993f)));
+            CollisionBoxes.Add(new Box(new Vector3(199.003f, 0f, 24.80006f), new Vector3(0), new Vector3(20.20004f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(235.8793f, 0f, 24.86195f), new Vector3(0), new Vector3(34.30005f, 20, 0.7999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(211.3778f, 0f, 23.06194f), new Vector3(0), new Vector3(4.799996f, 20, 4.299996f)));
+            CollisionBoxes.Add(new Box(new Vector3(209.4777f, 0f, 5.26189f), new Vector3(0), new Vector3(1.099998f, 20, 39.99996f)));
+            CollisionBoxes.Add(new Box(new Vector3(211.5778f, 0f, -21.73815f), new Vector3(0), new Vector3(5.399995f, 20, 3.499997f)));
+            CollisionBoxes.Add(new Box(new Vector3(233.7792f, 0f, -15.23813f), new Vector3(0), new Vector3(9.699999f, 20, 8.799995f)));
+            CollisionBoxes.Add(new Box(new Vector3(235.4793f, 0f, -21.63815f), new Vector3(0), new Vector3(2.999998f, 20, 3.599997f)));
+            CollisionBoxes.Add(new Box(new Vector3(235.8137f, 0f, -7.906326f), new Vector3(0), new Vector3(2.999998f, 20, 5.599995f)));
+            CollisionBoxes.Add(new Box(new Vector3(233.6136f, 0f, -4.106329f), new Vector3(0), new Vector3(10.3f, 20, 2.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(249.9015f, 0f, -8.099995f), new Vector3(0), new Vector3(16.10002f, 20, 4.299996f)));
+            CollisionBoxes.Add(new Box(new Vector3(278.4033f, 0f, -7.699995f), new Vector3(0), new Vector3(16.10002f, 20, 4.299996f)));
+            CollisionBoxes.Add(new Box(new Vector3(278.4033f, 0f, 3.199999f), new Vector3(0), new Vector3(16.10002f, 20, 4.299996f)));
+            CollisionBoxes.Add(new Box(new Vector3(276.2031f, 0f, 13.90002f), new Vector3(0), new Vector3(10.5f, 20, 3.999997f)));
+            CollisionBoxes.Add(new Box(new Vector3(247.6014f, 0f, 3f), new Vector3(0), new Vector3(10.5f, 20, 3.999997f)));
+            CollisionBoxes.Add(new Box(new Vector3(247.6014f, 0f, 13.70002f), new Vector3(0), new Vector3(10.5f, 20, 3.999997f)));
+            CollisionBoxes.Add(new Box(new Vector3(274.503f, 0f, -16.10003f), new Vector3(0), new Vector3(12.00001f, 20, 3.999997f)));
+            CollisionBoxes.Add(new Box(new Vector3(273.703f, 0f, 24.80006f), new Vector3(0), new Vector3(29.70008f, 20, 0.8999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(273.703f, 0f, 24.80006f), new Vector3(0), new Vector3(29.70008f, 20, 0.8999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(252.4459f, 0f, 22.42114f), new Vector3(0), new Vector3(1.499998f, 20, 3.999997f)));
+            CollisionBoxes.Add(new Box(new Vector3(288.4481f, 0f, 10.0211f), new Vector3(0), new Vector3(1.099998f, 20, 66.19956f)));
+            CollisionBoxes.Add(new Box(new Vector3(288.3481f, 0f, 75.02052f), new Vector3(0), new Vector3(1.099998f, 20, 51.69978f)));
+            CollisionBoxes.Add(new Box(new Vector3(339.8512f, 0f, 95.32021f), new Vector3(0), new Vector3(1.099998f, 20, 242.6056f)));
+            CollisionBoxes.Add(new Box(new Vector3(308.7792f, 0f, 43.83842f), new Vector3(0), new Vector3(6.099995f, 20, 7.999993f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.0799f, 0f, 43.83842f), new Vector3(0), new Vector3(6.099995f, 20, 7.999993f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.0799f, 0f, 43.83842f), new Vector3(0), new Vector3(6.099995f, 20, 7.999993f)));
+            CollisionBoxes.Add(new Box(new Vector3(331.002f, 0f, 43.81123f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(330.8019f, 0f, 57.21103f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.4013f, 0f, 57.21103f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(309.2006f, 0f, 57.21103f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(309.2006f, 0f, 70.41083f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.2013f, 0f, 70.41083f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(330.8019f, 0f, 70.41083f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(308.8006f, 0f, 97.21042f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.5013f, 0f, 97.21042f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(330.9019f, 0f, 97.21042f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(330.9019f, 0f, 110.0102f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.3013f, 0f, 110.0102f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(309.1006f, 0f, 110.0102f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(309.1006f, 0f, 123.61f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(320.2013f, 0f, 123.61f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(330.9019f, 0f, 123.61f), new Vector3(0), new Vector3(6.199995f, 20, 8.399994f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.9896f, 0f, 84.41061f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.5903f, 0f, 84.41061f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.791f, 0f, 84.41061f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.791f, 0f, 97.51041f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.5903f, 0f, 97.51041f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.8896f, 0f, 97.51041f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.8896f, 0f, 110.5102f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.6903f, 0f, 110.5102f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.5909f, 0f, 110.5102f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.8896f, 0f, 137.2105f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.5903f, 0f, 137.2105f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.791f, 0f, 137.2105f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.791f, 0f, 150.7113f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.791f, 0f, 150.7113f), new Vector3(0), new Vector3(6.199995f, 20, 7.599993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.6929f, 0f, 150.6951f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.9923f, 0f, 150.6951f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(128.9923f, 0f, 163.3947f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(139.6929f, 0f, 163.3947f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(150.7936f, 0f, 163.3947f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.6979f, 0f, 174.8954f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.7986f, 0f, 174.8954f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.3992f, 0f, 174.8954f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.3992f, 0f, 161.7946f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.7986f, 0f, 161.7946f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.6979f, 0f, 161.7946f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.6979f, 0f, 148.8938f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.6986f, 0f, 148.8938f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.5993f, 0f, 148.8938f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.5979f, 0f, 116.7927f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.6986f, 0f, 116.7927f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.4993f, 0f, 116.7927f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.4993f, 0f, 116.7927f), new Vector3(0), new Vector3(6.099995f, 20, 7.399993f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.5682f, 0f, 103.3611f), new Vector3(0), new Vector3(6.299994f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.8676f, 0f, 103.3611f), new Vector3(0), new Vector3(6.299994f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.6669f, 0f, 103.2611f), new Vector3(0), new Vector3(6.099995f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(221.6669f, 0f, 90.36127f), new Vector3(0), new Vector3(6.099995f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(232.7675f, 0f, 90.36127f), new Vector3(0), new Vector3(6.099995f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.4682f, 0f, 90.36127f), new Vector3(0), new Vector3(6.099995f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(243.4682f, 0f, 90.36127f), new Vector3(0), new Vector3(6.099995f, 20, 7.099994f)));
+            CollisionBoxes.Add(new Box(new Vector3(238.9928f, 0f, -0.3251197f), new Vector3(0), new Vector3(1.299998f, 20, 50.2998f)));
+            CollisionBoxes.Add(new Box(new Vector3(291.402f, 0f, 42.84902f), new Vector3(0), new Vector3(4.799996f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(297.9024f, 0f, 68.04864f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(297.9024f, 0f, 68.04864f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(297.9024f, 0f, 120.3478f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(297.9024f, 0f, 120.3478f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(210.7007f, 0f, 113.9479f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(210.7007f, 0f, 166.2501f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(210.7007f, 0f, 166.2501f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(161.5008f, 0f, 138.8484f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(161.5008f, 0f, 86.84836f), new Vector3(0), new Vector3(3.599997f, 20, 12.20001f)));
+            CollisionBoxes.Add(new Box(new Vector3(314.5873f, 0f, 83.35234f), new Vector3(0), new Vector3(52.49977f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(314.5873f, 0f, 136.7522f), new Vector3(0), new Vector3(52.49977f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(314.5873f, 0f, 136.7522f), new Vector3(0), new Vector3(52.49977f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(288.6207f, 0f, 131.2661f), new Vector3(0), new Vector3(0.9999982f, 20, 47.59985f)));
+            CollisionBoxes.Add(new Box(new Vector3(288.6207f, 0f, 131.2661f), new Vector3(0), new Vector3(0.9999982f, 20, 47.59985f)));
+            CollisionBoxes.Add(new Box(new Vector3(288.6207f, 0f, 188.3696f), new Vector3(0), new Vector3(0.9999982f, 20, 55.19973f)));
+            CollisionBoxes.Add(new Box(new Vector3(290.7258f, 0f, 101.5162f), new Vector3(0), new Vector3(5.799995f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(290.7258f, 0f, 101.5162f), new Vector3(0), new Vector3(5.799995f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(291.0258f, 0f, 154.7158f), new Vector3(0), new Vector3(5.799995f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(291.0258f, 0f, 154.7158f), new Vector3(0), new Vector3(5.799995f, 20, 1.299998f)));
+            CollisionBoxes.Add(new Box(new Vector3(306.7268f, 0f, 172.8169f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(306.7268f, 0f, 172.8169f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(319.6276f, 0f, 172.8169f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(332.9284f, 0f, 172.8169f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(332.9284f, 0f, 183.4175f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(332.9284f, 0f, 183.4175f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(319.7276f, 0f, 183.4175f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(306.7268f, 0f, 183.4175f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(306.7268f, 0f, 194.5182f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(319.6276f, 0f, 194.5182f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(332.8284f, 0f, 194.5182f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(332.8284f, 0f, 194.5182f), new Vector3(0), new Vector3(7.799993f, 20, 5.499995f)));
+            CollisionBoxes.Add(new Box(new Vector3(331.2283f, 0f, 205.5189f), new Vector3(0), new Vector3(12.10001f, 20, 3.599997f)));
+            CollisionBoxes.Add(new Box(new Vector3(157.1177f, 0f, 216.2195f), new Vector3(0), new Vector3(366.3131f, 20, 0.9999982f)));
+            CollisionBoxes.Add(new Box(new Vector3(-12.62502f, 0f, 190.6946f), new Vector3(0), new Vector3(3.999997f, 20, 11.60001f)));
+            CollisionBoxes.Add(new Box(new Vector3(-12.62502f, 0f, 190.6946f), new Vector3(0), new Vector3(3.999997f, 20, 11.60001f)));
+            CollisionBoxes.Add(new Box(new Vector3(65.67467f, 0f, 207.2956f), new Vector3(0), new Vector3(3.999997f, 20, 11.60001f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.67435f, 0f, 206.6956f), new Vector3(0), new Vector3(0.9999982f, 20, 17.60003f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.67435f, 0f, 206.6956f), new Vector3(0), new Vector3(0.9999982f, 20, 17.60003f)));
+            CollisionBoxes.Add(new Box(new Vector3(7.674402f, 0f, 206.6956f), new Vector3(0), new Vector3(0.9999982f, 20, 17.60003f)));
+            CollisionBoxes.Add(new Box(new Vector3(7.674402f, 0f, 177.8938f), new Vector3(0), new Vector3(0.9999982f, 20, 27.20007f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.6745f, 0f, 177.8938f), new Vector3(0), new Vector3(0.9999982f, 20, 27.20007f)));
+            CollisionBoxes.Add(new Box(new Vector3(84.1587f, 0f, 198.9931f), new Vector3(0), new Vector3(4.399996f, 20, 1.999998f)));
+            CollisionBoxes.Add(new Box(new Vector3(84.1587f, 0f, 198.9931f), new Vector3(0), new Vector3(4.399996f, 20, 1.999998f)));
+            CollisionBoxes.Add(new Box(new Vector3(5.259332f, 0f, 199.0932f), new Vector3(0), new Vector3(4.599996f, 20, 2.399998f)));
+            CollisionBoxes.Add(new Box(new Vector3(30.85949f, 0f, 164.091f), new Vector3(0), new Vector3(112.5989f, 20, 1.399998f)));
+            CollisionBoxes.Add(new Box(new Vector3(30.85949f, 0f, 52.98913f), new Vector3(0), new Vector3(112.5989f, 20, 1.399998f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.65821f, 0f, 96.06586f), new Vector3(0), new Vector3(1.199998f, 20, 85.59927f)));
+            CollisionBoxes.Add(new Box(new Vector3(86.65821f, 0f, 154.267f), new Vector3(0), new Vector3(1.199998f, 20, 17.10003f)));
+            CollisionBoxes.Add(new Box(new Vector3(84.45824f, 0f, 146.5665f), new Vector3(0), new Vector3(5.799995f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(84.45824f, 0f, 146.5665f), new Vector3(0), new Vector3(5.799995f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(167.8594f, 0f, 106.1664f), new Vector3(0), new Vector3(5.799995f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(167.9594f, 0f, 164.2671f), new Vector3(0), new Vector3(5.799995f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(167.9594f, 0f, 164.2671f), new Vector3(0), new Vector3(5.799995f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(204.1604f, 0f, 147.1657f), new Vector3(0), new Vector3(-5.300182f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(204.1604f, 0f, 88.8657f), new Vector3(0), new Vector3(-5.300182f, 20, 1.699998f)));
+            CollisionBoxes.Add(new Box(new Vector3(181.061f, 0f, 22.66546f), new Vector3(0), new Vector3(4.299996f, 20, 4.199996f)));
+            CollisionBoxes.Add(new Box(new Vector3(227.3041f, 0f, 70.68988f), new Vector3(0), new Vector3(51.79978f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(227.3041f, 0f, 70.68988f), new Vector3(0), new Vector3(51.79978f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(227.3041f, 0f, 129.2897f), new Vector3(0), new Vector3(51.79978f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(227.3041f, 0f, 181.7905f), new Vector3(0), new Vector3(51.79978f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(227.3041f, 0f, 181.7905f), new Vector3(0), new Vector3(51.79978f, 20, 1.599998f)));
+            CollisionBoxes.Add(new Box(new Vector3(144.8806f, 0f, 181.7463f), new Vector3(0), new Vector3(52.09978f, 20, 1.499998f)));
+            CollisionBoxes.Add(new Box(new Vector3(144.8806f, 0f, 123.8455f), new Vector3(0), new Vector3(52.09978f, 20, 1.499998f)));
+            CollisionBoxes.Add(new Box(new Vector3(144.8806f, 0f, 71.04543f), new Vector3(0), new Vector3(52.09978f, 20, 1.499998f)));
+            CollisionBoxes.Add(new Box(new Vector3(119.3302f, 0f, 126.6199f), new Vector3(0), new Vector3(0.9999982f, 20, 109.9989f)));
+            CollisionBoxes.Add(new Box(new Vector3(252.631f, 0f, 126.6199f), new Vector3(0), new Vector3(0.9999982f, 20, 109.9989f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.5354f, 0f, 167.8129f), new Vector3(0), new Vector3(0.9999982f, 20, 28.10007f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.5354f, 0f, 167.8129f), new Vector3(0), new Vector3(0.9999982f, 20, 28.10007f)));
+            CollisionBoxes.Add(new Box(new Vector3(170.5335f, 0f, 85.21082f), new Vector3(0), new Vector3(0.9999982f, 20, 28.10007f)));
+            CollisionBoxes.Add(new Box(new Vector3(170.5335f, 0f, 131.2094f), new Vector3(0), new Vector3(0.9999982f, 20, 51.49979f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.6354f, 0f, 121.3093f), new Vector3(0), new Vector3(0.9999982f, 20, 51.69978f)));
+            CollisionBoxes.Add(new Box(new Vector3(201.9354f, 0f, 79.80998f), new Vector3(0), new Vector3(0.9999982f, 20, 19.30004f)));
+            CollisionBoxes.Add(new Box(new Vector3(170.4365f, 0f, 172.4124f), new Vector3(0), new Vector3(0.9999982f, 20, 18.40003f)));
+            CollisionBoxes.Add(new Box(new Vector3(154.8109f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(154.8109f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(131.5094f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(131.5094f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(215.4115f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(238.6129f, 0f, 184.4977f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(238.6129f, 0f, 69.89781f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(238.6129f, 0f, 69.89781f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(215.4115f, 0f, 69.89781f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(154.8109f, 0f, 69.89781f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(131.7094f, 0f, 69.89781f), new Vector3(0), new Vector3(12.70001f, 20, 3.699997f)));
+            CollisionBoxes.Add(new Box(new Vector3(4.032712f, 0f, 69.334f), new Vector3(0), new Vector3(20.40004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(4.032712f, 0f, 92.03365f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(4.032712f, 0f, 113.5333f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(4.032712f, 0f, 113.5333f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(4.032712f, 0f, 135.8336f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(58.53277f, 0f, 135.8336f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(58.53277f, 0f, 135.8336f), new Vector3(0), new Vector3(20.80004f, 20, 11.90001f)));
+            CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 113.1667f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
+            CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 91.06671f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
+            CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 69.16705f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
+            #endregion  
 
             CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
             LevelQuadTree = new QuadTree(new Vector2(156, 65), 185, 4);
@@ -247,39 +452,46 @@ namespace zombies
                 Exit();
             }
 
+            
+            float modifier = 0.10f;
+
+            if(keyboard.IsKeyDown(Keys.RightShift))
+            {
+                modifier = 10;
+            }
             //Rotate World with Arrow Keys
             if (keyboard.IsKeyDown(Keys.K))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, 0.10f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, modifier);
             }
             if (keyboard.IsKeyDown(Keys.I))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, 0.10f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, modifier);
             }
             if (keyboard.IsKeyDown(Keys.L))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0.10f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(modifier, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.J))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0.10f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(modifier, 0, 0);
             }
 
             if (keyboard.IsKeyDown(Keys.Y))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0.10f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(modifier, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.U))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0.10f, 0, 0);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(modifier, 0, 0);
             }
             if (keyboard.IsKeyDown(Keys.O))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, 0.10f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, modifier);
             }
             if (keyboard.IsKeyDown(Keys.P))
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, 0.10f);
+                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, modifier);
             }
 
             //Toggle Collision Boundaries Display
@@ -288,11 +500,18 @@ namespace zombies
                 WireFrameCollisionBoxes = !WireFrameCollisionBoxes;
                 ButtonTimer = 10;
             }
-            
+
             //Toggle QuadTree Boundaries Display
             if (keyboard.IsKeyDown(Keys.B) && ButtonTimer <= 0)
             {
                 ShowQuadBoundaries = !ShowQuadBoundaries;
+                ButtonTimer = 10;
+            }
+
+            //Toggle Collision Boxes Display
+            if (keyboard.IsKeyDown(Keys.N) && ButtonTimer <= 0)
+            {
+                ShowCollisionBoxes = !ShowCollisionBoxes;
                 ButtonTimer = 10;
             }
 
@@ -303,7 +522,14 @@ namespace zombies
 
                 LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
 
-                CollisionBoxes.Add(new Box(new Vector3(Player.Position.X,Player.Position.Y,Player.Position.Z), new Vector3(0),new Vector3(10,20,10)));
+                if (keyboard.IsKeyDown(Keys.RightShift))
+                {
+                    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
+                }
+                else
+                {
+                    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+                }
                 ButtonTimer = 10;
             }
 
