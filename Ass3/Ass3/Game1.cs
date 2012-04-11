@@ -120,7 +120,6 @@ namespace zombies
       
         protected override void LoadContent()
         {
-
             Font1 = Content.Load<SpriteFont>("Arial");
             School = Content.Load<Model>("School");
           
@@ -134,14 +133,11 @@ namespace zombies
             HeroWalk = Content.Load<Model>("HeroWalk");
             HeroHurt = Content.Load<Model>("HeroHurt");
             HeroDie = Content.Load<Model>("HeroDead");
-          
-            // TODO: Initialize quad tree and insert all objects into it********************************************
-            //QuadTree = new QuadTree(centerPosition, size, depth);
 
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(-15, 0, 1);
 
-            /*Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z1.Position = new Vector3(0, 0, 10);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
             z2.Position = new Vector3(0, 0, -10);
@@ -174,7 +170,7 @@ namespace zombies
             zombies.Add(z8);
             zombies.Add(z9);
             zombies.Add(z10);
-            zombies.Add(z11);*/
+            zombies.Add(z11);
 
             #region Level Collision Detection
             CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
@@ -620,11 +616,6 @@ namespace zombies
             }
 
             CheckCollisions();
-
-            if (Player.Stance == AnimationStance.Shooting)//if shooting, check ray collisison
-            {
-                CheckRayCollisions();
-            }
             
             Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
             Camera.ActiveCamera.CameraLookAt = Player.Position;
@@ -634,29 +625,10 @@ namespace zombies
             globalEffect.Projection = Camera.ActiveCamera.Projection;
 
             base.Update(gameTime);
-        }
-
-
-        private void CheckRayCollisions()
-        {
-            float length = SIGHT_RADIUS;
-            foreach (Zombie z1 in zombies)
-            {
-                if ((z1.Position - Player.Position).Length() < SIGHT_RADIUS || z1.BehaviouralState != BehaviourState.Wander)
-                {
-
-                }
-
-            }
-
-            Player.raydist = length;
-
-        }
-        
+        }        
 
         private void CheckCollisions()
         {
-            
             #region Player collisions
 
             Sphere heroSphere = new Sphere(Player.Position, Player.Velocity, Player.modelRadius);
@@ -710,7 +682,7 @@ namespace zombies
                     checkZombietoPlayer(z1);
                     foreach (Zombie z2 in zombies)
                     {
-                        if (!z2.Equals(z1) &&((z2.Position - Player.Position).Length() < SIGHT_RADIUS || z2.BehaviouralState != BehaviourState.Wander))
+                        if (!z2.Equals(z1) && ((z2.Position - Player.Position).Length() < SIGHT_RADIUS || z2.BehaviouralState != BehaviourState.Wander))
                         {
                             checkZombietoZombie(z1, z2);
                         }
@@ -807,7 +779,7 @@ namespace zombies
             {
                 case WeaponType.BareHands:
                     {
-                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
                         foreach (Zombie z in zombies)
                         {
                             if ((z.Position - actionCaster.Position).Length() < weapon.Range)
@@ -831,7 +803,7 @@ namespace zombies
                     }
                 case WeaponType.Vomit:
                     {
-                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
                         if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
                         {
                             BoundingSphere bs = new BoundingSphere(Player.Position, Player.modelRadius);
@@ -842,7 +814,7 @@ namespace zombies
                     }
                 case WeaponType.ZombieHands:
                     {
-                        Ray ray = new Ray(actionCaster.Position, actionCaster.Velocity);
+                        Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
                         if ((actionCaster.Position - Player.Position).Length() < weapon.Range)
                         {
                             BoundingSphere bs = new BoundingSphere(Player.Position, Player.modelRadius);
@@ -875,24 +847,21 @@ namespace zombies
             }
 
             // check if ray intersects nearby primitives from quad tree
-            // if so, check if the Contacts are closer than the closestVictim
+            // if so, check if intersections are closer than the closest zombie intersection
             Sphere heroSphere = new Sphere(actionCaster.Position, actionCaster.Velocity, actionCaster.modelRadius);
             List<Primitive> primitives = new List<Primitive>();
             LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitives);
 
-            float closestContactDistance = 100;
             foreach (Box box in primitives)
             {
-                List<Contact> contacts = heroSphere.ProjectPOVRay(box, weapon.Range);
-                if (contacts != null && contacts.Count > 0)
-                {
-                    Contact boxContact = contacts.Aggregate((l, r) => (l.ContactPoint - actionCaster.Position).Length() < (r.ContactPoint - actionCaster.Position).Length() ? l : r);
-                    float boxDistance = (boxContact.ContactPoint - actionCaster.Position).Length();
-                    if (boxDistance < closestContactDistance)
-                        closestContactDistance = boxDistance;
-                }
+                BoundingBox bbox = new BoundingBox(
+                    new Vector3(box.Position.X - box.Size.X / 2, box.Position.Y - box.Size.Y / 2, box.Position.Z - box.Size.Z / 2), 
+                    new Vector3(box.Position.X + box.Size.X / 2, box.Position.Y + box.Size.Y / 2, box.Position.Z + box.Size.Z / 2)
+                );
+                if (ray.Intersects(bbox) != null && ray.Intersects(bbox) < closestIntersect)
+                    return;
             }
-            if (closestVictim != null && (closestVictim.Position - actionCaster.Position).Length() < closestContactDistance)
+            if (closestVictim != null)
             {
                 if (weapon.weaponType == WeaponType.Magnum && closestIntersect > 20)
                     closestVictim.TakeDamage(weapon.FirePower / 10);
@@ -931,12 +900,16 @@ namespace zombies
                 case ItemType.Extinguisher:
                     {
                         List<Box> firesToRemove = new List<Box>();
-                        Sphere heroSphere = new Sphere(actionCaster.Position, actionCaster.Velocity, actionCaster.modelRadius);
+                        Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
                         foreach (Box hazard in fireHazards)
                         {
                             if ((hazard.Position - Player.Position).Length() < item.Range)
                             {
-                                if (heroSphere.ProjectPOVRay(hazard, item.Range).Count > 0)
+                                BoundingBox bbox = new BoundingBox(
+                                    new Vector3(hazard.Position.X - hazard.Size.X / 2, hazard.Position.Y - hazard.Size.Y / 2, hazard.Position.Z - hazard.Size.Z / 2),
+                                    new Vector3(hazard.Position.X + hazard.Size.X / 2, hazard.Position.Y + hazard.Size.Y / 2, hazard.Position.Z + hazard.Size.Z / 2)
+                                );
+                                if (ray.Intersects(bbox) != null)
                                 {
                                     firesToRemove.Add(hazard);
                                 }
