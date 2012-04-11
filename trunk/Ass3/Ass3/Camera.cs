@@ -15,7 +15,7 @@ namespace zombies
 
         public Vector3 CameraPosition = new Vector3(0, 40, 30);
         public Vector3 CameraLookAt = new Vector3(0, 0, 0);
-        public Vector3 CameraZoom = new Vector3(0,0,0);
+        public Vector3 CameraZoom = new Vector3(0,00,0);
         // View and projection
         protected Matrix projection = Matrix.Identity;
         private Matrix view = Matrix.Identity;
@@ -75,13 +75,14 @@ namespace zombies
         {
             float ratio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1000f / 600f, .5f, 100000);
-            //projection = Matrix.CreateOrthographic(600, 360, 0.1f, 2000);
+            //projection = Matrix.CreateOrthographic(150, 90, 0.1f, 2000);
             base.LoadContent();
         }
       
         public override void Update(GameTime gameTime)
         {
             view = Matrix.CreateLookAt(CameraPosition, CameraLookAt, up);
+
                 
             base.Update(gameTime);
         }
