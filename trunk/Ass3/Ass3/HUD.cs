@@ -274,7 +274,7 @@ namespace zombies
     }
     else
     {
-        fire = empty;
+        slot3 = empty;
     }
                 
                 if (keyss > 0)
@@ -411,9 +411,9 @@ namespace zombies
 
 
 
-            /*
-
-            out2 = " ";
+            
+              Vector2 pos2 = new Vector2(200, 100);
+           String out2 = " ";
             if(fires>0)
             out2 +=fires;
 
@@ -427,7 +427,7 @@ namespace zombies
          pos2 = new Vector2(400, 100);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
-            */
+            
             //draw slots
 
             spriteBatch.Draw(slot1, slot1rec, Color.White);
