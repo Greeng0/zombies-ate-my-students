@@ -3927,7 +3927,7 @@ namespace zombies
             }
 
 
-            if (keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
+            if (Player.SelectedItem != null &&keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 CheckCollisions(true);
             }
@@ -3955,7 +3955,7 @@ namespace zombies
             FireEmitter3.UpdateEmitter(gameTime);
             FireEmitter4.UpdateEmitter(gameTime);
 
-            if (keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
+            if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 sound.playExtinguisher();
                 ChemicalsEmitter.Start();            
@@ -4327,6 +4327,7 @@ namespace zombies
 
                         if (p.model == extinguisherModel)
                         {
+                            Player.SelectedItem = extinguisher;
                             Player.extinguishers += 10;
                           
                         }
