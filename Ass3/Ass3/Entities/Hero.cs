@@ -297,14 +297,18 @@ namespace Entities
                 {
                     current = 1;
                 }
-                else if (SelectedItem.itemType == ItemType.Key)
+                else if (SelectedItem.itemType == ItemType.Key&& keys > 0)
                 {
                     current = 2;
                 }
 
-                else if (SelectedItem.itemType == ItemType.MedPack)
+                else if (SelectedItem.itemType == ItemType.MedPack && meds > 0)
                 {
                     current = 0;
+                }
+                else
+                {
+                    current = 1; 
                 }
             }
         }

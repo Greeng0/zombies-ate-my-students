@@ -255,14 +255,11 @@ namespace zombies
     int current = p.current;
 
             //drawselectedeq = false;
-            if (fires + meds + keyss > 0)
-            {
-                drawselectedeq = true;
-            }
+        
             // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
 
                
-                    if (current % 3 == 0)
+                    if (current % 3 == 0 || keyss + meds == 0)
                     {
                         selectedeqrec.X = slot3rec.X - 10;
                         selectedeqrec.Y = slot3rec.Y - 10;
