@@ -3964,11 +3964,13 @@ namespace zombies
 
             if (keyboard.IsKeyDown(Keys.Space))
             {
+                sound.playExtinguisher();
                 ChemicalsEmitter.Start();            
 
             }
             else
             {
+                sound.StopExtinguisher();
                 ChemicalsEmitter.Stop();
             }
 
@@ -4331,7 +4333,7 @@ namespace zombies
                         {
                             Player.meds++;
                        
-                        }
+                        }  
 
                         else if (p.model == keyModel)
                         {
@@ -4340,7 +4342,7 @@ namespace zombies
                         }
                         else if (p.model == sneakerModel)
                         {
-                            Player.PowerupsList.Add(sneakers);
+                            Player.PowerupsList.Add(sneakers);  
                            
                         }
 

@@ -57,6 +57,14 @@ namespace Sounds
             }
         }
 
+        public void StopExtinguisher()
+        {
+            if (Extinst != null)
+            {
+                Extinst.Stop(true);
+            }
+        }
+
         public void playMagnum()
         {
             if (Maginst == null || Maginst.State == SoundState.Stopped)
