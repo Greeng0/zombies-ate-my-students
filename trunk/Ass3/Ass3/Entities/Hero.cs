@@ -271,11 +271,18 @@ namespace Entities
 
         public void SwitchNextWeapon()
         {
-            EquippedWeapon = WeaponsList.Last().Key;
+            if (EquippedWeapon == WeaponsList.First().Key)
+            {
+                EquippedWeapon = WeaponsList.Last().Key;
+            }
+            else
+            {
+                EquippedWeapon = WeaponsList.First().Key;
+            }
         }
         public void SwitchNextItem()
         {
-            EquippedWeapon = WeaponsList.First().Key;
+           
         }
 
         public void MoveForward()
