@@ -155,6 +155,128 @@ namespace SpacePartition
             }
         }
 
+        //Insert a Pathfinding node in the tree
+        public void Insert(PathFinding.Node pfNode, QuadTreeNode node = null, int DepthLevel = 0)
+        {
+            if (node == null)
+                node = Head;
+
+            //Make sure Box is smaller than current quadrant. If yes, go deeper, otherwise add elements here
+            if (DepthLevel < this.Depth)
+            {
+                //Process North-West Part
+                if (node.Children[0] != null)
+                {
+                    if (pfNode.position.X <= node.Position.X && pfNode.position.Z <= node.Position.Y)
+                    {
+                        Insert(pfNode, node.Children[0], DepthLevel + 1);
+                    }
+                }
+
+                //Process North-East Part
+                if (node.Children[1] != null)
+                {
+                    if (pfNode.position.X >= node.Position.X && pfNode.position.Z <= node.Position.Y)
+                    {
+
+                        Insert(pfNode, node.Children[1], DepthLevel + 1);
+                    }
+                }
+
+                //Process South-West Part
+                if (node.Children[2] != null)
+                {
+                    if (pfNode.position.X <= node.Position.X && pfNode.position.Z >= node.Position.Y)
+                    {
+
+                        Insert(pfNode, node.Children[2], DepthLevel + 1);
+                    }
+                }
+
+                //Process South-East Part
+                if (node.Children[3] != null)
+                {
+                    if (pfNode.position.X >= node.Position.X && pfNode.position.Z >= node.Position.Y)
+                    {
+
+                        Insert(pfNode, node.Children[3], DepthLevel + 1);
+                    }
+                }
+            }
+            else
+            {
+                //Add box in current layer
+                if (node.PathFindingNodes == null)
+                    node.PathFindingNodes = new List<PathFinding.Node>();
+
+                if (!node.PathFindingNodes.Contains(pfNode))
+                {
+                    node.PathFindingNodes.Add(pfNode);
+                    ItemCount++;
+                }
+            }
+        }
+
+        //Retrieve Objects nearby PathFinding Nodes given Position in the Quad Tree and Superior layers of the quadrant if UpperLayerDepth > 0
+        public void RetrieveNearbyObjects(Vector3 Position, ref List<PathFinding.Node> pfNodesNearby, int UpperLayerDepth, QuadTreeNode node, int DepthCounter = 0)
+        {
+            if (node == null)
+                node = Head;
+
+            //Process North-West Part
+            if (node.Children[0] != null)
+            {
+                //If Sphere can be found inside the North West quadrant of the current quadrant or if this depth level should be covered, go inside
+                if ((Position.X <= node.Position.X && Position.Z <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                {
+                    RetrieveNearbyObjects(Position, ref pfNodesNearby, UpperLayerDepth, node.Children[0], DepthCounter + 1);
+                }
+            }
+
+            //Process North-East Part
+            if (node.Children[1] != null)
+            {
+                //If Sphere can be found inside the North East quadrant of the current quadrant or if this depth level should be covered, go inside
+                if ((Position.X >= node.Position.X &&Position.Z <= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                {
+                    RetrieveNearbyObjects(Position, ref pfNodesNearby, UpperLayerDepth, node.Children[1], DepthCounter + 1);
+                }
+            }
+
+            //Process South-West Part
+            if (node.Children[2] != null)
+            {
+                //If Sphere can be found inside the South West quadrant of the current quadrant or if this depth level should be covered, go inside
+                if ((Position.X <= node.Position.X && Position.Z >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                {
+                    RetrieveNearbyObjects(Position, ref pfNodesNearby, UpperLayerDepth, node.Children[2], DepthCounter + 1);
+                }
+            }
+
+            //Process South-East Part
+            if (node.Children[3] != null)
+            {
+                //If Sphere can be found inside the South West quadrant of the current quadrant or if this depth level should be covered, go inside
+                if ((Position.X >= node.Position.X && Position.Z >= node.Position.Y) || (this.depth - DepthCounter) <= UpperLayerDepth)
+                {
+                    RetrieveNearbyObjects(Position, ref pfNodesNearby, UpperLayerDepth, node.Children[3], DepthCounter + 1);
+                }
+            }
+
+            //Return all primitives found in the node 
+            if (node.PathFindingNodes != null)
+            {
+                //Add all primitives found in the quadrant that aren't already in the list
+                foreach (PathFinding.Node pfNode in node.PathFindingNodes)
+                {
+                    if (!pfNodesNearby.Contains(pfNode))
+                    {
+                        pfNodesNearby.Add(pfNode);
+                    }
+                }
+            }
+        }
+
         //Return boxes that generate Quad Tree Grid. It is possible to filter lower levels and display only higher ones by setting UpperLayerDepth to a value > 0
         public List<Box> RetrieveBoundariesFromPosition(Sphere sphere, ref List<Box> boxes, int UpperLayerDepth = 0, QuadTreeNode node = null)
         {
@@ -399,6 +521,15 @@ namespace SpacePartition
             get { return primitives; }
             set { primitives = value; }
         }
+
+        private List<PathFinding.Node> pathFindingNodes;
+
+        internal List<PathFinding.Node> PathFindingNodes
+        {
+            get { return pathFindingNodes; }
+            set { pathFindingNodes = value; }
+        }
+
 
         //Size of the quadrant for that node
         float size;
