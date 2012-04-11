@@ -4246,9 +4246,24 @@ namespace zombies
 
             //do soundeffect attached
             if (weapon.weaponType == WeaponType.Handgun9mm)
-            { 
-                //need to check the time
+            {
+                if (Player.PowerupsList.Contains(silencer))
+                {
+                    sound.StopSilencer();
+                    //need to check the time
+                    sound.playSilencer();
+                }
+                else
+                {
+                    sound.Stopgun();
                     sound.playgun();
+                }
+            }
+            if (weapon.weaponType == WeaponType.Magnum)
+            {
+                sound.StopMagnum();
+                //need to check the time
+                sound.playMagnum();
             }
            
    

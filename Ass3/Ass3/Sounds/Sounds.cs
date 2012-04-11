@@ -14,10 +14,17 @@ namespace Sounds
     
       //soundeffects
         private SoundEffect gun ;
+        private SoundEffect magnumSound;
+        private SoundEffect ExtinguisherSound;
+        private SoundEffect SilencerSound;
+
         SoundEffectInstance guninst;
+        SoundEffectInstance Extinst;
+        SoundEffectInstance Maginst;
+        SoundEffectInstance Silinst;
 
         private ContentManager content;
-
+     
         public Sounds(Game game, ContentManager content) : base(game)
         {
 
@@ -28,14 +35,68 @@ namespace Sounds
         {
             if (guninst == null || guninst.State == SoundState.Stopped)
             {
-            guninst = gun.CreateInstance();
-            guninst.Play();
+                guninst = gun.CreateInstance();
+                guninst.Play();
+            }
+        }
+
+        public void Stopgun()
+        {
+            if (guninst != null)
+            {
+                guninst.Stop(true);
+            }
+        }
+
+        public void playExtinguisher()
+        {
+            if (Extinst == null || Extinst.State == SoundState.Stopped)
+            {
+                Extinst = ExtinguisherSound.CreateInstance();
+                Extinst.Play();
+            }
+        }
+
+        public void playMagnum()
+        {
+            if (Maginst == null || Maginst.State == SoundState.Stopped)
+            {
+                Maginst = magnumSound.CreateInstance();
+                Maginst.Play();
+            }
+        }
+
+        public void StopMagnum()
+        {
+            if (Maginst != null)
+            {
+                Maginst.Stop(true);
+            }
+        }
+
+        public void playSilencer()
+        {
+            if (Silinst == null || Silinst.State == SoundState.Stopped)
+            {
+                Silinst = SilencerSound.CreateInstance();
+                Silinst.Play();
+            }
+        }
+
+        public void StopSilencer()
+        {
+            if (Silinst != null)
+            {
+                Silinst.Stop(true);
             }
         }
 
         public void LoadSounds()
         {
             gun = content.Load<SoundEffect>("gunsound1");
+            magnumSound = content.Load<SoundEffect>("MagnumSound");
+            ExtinguisherSound = content.Load<SoundEffect>("ExtinguisherSound");
+            SilencerSound = content.Load<SoundEffect>("SilencerSound");
         }
     }
 }
