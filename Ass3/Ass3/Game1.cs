@@ -4003,6 +4003,10 @@ namespace zombies
                 if (c != null)
                 {
                     ResolveStaticCollision(c, Player, heroSphere);
+                    if(((Box)p).Tag == "Fire1" || ((Box)p).Tag == "Fire2" || ((Box)p).Tag == "Fire3" || ((Box)p).Tag == "Fire4")
+                    {
+                        Player.TakeDamage(25);
+                    }
                 }
             }
 
