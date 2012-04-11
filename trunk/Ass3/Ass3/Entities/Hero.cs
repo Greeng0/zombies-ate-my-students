@@ -73,6 +73,9 @@ namespace Entities
         public Dictionary<Weapon, int> WeaponsList; // List of weapons obtained by the Hero
         public Item SelectedItem;                   // Item which will be used when UseItem is called
         public Weapon EquippedWeapon;
+        public int TimeSinceLastFire = 0;
+        public int TimeSinceLastUse = 0;
+        public const int ITEM_USE_INTERVAL = 500;
 
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
 
@@ -152,6 +155,9 @@ namespace Entities
 
         public void Update(GameTime gameTime)
         {
+            TimeSinceLastFire += gameTime.ElapsedGameTime.Milliseconds;
+            TimeSinceLastUse += gameTime.ElapsedGameTime.Milliseconds;
+
             if (animState == AnimationState.Idle)
             {
                 animationPlayer = animationPlayerwalk;
@@ -216,17 +222,19 @@ namespace Entities
 
         private void UseItem()
         {
-            if (SelectedItem != null)
+            if (SelectedItem != null && TimeSinceLastUse > ITEM_USE_INTERVAL)
             {
                 ActionFunction(this, SelectedItem);
+                TimeSinceLastUse = 0;
             }
         }
 
         private void FireWeapon()
         {
-            if (EquippedWeapon != null)
+            if (EquippedWeapon != null && TimeSinceLastFire > EquippedWeapon.Speed)
             {
                 ActionFunction(this, EquippedWeapon);
+                TimeSinceLastFire = 0;
             }
         }
 

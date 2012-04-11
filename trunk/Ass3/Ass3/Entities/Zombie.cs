@@ -199,6 +199,7 @@ namespace Entities
         public void Update(GameTime gameTime)
         {
             lastAttackTime += gameTime.ElapsedGameTime.Milliseconds;
+
             if (animState == AnimationState.Idle)
             {
                 animationPlayer = animationPlayerwalk;
@@ -689,9 +690,13 @@ namespace Entities
         private void Attack(Weapon weapon)
         {
             SetOrientation(Position - Target.Position);
-            AttackFunction(this, weapon);
 
-            DoFuzzyLogic();
+            if (lastAttackTime > weapon.Speed)
+            {
+                AttackFunction(this, weapon);
+                DoFuzzyLogic();
+                lastAttackTime = 0;
+            }
         }
 
         // Retrieves next behaviour from fuzzy logic module
