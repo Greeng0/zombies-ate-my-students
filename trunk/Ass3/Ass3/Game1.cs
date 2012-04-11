@@ -586,14 +586,7 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Idle;        
            
             #endregion
-            if (Player.HealthPoints <= 0)
-            {
-                if (Player.animState != Entity.AnimationState.Dying)
-                {
-                    Player.animState = Entity.AnimationState.Dying;
-                }
-
-            }
+         
             if (Player.Dead)
             {
                 // TODO: GameOver
