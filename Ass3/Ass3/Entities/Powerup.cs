@@ -27,6 +27,8 @@ namespace Entities
 
         public override bool Equals(object obj)
         {
+            if (!(obj is Powerup))
+                return false;
             return Type.Equals((obj as Powerup).Type);
         }
         public override int GetHashCode()

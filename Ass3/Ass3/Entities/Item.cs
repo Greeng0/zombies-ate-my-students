@@ -51,6 +51,8 @@ namespace Entities
 
         public override bool Equals(object obj)
         {
+            if (!(obj is Item))
+                return false;
             return itemType.Equals((obj as Item).itemType);
         }
         public override int GetHashCode()
