@@ -138,6 +138,8 @@ namespace zombies
         Sounds.Sounds sound;
 
 
+        bool released = true;
+
 
         public Game1()
         {
@@ -260,8 +262,13 @@ namespace zombies
             PickupableObjects.Add(key1);
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
-            
-            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
+
+            Item fireext = new Item(ItemType.Extinguisher);
+            fireext.model = extinguisherModel;
+           
+
+
+            Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction, ref fireext);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
@@ -3510,14 +3517,7 @@ namespace zombies
 
           
             
-            //testing code
-           Item medkit10 = new Item(ItemType.Extinguisher);
-            medkit10.model = Content.Load<Model>("Extinguisher");
-            medkit10.Position = Player.Position- new Vector3(10,0,20);
-            PickupableObjects.Add(medkit10);
-           
-           
-         
+ 
 
 
 
@@ -3888,7 +3888,11 @@ namespace zombies
                             Player.TurnRight();
                         break;
                     case Keys.Tab:
-                        Player.SwitchNextItem();
+                        if (released)
+                        {
+                            Player.SwitchNextItem();
+                            released = false;
+                        }
                         break;
                   
                     case Keys.Space:
@@ -3897,7 +3901,11 @@ namespace zombies
                         break;
                 }
             }
-           
+            if (keyboard.IsKeyUp(Keys.Tab))
+            {
+                released = true;
+
+            }
             if (walk)
                     Player.animState = Entity.AnimationState.Walking;
             else if (Player.animState != Entity.AnimationState.Hurt && Player.animState != Entity.AnimationState.Dying)

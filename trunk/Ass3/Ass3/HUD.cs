@@ -269,7 +269,7 @@ namespace zombies
                 
                 if (keyss > 0)
                 {
-                    if (current % 3 == 1)
+                    if (current % 3 == 1 || (meds == 0 && current == 2))
                     {
                         selectedeqrec.X = slot4rec.X - 10;
                         selectedeqrec.Y = slot4rec.Y - 10;
@@ -283,7 +283,7 @@ namespace zombies
                 }
               if (meds > 0)
                 {
-                    if (current % 3 == 2)
+                    if (current % 3 == 2 || (keyss == 0 && current == 1))
                     {
                         selectedeqrec.X = slot5rec.X - 10;
                         selectedeqrec.Y = slot5rec.Y - 10;
