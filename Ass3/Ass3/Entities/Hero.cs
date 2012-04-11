@@ -273,24 +273,30 @@ namespace Entities
 
         public void SwitchNextWeapon()
         {
-            if (EquippedWeapon == WeaponsList.First().Key)
+            if (WeaponsList != null)
             {
-                EquippedWeapon = WeaponsList.Last().Key;
-            }
-            else
-            {
-                EquippedWeapon = WeaponsList.First().Key;
+                if (EquippedWeapon == WeaponsList.First().Key)
+                {
+                    EquippedWeapon = WeaponsList.Last().Key;
+                }
+                else
+                {
+                    EquippedWeapon = WeaponsList.First().Key;
+                }
             }
         }
         public void SwitchNextItem()
         {
-            if (SelectedItem == ItemsList.First().Key)
+            if (SelectedItem != null)
             {
-                SelectedItem = ItemsList.Last().Key;
-            }
-            else
-            {
-                SelectedItem = ItemsList.First().Key;
+                if (SelectedItem == ItemsList.First().Key)
+                {
+                    SelectedItem = ItemsList.Last().Key;
+                }
+                else
+                {
+                    SelectedItem = ItemsList.First().Key;
+                }
             }
         }
 
