@@ -350,7 +350,7 @@ namespace zombies
             zombies.Add(z8);
             zombies.Add(z9);
             zombies.Add(z10);
-            zombies.Add(z11);*/
+            zombies.Add(z11);
             zombies.Add(z12);
             zombies.Add(z13);
             zombies.Add(z14);
