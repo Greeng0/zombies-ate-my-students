@@ -605,6 +605,7 @@ namespace zombies
         protected override void Update(GameTime gameTime)
         {
             #region Update hud
+            HUD.ActiveHUD.chooseslots(ref Player);
             HUD.ActiveHUD.p = Player.Position;
             HUD.ActiveHUD.angle = (float) Player.Rotation;
             HUD.ActiveHUD.playerhealth = (int)((float)Player.HealthPoints / (float)Player.MaxHealth * 100);
