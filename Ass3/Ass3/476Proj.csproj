@@ -113,6 +113,7 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Hero.cs" />
     <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\Powerup.cs" />
     <Compile Include="Entities\Weapon.cs" />
     <Compile Include="AI\Fuzzifier.cs" />
     <Compile Include="HIDInput\KeyboardInput.cs" />

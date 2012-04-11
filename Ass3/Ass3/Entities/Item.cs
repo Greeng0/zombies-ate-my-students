@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 using Entities;
 
 namespace Entities
@@ -18,6 +19,11 @@ namespace Entities
         public ItemType itemType;
         public float SoundRadius;
         public float Range = 0;
+
+        public Item(ItemType type, ref Model model) : this(type)
+        {
+            this.model = model;
+        }
 
         public Item(ItemType type)
         {
