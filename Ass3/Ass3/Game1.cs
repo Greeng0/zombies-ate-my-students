@@ -388,7 +388,7 @@ namespace zombies
             CollisionBoxes.Add(new Box(new Vector3(58.54241f, 0f, 69.16705f), new Vector3(0), new Vector3(20.90004f, 20, 11.80001f)));
             #endregion  
 
-            CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+            //CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
             LevelQuadTree = new QuadTree(new Vector2(156, 65), 185, 4);
             
             foreach (Box box in CollisionBoxes)
@@ -635,11 +635,11 @@ namespace zombies
             List<Primitive> primitivesNearby = new List<Primitive>();
             LevelQuadTree.RetrieveNearbyObjects(heroSphere, ref primitivesNearby,2);
 
-            foreach (Primitive bx in primitivesNearby)
+            /*foreach (Primitive bx in primitivesNearby)
             {
                 if (!TotalNearbyBoxes.Contains(bx))
                     TotalNearbyBoxes.Add(bx);
-            }
+            }*/
 
             foreach (Primitive p in primitivesNearby)
             {

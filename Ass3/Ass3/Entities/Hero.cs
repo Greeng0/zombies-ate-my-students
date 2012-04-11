@@ -280,13 +280,27 @@ namespace Entities
         }
         public void TurnLeft()
         {
-            Rotation += rotationSpeed;
+            if (this.Stance == AnimationStance.Shooting)
+            {
+                Rotation += rotationSpeed/3;
+            }
+            else
+            {
+                Rotation += rotationSpeed;
+            }
             Rotation %= Math.PI * 2;
             Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
         public void TurnRight()
         {
-            Rotation -= rotationSpeed;
+            if (this.Stance == AnimationStance.Shooting)
+            {
+                Rotation -= rotationSpeed / 3;
+            }
+            else
+            {
+                Rotation -= rotationSpeed;
+            }
             Rotation %= Math.PI * 2;
             Velocity = moveSpeed * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation));
         }
