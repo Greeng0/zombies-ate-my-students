@@ -256,19 +256,26 @@ namespace zombies
           meds=  p.meds;
          keyss= p.keys;
     int current = p.current;
-
-            //drawselectedeq = false;
+    if (fires + meds + keyss > 0)
+        drawselectedeq = true;
+    else 
+            drawselectedeq = false;
         
             // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
 
-               
-                    if (current % 3 == 0 || keyss + meds == 0)
-                    {
-                        selectedeqrec.X = slot3rec.X - 10;
-                        selectedeqrec.Y = slot3rec.Y - 10;
-                    }
-                    slot3 = fire;
-
+    if (fires > 0)
+    {
+        if (current % 3 == 0)
+        {
+            selectedeqrec.X = slot3rec.X - 10;
+            selectedeqrec.Y = slot3rec.Y - 10;
+        }
+        slot3 = fire;
+    }
+    else
+    {
+        fire = empty;
+    }
                 
                 if (keyss > 0)
                 {
@@ -434,6 +441,7 @@ namespace zombies
             {
                 spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
             }
+
             if (drawselectedeq)
             {
                 temp = selectedeq;
@@ -443,7 +451,7 @@ namespace zombies
                 temp = empty;
             }
 
-            spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
+            spriteBatch.Draw(temp, selectedeqrec, Color.White);
 
 
 

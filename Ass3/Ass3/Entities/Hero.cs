@@ -102,20 +102,20 @@ namespace Entities
         public int current = 0;
 
 
-        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction,ref Item fire)
+        public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
         {
             this.model = modelwalk;
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
-            fireext = fire;
+         
 
             PowerupsList = new List<Powerup>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
          //   AddWeapon(new Weapon(WeaponType.Handgun9mm));
-            AddItem(fire);
+
             this.ActionFunction = actionFunction;
 
             //get animations
