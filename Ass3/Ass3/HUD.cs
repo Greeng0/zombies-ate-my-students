@@ -192,7 +192,7 @@ namespace zombies
 
 
             // choosing weapons
-            if(useweapons)
+   
             drawselectedwep = true;
             if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
             {
