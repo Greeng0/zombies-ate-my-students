@@ -3520,15 +3520,6 @@ namespace zombies
  
 
 
-
-            //testing code
-            Item medkit12 = new Item(ItemType.MedPack); ;
-            medkit12.model = Content.Load<Model>("MedKit");
-            medkit12.Position = Player.Position;
-            PickupableObjects.Add(medkit12);
-    
-         
-
             base.LoadContent();
         }
 
