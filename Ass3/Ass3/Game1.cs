@@ -112,7 +112,7 @@ namespace zombies
 
         int scrollWheel = 0;
         int scrollWheelLow = 0;
-        int scrollWheelHigh = 500;
+        int scrollWheelHigh = 50;
 
         const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 25;
