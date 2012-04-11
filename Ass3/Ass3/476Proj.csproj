@@ -119,6 +119,10 @@
     <Compile Include="HIDInput\KeyboardInput.cs" />
     <Compile Include="HUD.cs" />
     <Compile Include="Entities\IHeroObserver.cs" />
+    <Compile Include="PathFinding\AStar.cs" />
+    <Compile Include="PathFinding\Link.cs" />
+    <Compile Include="PathFinding\Node.cs" />
+    <Compile Include="PathFinding\NodeConnection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Game1.cs" />
