@@ -17,7 +17,7 @@ namespace zombies
 
         // Screen Writing
         SpriteFont Font1;
-      
+
         SpriteBatch spriteBatch;
         private int windowH;
         private int windowW;
@@ -26,7 +26,7 @@ namespace zombies
         private double lasttime;
         public Vector3 p;
         public float angle;
-       
+
 
         //calculating scale of blood for hud info
 
@@ -56,12 +56,17 @@ namespace zombies
         Texture2D powerup;
         Texture2D healthbar;
 
+
         //slots holding texures
         Texture2D slot1;
         Texture2D slot2;
         Texture2D slot3;
         Texture2D slot4;
         Texture2D slot5;
+
+        Texture2D silencer;
+        Texture2D shoes;
+
 
         //adding their rectangles
 
@@ -71,11 +76,18 @@ namespace zombies
         Rectangle slot4rec = new Rectangle(510, 10, 70, 70);
         Rectangle slot5rec = new Rectangle(630, 10, 70, 70);
 
+        Rectangle silencerrec = new Rectangle(750, 0, 70, 70);
+        Rectangle shoerec = new Rectangle(750, 70, 70, 70);
 
 
         bool drawselectedwep = false;
         Texture2D selectedwep;
-        Rectangle selectedweprec  = new Rectangle(0, 0, 90,90);
+        Rectangle selectedweprec = new Rectangle(0, 0, 90, 90);
+
+        bool drawselectedeq = false;
+        Texture2D selectedeq;
+        Rectangle selectedeqrec = new Rectangle(0, 0, 90, 90);
+
 
 
         Texture2D letter;
@@ -127,6 +139,8 @@ namespace zombies
             powerup = _content.Load<Texture2D>("powerup");
             med = _content.Load<Texture2D>("med");
             healthbar = _content.Load<Texture2D>("healthbar");
+
+
             //for letters 
 
             a = _content.Load<Texture2D>("a");
@@ -139,6 +153,9 @@ namespace zombies
             letter = a;
 
             selectedwep = _content.Load<Texture2D>("selectedweapon");
+            selectedeq = _content.Load<Texture2D>("selecteditem");
+
+
 
             //fill slots with inventory
             slot1 = gun;
@@ -147,62 +164,111 @@ namespace zombies
             slot4 = keys;
             slot5 = fire;
 
+
+
+
+            silencer = _content.Load<Texture2D>("powerup");
+            shoes = _content.Load<Texture2D>("shoe");
+
             base.LoadContent();
         }
         public void chooseslots(ref Entities.Hero p)
         {
+
+
+            // choosing weapons
             drawselectedwep = true;
             if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
             {
                 //draw both pictures
                 slot1 = gun;
                 slot2 = gun2;
-           
-            if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm)
-            {
-                selectedweprec.X = slot1rec.X-10;
-                selectedweprec.Y = slot1rec.Y-10;
-            }
-            else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
-            {
-                //inset green outline on second slot
-                selectedweprec.X = slot2rec.X - 10;
-                selectedweprec.Y = slot2rec.Y - 10;
-            }
-        
+
+                if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm)
+                {
+                    selectedweprec.X = slot1rec.X - 10;
+                    selectedweprec.Y = slot1rec.Y - 10;
+                }
+                else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
+                {
+                    //inset green outline on second slot
+                    selectedweprec.X = slot2rec.X - 10;
+                    selectedweprec.Y = slot2rec.Y - 10;
+                }
+
             }
 
             else if (p.WeaponsList.Count == 1)
             {
                 //draw one pictures
 
-           if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm )
-           {
-               selectedweprec.X = slot1rec.X - 10;
-               selectedweprec.Y = slot1rec.Y - 10;
-                slot1 = gun;
-                slot2 = empty;
+                if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm)
+                {
+                    selectedweprec.X = slot1rec.X - 10;
+                    selectedweprec.Y = slot1rec.Y - 10;
+                    slot1 = gun;
+                    slot2 = empty;
 
+                }
+                else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
+                {
+                    slot1 = empty;
+                    slot2 = gun2;
+                    selectedweprec.X = slot2rec.X - 10;
+                    selectedweprec.Y = slot2rec.Y - 10;
+                }
             }
-            else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
-            {
-                slot1 = empty;
-                slot2 = gun2;
-                selectedweprec.X = slot2rec.X-10;
-                selectedweprec.Y = slot2rec.Y-10;
-            }
-            }
-                else
+            else
             {
                 slot1 = empty;
                 slot2 = empty;
                 selectedweprec.X = slot1rec.X - 10;
                 selectedweprec.Y = slot1rec.Y - 10;
                 drawselectedwep = false;
-            } 
+            }
+
+
+
+            //end of choosing weapons
+
+
+            //choosing items
+
+
+            drawselectedeq = false;
+            if (p.SelectedItem != null)
+            {
+                drawselectedeq = true;
+
+                if (p.SelectedItem.itemType == Entities.ItemType.Extinguisher)
+                {
+                    selectedeqrec.X = slot3rec.X - 10;
+                    selectedeqrec.Y = slot3rec.Y - 10;
+                    slot3 = fire;
+                }
+
+                else if (p.SelectedItem.itemType == Entities.ItemType.Key)
+                {
+                    selectedeqrec.X = slot4rec.X - 10;
+                    selectedeqrec.Y = slot4rec.Y - 10;
+                    slot4 = keys;
+                }
+                else if (p.SelectedItem.itemType == Entities.ItemType.MedPack)
+                {
+                    selectedeqrec.X = slot5rec.X - 10;
+                    selectedeqrec.Y = slot5rec.Y - 10;
+                    slot5 = med;
+                }
+                else
+                    drawselectedeq = false;
+
+            }
+
+
+
         }
-    
-       
+
+
         public override void Update(GameTime gameTime)
         {
             if (gameTime.TotalGameTime.TotalMilliseconds > lasttime + 1000)
@@ -211,7 +277,7 @@ namespace zombies
                 frames = 0;
                 lasttime = gameTime.TotalGameTime.TotalMilliseconds;
             }
-          //update letter
+            //update letter
 
             if (playerhealth > 75)
                 letter = a;
@@ -234,48 +300,56 @@ namespace zombies
 
             frames++;
             spriteBatch.Begin();
-         
-                
-
-                string out2 = "Position";
-                out2 += "\n" + p ;
-                out2 += "\n\n\nAngle";
-                out2 += "\n" + MathHelper.ToDegrees(angle);
-                out2 += "\n\n\nFps";
-                out2 += "\n" + fps;
 
 
-                Vector2 pos2 = new Vector2(200, 100);
-                spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
-                
+            string out2 = "Position";
+            out2 += "\n" + p;
+            out2 += "\n\n\nAngle";
+            out2 += "\n" + MathHelper.ToDegrees(angle);
+            out2 += "\n\n\nFps";
+            out2 += "\n" + fps;
 
-                healthscale = rate * playerhealth;
-                int diff = min + (int)(rate * (100 - playerhealth));
+
+            Vector2 pos2 = new Vector2(200, 100);
+            spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
+
+
+
+            healthscale = rate * playerhealth;
+            int diff = min + (int)(rate * (100 - playerhealth));
 
 
             //draw health bar
-               spriteBatch.Draw(healthbar, new Rectangle(healthx,  diff, healthsizex, max-diff), Color.White);
+            spriteBatch.Draw(healthbar, new Rectangle(healthx, diff, healthsizex, max - diff), Color.White);
             spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
-              spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
-          
-          
-               
-                //draw slots
-
-             spriteBatch.Draw(slot1, slot1rec, Color.White);
-             spriteBatch.Draw(slot2, slot2rec, Color.White);
-             spriteBatch.Draw(slot3, slot3rec, Color.White);
-             spriteBatch.Draw(slot4, slot4rec, Color.White);
-             spriteBatch.Draw(slot5, slot5rec, Color.White);
+            spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
 
 
+
+            //draw slots
+
+            spriteBatch.Draw(slot1, slot1rec, Color.White);
+            spriteBatch.Draw(slot2, slot2rec, Color.White);
+            spriteBatch.Draw(slot3, slot3rec, Color.White);
+            spriteBatch.Draw(slot4, slot4rec, Color.White);
+            spriteBatch.Draw(slot5, slot5rec, Color.White);
+
           
-             if (drawselectedwep)
-             {
-                 spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
-             }
-            
+            if (drawselectedwep)
+            {
+                spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
+            }
+            if (drawselectedeq)
+            {
+                spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
+            }
+  //draw powerups
+
+            spriteBatch.Draw(silencer, silencerrec, Color.White);
+            spriteBatch.Draw(shoes, shoerec, Color.White);
+
+
 
 
 

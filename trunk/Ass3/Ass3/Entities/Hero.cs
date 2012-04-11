@@ -255,6 +255,7 @@ namespace Entities
             {
                 SelectedItem = item;
             }
+            
             if (ItemsList.ContainsKey(item))
             {
                 ItemsList[item]++;
