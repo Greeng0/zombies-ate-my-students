@@ -261,8 +261,7 @@ namespace zombies
             }
             // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
 
-                if (fires > 0)
-                {
+               
                     if (current % 3 == 0)
                     {
                         selectedeqrec.X = slot3rec.X - 10;
@@ -270,11 +269,7 @@ namespace zombies
                     }
                     slot3 = fire;
 
-                }
-                else
-                {
-                    slot3 = empty;
-                }
+                
                 if (keyss > 0)
                 {
                     if (current % 3 == 1)
@@ -423,7 +418,7 @@ namespace zombies
             if (keyss > 0)
                 out2 += keyss;
 
-         pos2 = new Vector2(400, 80);
+         pos2 = new Vector2(400, 100);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
 
@@ -442,11 +437,14 @@ namespace zombies
             }
             if (drawselectedeq)
             {
-                spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
+                temp = selectedeq;
+            }
+            else
+            {
+                temp = empty;
             }
 
-
-
+            spriteBatch.Draw(selectedeq, selectedeqrec, Color.White);
 
 
 
