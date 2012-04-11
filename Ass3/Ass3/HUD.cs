@@ -99,6 +99,8 @@ namespace zombies
 
         public int selecteditem = 0;
 
+        public bool useweapons = false;
+
         
         Texture2D temp;
      
@@ -190,6 +192,7 @@ namespace zombies
 
 
             // choosing weapons
+            if(useweapons)
             drawselectedwep = true;
             if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
             {

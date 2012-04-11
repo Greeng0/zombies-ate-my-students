@@ -4346,9 +4346,19 @@ namespace zombies
                             Player.PowerupsList.Add(silencer);
                
                         }
-                        PickupableObjects.Remove(p);
-                  
+                        else if (p.model == magnumModel)
+                        {
+                            Player.AddWeapon((Weapon)p);
+                        }
+                        else if (p.model == socom.model)
+                        {
+                            Player.AddWeapon((Weapon)p);
 
+                        }
+                            PickupableObjects.Remove(p);
+
+
+                        
                     }
                
                   
