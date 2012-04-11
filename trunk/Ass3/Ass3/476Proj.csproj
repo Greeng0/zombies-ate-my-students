@@ -119,6 +119,10 @@
     <Compile Include="HIDInput\KeyboardInput.cs" />
     <Compile Include="HUD.cs" />
     <Compile Include="Entities\IHeroObserver.cs" />
+    <Compile Include="Particles\Particle.cs" />
+    <Compile Include="Particles\ParticleController.cs" />
+    <Compile Include="Particles\ParticleEmitter.cs" />
+    <Compile Include="Particles\ParticleGroup.cs" />
     <Compile Include="PathFinding\AStar.cs" />
     <Compile Include="PathFinding\Link.cs" />
     <Compile Include="PathFinding\Node.cs" />

@@ -15,6 +15,7 @@ using SpacePartition;
 using AI;
 using System.Diagnostics;
 using PathFinding;
+using Particles;
 
 namespace zombies
 {
@@ -53,6 +54,16 @@ namespace zombies
         //List of nodes for the path to follow obtained from A* computation
         List<PathFinding.Node> NodeList;
 
+        #endregion
+
+        #region Particles
+
+        ParticleEmitter FireEmitter;
+        ParticleEmitter FireEmitter2;
+        ParticleEmitter FireEmitter3;
+        ParticleEmitter FireEmitter4;
+        Texture2D fire;
+        Texture2D smoke;
         #endregion
 
         HUD hud;
@@ -177,9 +188,6 @@ namespace zombies
       
         protected override void LoadContent()
         {
-           
-
-
             //sounds
        
             sound = new Sounds.Sounds(this, Content);
@@ -204,7 +212,10 @@ namespace zombies
             NodeModel = Content.Load<Model>("Pyramid");
             StartNode = Content.Load<Model>("SPyramid");
             EndNode = Content.Load<Model>("EPyramid");
-            
+
+            smoke = Content.Load<Texture2D>("Smoke2");
+            fire = Content.Load<Texture2D>("Fire2");
+
             //weapon/item/powerup models
             Silenced9mm = Content.Load<Model>("socom9mmsilencer");
             magnumModel = Content.Load<Model>("Magnum");
@@ -3385,10 +3396,47 @@ namespace zombies
             globalEffect.World = world;
             globalEffect.Projection = Camera.ActiveCamera.Projection;
 
+            //Effects for Fire Core and Flames
+            BasicEffect FireEffect = new BasicEffect(GraphicsDevice);
+            FireEffect = new BasicEffect(GraphicsDevice);
+            FireEffect.View = Camera.ActiveCamera.View;
+            FireEffect.TextureEnabled = true;
+            FireEffect.Projection = Camera.ActiveCamera.Projection;
+            FireEffect.World = world;
+            FireEffect.Texture = fire;
+            FireEffect.Alpha = 0.6f;
 
+            
+            FireEmitter = new ParticleEmitter(new Vector3(92,0,35), new Vector3(0), 0, 0, 1);
+            FireEmitter.particleGroups.Add(new ParticleGroup("FireFlames", BlendState.Additive, DepthStencilState.DepthRead, FireEffect));
+            FireEmitter.particleGroups[0].controller.MaxParticles = 50;
+            FireEmitter.particleGroups[0].controller.ParticlePerEmission = 1;
+            FireEmitter.particleGroups[0].controller.LifeSpan = 1000;
+            FireEmitter.particleGroups[0].controller.Size = 12f;
+            FireEmitter.particleGroups[0].controller.Velocity = new Vector3(0.04f, 0.36f, 0.04f);
+            FireEmitter.particleGroups[0].controller.directionRange = new Vector3(6f, 1, 2f);
+            FireEmitter.particleGroups[0].controller.directionOffset = new Vector3(-3f, 0, -3f);
+            FireEmitter.particleGroups[0].controller.RandomizeDirection = true;
+            FireEmitter.particleGroups[0].controller.RotationVelocity = 1.0f / 60.0f;
+            FireEmitter.particleGroups[0].controller.RandomizeRotation = true;
 
+            FireEmitter2 = FireEmitter.Clone();
+            FireEmitter2.position = new Vector3(284, 0, 53);
 
-/*
+            FireEmitter3 = FireEmitter.Clone();
+            FireEmitter3.position = new Vector3(88, 0, 200);
+            
+            FireEmitter4 = FireEmitter.Clone();
+            FireEmitter.particleGroups[0].controller.Alpha = 0.8f;
+            FireEmitter.particleGroups[0].controller.MaxParticles = 100;
+            FireEmitter4.position = new Vector3(332, 0, -6);
+
+            FireEmitter.Start();
+            FireEmitter2.Start();
+            FireEmitter3.Start();
+            FireEmitter4.Start();
+
+            /*
 
             //testing code
             medkit1 = new Item(ItemType.MedPack);
@@ -3740,6 +3788,16 @@ namespace zombies
             globalEffect.View = Camera.ActiveCamera.View;
             globalEffect.World = world;
             globalEffect.Projection = Camera.ActiveCamera.Projection;
+
+
+            FireEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+            FireEmitter2.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+            FireEmitter3.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+            FireEmitter4.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+            FireEmitter.UpdateEmitter(gameTime);
+            FireEmitter2.UpdateEmitter(gameTime);
+            FireEmitter3.UpdateEmitter(gameTime);
+            FireEmitter4.UpdateEmitter(gameTime);
 
             base.Update(gameTime);
         }        
@@ -4271,6 +4329,12 @@ namespace zombies
                 else if (ent is Powerup)
                     DrawModel(ent as Powerup);
             }
+
+            
+            EmitterDraw(FireEmitter);
+            EmitterDraw(FireEmitter2);
+            EmitterDraw(FireEmitter3);
+            EmitterDraw(FireEmitter4);
             base.Draw(gameTime);
         }
 
@@ -4473,38 +4537,41 @@ namespace zombies
 
         private void DrawModel(Zombie zombie)
         {
-            Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
+            if (zombie.animationPlayer != null)
+            {
+                Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
 
-            float zombieRotation;
-            if (zombie.animState == Entity.AnimationState.Attacking || zombie.animState == Entity.AnimationState.Hurt ||
-                zombie.animState == Entity.AnimationState.Dying)
-            {
-                zombieRotation = (float)zombie.Rotation;
-            }
-            else
-            {
-                zombieRotation = (float)(zombie.Rotation - Math.PI);
-            }
-
-            // Render the skinned mesh
-            foreach (ModelMesh mesh in zombie.model.Meshes)
-            {
-                foreach (SkinnedEffect effect in mesh.Effects)
+                float zombieRotation;
+                if (zombie.animState == Entity.AnimationState.Attacking || zombie.animState == Entity.AnimationState.Hurt ||
+                    zombie.animState == Entity.AnimationState.Dying)
                 {
-                    effect.World = Matrix.CreateRotationY(zombieRotation) *
-                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
-                    effect.SetBoneTransforms(bones);
-                    effect.View = Camera.ActiveCamera.View;
-                    effect.World = effect.World;
-                    effect.Projection = Camera.ActiveCamera.Projection;
-
-                    effect.EnableDefaultLighting();
-
-                    effect.SpecularColor = new Vector3(0.25f);
-                    effect.SpecularPower = 16;
+                    zombieRotation = (float)zombie.Rotation;
+                }
+                else
+                {
+                    zombieRotation = (float)(zombie.Rotation - Math.PI);
                 }
 
-                mesh.Draw();
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in zombie.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateRotationY(zombieRotation) *
+                            Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.World = effect.World;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
             }
         }
 
@@ -4679,6 +4746,40 @@ namespace zombies
 
                     GraphicsDevice.SetVertexBuffer(vertexBuffer);
                     GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, 0, 12);
+                    vertexBuffer.Dispose();
+                }
+            }
+        }
+
+        //Draw All the particles found in each particle group of the given emitter
+        protected void EmitterDraw(ParticleEmitter emitter)
+        {
+            foreach (ParticleGroup group in emitter.particleGroups)
+            {
+                VertexBuffer vertexBuffer;
+
+                GraphicsDevice.BlendState = group.blendState;
+                GraphicsDevice.DepthStencilState = group.depthStencil;
+                group.effect.CurrentTechnique.Passes[0].Apply();
+
+                //Display Particles in their flat 2D form or fake 3D feel
+                if (true)
+                {
+                    group.LoadVertexArray(ParticleAppearance.ThreeDimensional);
+                }
+                else
+                {
+                    group.LoadVertexArray(ParticleAppearance.Flat);
+                }
+
+                //Draw each particle
+                if (group.vertices.Length > 0)
+                {
+                    vertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionNormalTexture.VertexDeclaration, group.vertices.Length, BufferUsage.None);
+                    vertexBuffer.SetData<VertexPositionNormalTexture>(group.vertices);
+
+                    GraphicsDevice.SetVertexBuffer(vertexBuffer);
+                    GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, 0, (group.vertices.Length / 6) + 1);
                     vertexBuffer.Dispose();
                 }
             }
