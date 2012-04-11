@@ -1254,14 +1254,37 @@ namespace zombies
             if (Player.Stance == AnimationStance.Shooting && Player.animState == Entity.AnimationState.Idle)
             {
 
-                if (Player.EquippedWeapon != null)
+                if(Player.EquippedWeapon != null){
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in hero.EquippedWeapon.model.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateTranslation(hero.Position);// 
+
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
+
+
+              //  if it has a silencer
+
+                if (Player.PowerupsList.Contains(silencer) && hero.EquippedWeapon == socom)
                 {
                     // Render the skinned mesh
-                    foreach (ModelMesh mesh in hero.EquippedWeapon.model.Meshes)
+                    foreach (ModelMesh mesh in Silenced9mm.Meshes)
                     {
                         foreach (BasicEffect effect in mesh.Effects)
                         {
-                            effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateTranslation(hero.Position);// 
+                            effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateScale(1) * Matrix.CreateTranslation(hero.Position);// 
 
                             effect.View = Camera.ActiveCamera.View;
                             effect.Projection = Camera.ActiveCamera.Projection;
@@ -1273,36 +1296,12 @@ namespace zombies
                         }
 
                         mesh.Draw();
-                    }
 
 
-                    //  if it has a silencer
-
-                    if (Player.PowerupsList.Contains(silencer) && hero.EquippedWeapon == socom)
-                    {
-                        // Render the skinned mesh
-                        foreach (ModelMesh mesh in Silenced9mm.Meshes)
-                        {
-                            foreach (BasicEffect effect in mesh.Effects)
-                            {
-                                effect.World = Matrix.CreateTranslation(hero.EquippedWeapon.offset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateScale(1) * Matrix.CreateTranslation(hero.Position);// 
-
-                                effect.View = Camera.ActiveCamera.View;
-                                effect.Projection = Camera.ActiveCamera.Projection;
-
-                                effect.EnableDefaultLighting();
-
-                                effect.SpecularColor = new Vector3(0.25f);
-                                effect.SpecularPower = 16;
-                            }
-
-                            mesh.Draw();
-
-
-                        }
                     }
                 }
             }
+                }
             // Render the skinned mesh
             foreach (ModelMesh mesh in hero.model.Meshes)
             {
