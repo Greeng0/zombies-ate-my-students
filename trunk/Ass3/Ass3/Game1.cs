@@ -117,7 +117,8 @@ namespace zombies
 
         const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 25;
-
+        const int COLLISION_ITEM_RANGE = 5;
+        
 
         //sound
         Sounds.Sounds sound;
@@ -3433,7 +3434,8 @@ namespace zombies
 
         protected override void Update(GameTime gameTime)
         {
-      
+
+          
 
             #region Update hud
             HUD.ActiveHUD.chooseslots(ref Player);
@@ -3806,6 +3808,7 @@ namespace zombies
                     }
                 }
             }
+            checkItemCollisions();
         }
 
         private void ResolveStaticCollision(Contact contact, Entity ent, Sphere sphere)
@@ -3998,7 +4001,51 @@ namespace zombies
                     closestVictim.TakeDamage(weapon.FirePower);
             }
         }
+        private void checkItemCollisions()
+        {
 
+            if(PickupableObjects.Count > 0){
+            //check for collisions with map items
+                foreach (Entity p in PickupableObjects)
+                {
+                    if ((p.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
+                    {
+                        if (p.model == extinguisherModel)
+                        {
+                            Player.extinguishers += 10;
+                        }
+                      
+                        else if (p.model == medkitModel)
+                        {
+                            Player.meds++;
+                        }
+
+                        else if (p.model == keyModel)
+                        {
+                            Player.keys++;
+                        }
+                        else if (p.model == sneakerModel)
+                        {
+                            Player.PowerupsList.Add(sneakers);
+
+                        }
+
+                        else if (p.model == silencerModel)
+                        {
+                            Player.PowerupsList.Add(silencer);
+
+                        }
+
+                        
+                    }
+                   // PickupableObjects.Remove(p);
+
+
+                }
+           
+
+            }
+        }
         private void CastItem(Item item, Entity actionCaster)
         {
             CastSoundWave(item.SoundRadius);

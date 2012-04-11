@@ -90,6 +90,14 @@ namespace Entities
         private Vector3 rayHeight = new Vector3(0, 5.5f, 0);
         public float raydist = 50;
 
+
+        //items
+
+        public int extinguishers = 0;
+        public int meds = 0;
+        public int keys = 0;
+
+
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
         {
