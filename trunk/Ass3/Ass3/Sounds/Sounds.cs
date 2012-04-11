@@ -18,13 +18,11 @@ namespace Sounds
 
         private ContentManager content;
 
-
         public Sounds(Game game, ContentManager content) : base(game)
         {
 
             this.content = content;
         }
-
     
         public void playgun()
         {
@@ -35,16 +33,9 @@ namespace Sounds
             }
         }
 
-
         public void LoadSounds()
         {
-
-             gun = content.Load<SoundEffect>("gunsound1");
-     
-   
+            gun = content.Load<SoundEffect>("gunsound1");
         }
-
-    
-
     }
 }
