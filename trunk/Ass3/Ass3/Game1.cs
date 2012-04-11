@@ -49,6 +49,7 @@ namespace zombies
         Model HeroDie;
 
         int ButtonTimer = 0;
+        int zCounter = 1;
 
         BasicEffect globalEffect;
         QuadTree LevelQuadTree;
@@ -73,7 +74,7 @@ namespace zombies
         int scrollWheelHigh = 500;
 
         const int SIGHT_RADIUS = 60;
-        const float COLLISON_SOUND_RADIUS = 15;
+        const float COLLISON_SOUND_RADIUS = 25;
 
 
         //sound
@@ -166,7 +167,7 @@ namespace zombies
            
           
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
-            Player.Position = new Vector3(-15, 0, 1);
+            Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
             //add weapons
             Player.AddWeapon(magnum);
@@ -175,34 +176,133 @@ namespace zombies
             
             Powerups silence = new Powerups();
             silence = Powerups.Silencer;
-            Player.PowerupsList.Add(silence);
-
-            
-
+            //Player.PowerupsList.Add(silence);
 
             Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z1.Position = new Vector3(0, 0, 10);
+            z1.Position = new Vector3(301.519f, 0, 145.7045f);
             Zombie z2 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z2.Position = new Vector3(0, 0, -10);
+            z2.Position = new Vector3(269.3711f, 0, 190.6429f);
             Zombie z3 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z3.Position = new Vector3(10, 0, 0);
+            z3.Position = new Vector3(261.2204f, 0, 93.19714f);
             Zombie z4 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z4.Position = new Vector3(-10, 0, 0);
+            z4.Position = new Vector3(336.6563f, 0, 97.20895f);
             Zombie z5 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z5.Position = new Vector3(15, 0, 10);
+            z5.Position = new Vector3(336.6563f, 0, 97.20895f);
             Zombie z6 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z6.Position = new Vector3(10, 0, -15);
+            z6.Position = new Vector3(329.1409f, 0, 131.5164f);
             Zombie z7 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z7.Position = new Vector3(-15, 0, -10);
+            z7.Position = new Vector3(301.1594f, 0, 65.94746f);
             Zombie z8 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z8.Position = new Vector3(-10, 0, 15);
+            z8.Position = new Vector3(328.5325f, 0, 25.91457f);
             Zombie z9 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z9.Position = new Vector3(0, 0, -25);
+            z9.Position = new Vector3(303.7029f, 0, 9.12639f);
             Zombie z10 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z10.Position = new Vector3(0, 0, -35);
+            z10.Position = new Vector3(317.9062f, 0, -3.754462f);
             Zombie z11 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
-            z11.Position = new Vector3(45, 0, -45);
-
+            z11.Position = new Vector3(249.0774f, 0, 8.751559f);
+            Zombie z12 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z12.Position = new Vector3(249.0774f, 0, 8.751559f);
+            Zombie z13 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z13.Position = new Vector3(247.3187f, 0, -14.76119f);
+            Zombie z14 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z14.Position = new Vector3(258.4365f, 0, -18.24927f);
+            Zombie z15 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z15.Position = new Vector3(258.4365f, 0, -18.24927f);
+            Zombie z16 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z16.Position = new Vector3(239.0731f, 0, 60.01192f);
+            Zombie z17 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z17.Position = new Vector3(232.3299f, 0, -7.815142f);
+            Zombie z18 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z18.Position = new Vector3(183.7789f, 0, -19.10403f);
+            Zombie z19 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z19.Position = new Vector3(187.8999f, 0, -4.894011f);
+            Zombie z20 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z20.Position = new Vector3(188.1283f, 0, 9.704206f);
+            Zombie z21 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z21.Position = new Vector3(200.033f, 0, 2.194498f);
+            Zombie z22 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z22.Position = new Vector3(196.9581f, 0, 9.796185f);
+            Zombie z23 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z23.Position = new Vector3(185.8409f, 0, 99.64986f);
+            Zombie z24 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z24.Position = new Vector3(180.9995f, 0, 169.6039f);
+            Zombie z25 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z25.Position = new Vector3(167.7615f, 0, 172.059f);
+            Zombie z26 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z26.Position = new Vector3(122.0838f, 0, 144.119f);
+            Zombie z27 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z27.Position = new Vector3(123.5005f, 0, 176.1559f);
+            Zombie z28 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z28.Position = new Vector3(213.768f, 0, 135.7222f);
+            Zombie z29 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z29.Position = new Vector3(246.0834f, 0, 138.0532f);
+            Zombie z30 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z30.Position = new Vector3(214.1074f, 0, 171.7199f);
+            Zombie z31 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z31.Position = new Vector3(206.5015f, 0, 175.7075f);
+            Zombie z32 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z32.Position = new Vector3(165.1259f, 0, 88.55122f);
+            Zombie z33 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z33.Position = new Vector3(145.6952f, 0, 103.8975f);
+            Zombie z34 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z34.Position = new Vector3(135.175f, 0, 91.71438f);
+            Zombie z35 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z35.Position = new Vector3(208.605f, 0, 123.8601f);
+            Zombie z36 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z36.Position = new Vector3(62.17467f, 0, 206.7475f);
+            Zombie z37 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z37.Position = new Vector3(41.59457f, 0, 193.5849f);
+            Zombie z38 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z38.Position = new Vector3(28.12794f, 0, 176.6967f);
+            Zombie z39 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z39.Position = new Vector3(-5.158183f, 0, 177.9941f);
+            Zombie z40 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z40.Position = new Vector3(-19.26436f, 0, 180.8879f);
+            Zombie z41 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z41.Position = new Vector3(-18.53246f, 0, 204.0769f);
+            Zombie z42 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z42.Position = new Vector3(-8.234371f, 0, 206.5888f);
+            Zombie z43 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z43.Position = new Vector3(41.16431f, 0, 142.7086f);
+            Zombie z44 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z44.Position = new Vector3(24.07458f, 0, 113.5347f);
+            Zombie z45 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z45.Position = new Vector3(-13.25363f, 0, 102.294f);
+            Zombie z46 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z46.Position = new Vector3(-10.16963f, 0, 68.20435f);
+            Zombie z47 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z47.Position = new Vector3(57.56277f, 0, 78.36703f);
+            Zombie z48 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z48.Position = new Vector3(33.51163f, 0, 4.10241f);
+            Zombie z49 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z49.Position = new Vector3(64.64824f, 0, -2.653803f);
+            Zombie z50 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z50.Position = new Vector3(11.22738f, 0, -0.01383802f);
+            Zombie z51 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z51.Position = new Vector3(-5.455381f, 0, -17.11485f);
+            Zombie z52 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z52.Position = new Vector3(-12.90771f, 0, 3.014349f);
+            Zombie z53 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z53.Position = new Vector3(135.701f, 0, -78.65513f);
+            Zombie z54 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z54.Position = new Vector3(110.1617f, 0, -78.243f);
+            Zombie z55 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z55.Position = new Vector3(98.60985f, 0, -99.87992f);
+            Zombie z56 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z56.Position = new Vector3(125.8402f, 0, -105.1298f);
+            Zombie z57 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z57.Position = new Vector3(154.5468f, 0, -104.6467f);
+            Zombie z58 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z58.Position = new Vector3(164.7363f, 0, -92.75577f);
+            Zombie z59 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z59.Position = new Vector3(166.331f, 0, -70.69667f);
+            Zombie z60 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z60.Position = new Vector3(136.4978f, 0, -66.72479f);
+            Zombie z61 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z61.Position = new Vector3(107.2373f, 0, -69.5914f);
+            Zombie z62 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+            z62.Position = new Vector3(158.4751f, 0, -46.98093f);
+            zombies.Add(z1);
             zombies.Add(z1);
             zombies.Add(z2);
             zombies.Add(z3);
@@ -214,6 +314,58 @@ namespace zombies
             zombies.Add(z9);
             zombies.Add(z10);
             zombies.Add(z11);
+            zombies.Add(z12);
+            zombies.Add(z13);
+            zombies.Add(z14);
+            zombies.Add(z15);
+            zombies.Add(z16);
+            zombies.Add(z17);
+            zombies.Add(z18);
+            zombies.Add(z19);
+            zombies.Add(z20);
+            zombies.Add(z21);
+            zombies.Add(z22);
+            zombies.Add(z23);
+            zombies.Add(z24);
+            zombies.Add(z25);
+            zombies.Add(z26);
+            zombies.Add(z27);
+            zombies.Add(z28);
+            zombies.Add(z29);
+            zombies.Add(z30);
+            zombies.Add(z31);
+            zombies.Add(z32);
+            zombies.Add(z33);
+            zombies.Add(z34);
+            zombies.Add(z35);
+            zombies.Add(z36);
+            zombies.Add(z37);
+            zombies.Add(z38);
+            zombies.Add(z39);
+            zombies.Add(z40);
+            zombies.Add(z41);
+            zombies.Add(z42);
+            zombies.Add(z43);
+            zombies.Add(z44);
+            zombies.Add(z45);
+            zombies.Add(z46);
+            zombies.Add(z47);
+            zombies.Add(z48);
+            zombies.Add(z49);
+            zombies.Add(z50);
+            zombies.Add(z51);
+            zombies.Add(z52);
+            zombies.Add(z53);
+            zombies.Add(z54);
+            zombies.Add(z55);
+            zombies.Add(z56);
+            zombies.Add(z57);
+            zombies.Add(z58);
+            zombies.Add(z59);
+            zombies.Add(z60);
+            zombies.Add(z61);
+            zombies.Add(z62);
+            
 
             #region Level Collision Detection
             CollisionBoxes.Add(new Box(new Vector3(0, 0, 0.5f), new Vector3(0), new Vector3(10, 20, 27.5f)));
@@ -557,19 +709,24 @@ namespace zombies
 
             if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
             {
-                Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + "f, " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + "f, " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +"f) , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + "f, 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +"f)));");
-                CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
+                //Zombie z1 = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);
+                //z1.Position = new Vector3(0, 0, 10)
+                Debug.WriteLine("Zombie z" + zCounter +" = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction);");
+                Debug.WriteLine("z"+ zCounter +".Position = new Vector3("+Player.Position.X +"f,0,"+Player.Position.Z +"f)");
+                zCounter++;
+                //Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + "f, " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + "f, " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +"f) , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + "f, 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +"f)));");
+                //CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
 
-                LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
+                //LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
 
-                if (keyboard.IsKeyDown(Keys.RightShift))
-                {
-                    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
-                }
-                else
-                {
-                    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
-                }
+                //if (keyboard.IsKeyDown(Keys.RightShift))
+                //{
+                //    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
+                //}
+                //else
+                //{
+                //    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+                //}
                 ButtonTimer = 10;
             }
 
@@ -687,6 +844,7 @@ namespace zombies
                     TotalNearbyBoxes.Add(bx);
             }*/
 
+            primitivesNearby.AddRange(fireHazards);
             foreach (Primitive p in primitivesNearby)
             {
                 Contact c = heroSphere.Collides(p as Box);
@@ -708,6 +866,7 @@ namespace zombies
                     Sphere zombieSphere = new Sphere(z.Position, z.Velocity, z.modelRadius);
                     List<Primitive> primitives = new List<Primitive>();
                     LevelQuadTree.RetrieveNearbyObjects(zombieSphere, ref primitives);
+                    primitives.AddRange(fireHazards);
                     foreach (Primitive p in primitives)
                     {
                         Contact c = zombieSphere.Collides(p as Box);

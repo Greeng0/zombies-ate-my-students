@@ -41,7 +41,7 @@ namespace Entities
                     {
                         FirePower = 200;
                         Speed = 500;
-                        SoundRadius = 40;
+                        SoundRadius = 60;
                         Range = 40;
                         offset = new Vector3(-2.3f, 4.5f, -1f);
                         break;
@@ -50,7 +50,7 @@ namespace Entities
                     {
                         FirePower = 2000;
                         Speed = 2000;
-                        SoundRadius = 50;
+                        SoundRadius = 80;
                         Range = 40;
                         offset = new Vector3(-2.3f, 4.5f, -1f);
                         
