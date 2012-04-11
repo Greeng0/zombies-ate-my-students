@@ -233,7 +233,7 @@ namespace zombies
             //sneakerModel = Content.Load<Model>("key");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
-            magnum.Position = new Vector3(200f, 0, 0);
+            magnum.Position = new Vector3(70f, 0, -15);
             socom = new Weapon(WeaponType.Handgun9mm, ref handgunModel);
             socom.Position = new Vector3(293.3976f, 0, 123.4541f);
             silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
@@ -4385,7 +4385,8 @@ namespace zombies
                         float next = rand.Next(25, 76);
                         next /= 100;
                         Player.Heal((int)(Player.MaxHealth * next));
-                        Player.ItemsList[item]--;
+                        if (Player.ItemsList.Count > 1)
+                             Player.ItemsList[item]--;
                         break;
                     }
                 case ItemType.Key:
@@ -4393,6 +4394,7 @@ namespace zombies
                         //if (lock in range)
                         //{
                         //      unlock
+                        if(Player.ItemsList.Count > 1)
                         Player.ItemsList[item]--;
                         //}
                         break;
