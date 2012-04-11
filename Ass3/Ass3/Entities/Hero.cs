@@ -32,7 +32,7 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public float moveSpeed = 0.2f;
+        public float moveSpeed = 0.8f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
         public bool Dead = false;
