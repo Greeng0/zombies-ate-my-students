@@ -175,6 +175,9 @@ namespace zombies
       
         protected override void LoadContent()
         {
+           
+
+
             //sounds
        
             sound = new Sounds.Sounds(this, Content);
@@ -3373,6 +3376,21 @@ namespace zombies
             globalEffect.View = Camera.ActiveCamera.View;
             globalEffect.World = world;
             globalEffect.Projection = Camera.ActiveCamera.Projection;
+
+
+
+
+
+
+            //testing code
+            medkit1 = new Item(ItemType.MedPack);
+            Player.AddWeapon(socom);
+            Player.AddItem(medkit1);
+
+
+
+
+
 
             base.LoadContent();
         }
