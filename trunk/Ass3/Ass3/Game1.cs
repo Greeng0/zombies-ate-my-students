@@ -870,6 +870,7 @@ namespace zombies
             }
             if (closestVictim != null)
             {
+                closestVictim.Alert(actionCaster as Hero);
                 if (weapon.weaponType == WeaponType.Magnum && closestIntersect > 20)
                     closestVictim.TakeDamage(weapon.FirePower / 10);
                 else if (weapon.weaponType == WeaponType.Magnum && closestIntersect > 10)

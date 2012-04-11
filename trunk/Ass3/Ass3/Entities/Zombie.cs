@@ -702,23 +702,26 @@ namespace Entities
         // Retrieves next behaviour from fuzzy logic module
         private void DoFuzzyLogic()
         {
-            Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
-                    (Position - Target.Position).Length() / MAX_DISTANCE);
-            BehaviouralState = fuzz.GetBehaviour();
+            if (Target != null)
+            {
+                Fuzzifier fuzz = new Fuzzifier(HealthPoints / MaxHealth, (Target as Hero).HealthPoints / (Target as Hero).MaxHealth,
+                        (Position - Target.Position).Length() / MAX_DISTANCE);
+                BehaviouralState = fuzz.GetBehaviour();
 
-            // release any reserved slot if new behaviour does not require one
-            if (BehaviouralState != BehaviourState.MeleeCreep && BehaviouralState != BehaviourState.MeleePursue)
-            {
-                if (targetslot >= 0)
+                // release any reserved slot if new behaviour does not require one
+                if (BehaviouralState != BehaviourState.MeleeCreep && BehaviouralState != BehaviourState.MeleePursue)
                 {
-                    Target.releaseSlot(this, targetslot);
+                    if (targetslot >= 0)
+                    {
+                        Target.releaseSlot(this, targetslot);
+                    }
+                    GroundTarget = new Vector3();
                 }
-                GroundTarget = new Vector3();
-            }
-            // forget the target if the bew behaviour does not require one
-            if (BehaviouralState == BehaviourState.Wander)
-            {
-                Target = null;
+                // forget the target if the bew behaviour does not require one
+                if (BehaviouralState == BehaviourState.Wander)
+                {
+                    Target = null;
+                }
             }
         }
 
