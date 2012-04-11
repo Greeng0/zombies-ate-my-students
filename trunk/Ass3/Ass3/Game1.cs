@@ -129,7 +129,9 @@ namespace zombies
         const int SIGHT_RADIUS = 60;
         const float COLLISON_SOUND_RADIUS = 25;
         const int COLLISION_ITEM_RANGE = 5;
-        
+
+        float ItemRotation = 0f;
+        float ItemHeight = 0f;
 
         //sound
         Sounds.Sounds sound;
@@ -3799,6 +3801,9 @@ namespace zombies
             FireEmitter3.UpdateEmitter(gameTime);
             FireEmitter4.UpdateEmitter(gameTime);
 
+            ItemRotation += 0.01f % ((float)Math.PI*2);
+            ItemHeight = (float)Math.Cos(ItemRotation*4);
+
             base.Update(gameTime);
         }        
 
@@ -4404,7 +4409,7 @@ namespace zombies
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = Matrix.CreateTranslation(ent.Position);
+                    effect.World = Matrix.CreateRotationY(ItemRotation) * Matrix.CreateScale(4) * Matrix.CreateTranslation(ent.Position + new Vector3(0, ItemHeight, 0));
                     effect.View = Camera.ActiveCamera.View;
 
                     effect.Projection = Camera.ActiveCamera.Projection;
