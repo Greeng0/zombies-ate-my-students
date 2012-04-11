@@ -977,7 +977,7 @@ namespace zombies
         private void DoAttack(Weapon weapon, Entity actionCaster)
         {
             // apply silencer if possible
-            if (weapon.weaponType == Entities.WeaponType.Handgun9mm && (actionCaster as Hero).PowerupsList.Contains(Powerups.Silencer))
+            if (weapon.weaponType == Entities.WeaponType.Handgun9mm && (actionCaster as Hero).PowerupsList.Contains(silencer))
             {
                 CastSoundWave(weapon.SoundRadius / 3);
             }
