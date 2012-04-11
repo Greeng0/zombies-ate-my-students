@@ -372,9 +372,9 @@ namespace zombies
             frames++;
             spriteBatch.Begin();
 
+/*
 
-
-        /*    string out2 = "Position";
+      string out2 = "Position";
             out2 += "\n" + p;
             out2 += "\n\n\nAngle";
             out2 += "\n" + MathHelper.ToDegrees(angle);
@@ -385,9 +385,8 @@ namespace zombies
             Vector2 pos2 = new Vector2(200, 100);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
-     */
 
-
+*/
 
 
             healthscale = rate * playerhealth;
