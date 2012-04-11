@@ -63,6 +63,20 @@ namespace zombies
         Texture2D slot4;
         Texture2D slot5;
 
+        //adding their rectangles
+
+        Rectangle slot1rec = new Rectangle(150, 10, 70, 70);
+        Rectangle slot2rec = new Rectangle(270, 10, 70, 70);
+        Rectangle slot3rec = new Rectangle(390, 10, 70, 70);
+        Rectangle slot4rec = new Rectangle(510, 10, 70, 70);
+        Rectangle slot5rec = new Rectangle(630, 10, 70, 70);
+
+
+
+
+        Texture2D selectedwep;
+        Rectangle selectedweprec  = new Rectangle(0, 0, 80,80);
+
 
         Texture2D letter;
         Texture2D a;
@@ -71,8 +85,8 @@ namespace zombies
         Texture2D d;
         Texture2D e;
         Texture2D f;
-      
 
+        Texture2D empty;
 
 
         public static HUD ActiveHUD
@@ -97,8 +111,14 @@ namespace zombies
 
         protected override void LoadContent()
         {
+
+
+
             spriteBatch = new SpriteBatch(device);
             Font1 = _content.Load<SpriteFont>("Arial");
+            empty = _content.Load<Texture2D>("empty");
+
+
             fire = _content.Load<Texture2D>("fireext");
             gun = _content.Load<Texture2D>("gun");
             gun2 = _content.Load<Texture2D>("gun2");
@@ -118,6 +138,8 @@ namespace zombies
 
             letter = a;
 
+            selectedwep = _content.Load<Texture2D>("selectedweapon");
+
             //fill slots with inventory
             slot1 = gun;
             slot2 = gun2;
@@ -126,7 +148,57 @@ namespace zombies
             slot5 = fire;
             base.LoadContent();
         }
+        public void chooseslots(ref Entities.Hero p)
+        {
 
+            if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
+            {
+                //draw both pictures
+                slot1 = gun;
+                slot2 = gun2;
+           
+            if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm)
+            {
+                selectedweprec.X = slot1rec.X-5;
+                selectedweprec.Y = slot1rec.Y-5;
+            }
+            else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
+            {
+                //inset green outline on second slot
+                selectedweprec.X = slot2rec.X - 5;
+                selectedweprec.Y = slot2rec.Y - 5;
+            }
+        
+            }
+
+            else if (p.WeaponsList.Count == 1)
+            {
+                //draw one pictures
+
+           if (p.EquippedWeapon.weaponType == Entities.WeaponType.Handgun9mm )
+           {
+               selectedweprec.X = slot1rec.X - 5;
+               selectedweprec.Y = slot1rec.Y - 5;
+                slot1 = gun;
+                slot2 = empty;
+
+            }
+            else if (p.EquippedWeapon.weaponType == Entities.WeaponType.Magnum)
+            {
+                slot1 = empty;
+                slot2 = gun2;
+                selectedweprec.X = slot2rec.X-5;
+                selectedweprec.Y = slot2rec.Y-5;
+            }
+            }
+                else
+            {
+                slot1 = empty;
+                slot2 = empty;
+                selectedweprec.X = slot1rec.X - 5;
+                selectedweprec.Y = slot1rec.Y - 5;
+            } 
+        }
     
        
         public override void Update(GameTime gameTime)
@@ -149,6 +221,7 @@ namespace zombies
                 letter = d;
             else
                 letter = f;
+
             base.Update(gameTime);
         }
 
@@ -178,19 +251,24 @@ namespace zombies
                 healthscale = rate * playerhealth;
                 int diff = min + (int)(rate * (100 - playerhealth));
 
+
+            //draw health bar
                spriteBatch.Draw(healthbar, new Rectangle(healthx,  diff, healthsizex, max-diff), Color.White);
+            spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
+              spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
+          
           
                
-                
-             spriteBatch.Draw(slot1, new Rectangle(390, 0, 70, 70), Color.White);
-             spriteBatch.Draw(slot2, new Rectangle(150, 0, 70, 70), Color.White);
-             spriteBatch.Draw(slot3, new Rectangle(270, 0, 70, 70), Color.White);
-             spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
-             spriteBatch.Draw(slot4, new Rectangle(510, 0, 70, 70), Color.White);
-             spriteBatch.Draw(slot5, new Rectangle(630, 0, 70, 70), Color.White);
+                //draw slots
 
-             spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
-          
+             spriteBatch.Draw(slot1, slot1rec, Color.White);
+             spriteBatch.Draw(slot2, slot2rec, Color.White);
+             spriteBatch.Draw(slot3, slot3rec, Color.White);
+             spriteBatch.Draw(slot4, slot4rec, Color.White);
+             spriteBatch.Draw(slot5, slot5rec, Color.White);
+
+
+             spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
               
             
 
