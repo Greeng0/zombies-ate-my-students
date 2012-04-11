@@ -1087,7 +1087,7 @@ namespace zombies
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.World = Matrix.CreateRotationY((float)(hero.Rotation + Math.PI/2)) * Matrix.CreateScale(1) * Matrix.CreateTranslation(hero.Position);// 
+                        effect.World = Matrix.CreateTranslation(hero.weaponoffset) * Matrix.CreateRotationY((float)(hero.Rotation + Math.PI / 2)) * Matrix.CreateTranslation(hero.Position);// 
                       
                         effect.View = Camera.ActiveCamera.View;
                         effect.Projection = Camera.ActiveCamera.Projection;
