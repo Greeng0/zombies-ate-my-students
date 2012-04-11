@@ -415,12 +415,12 @@ namespace zombies
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-            //if (mouseState.LeftButton == ButtonState.Pressed)
-            //{
-            //    Player.HealthPoints = 200;
-            //    foreach (Zombie z in zombies)
-            //        z.animState = Entity.AnimationState.Idle;
-            //}
+            if (mouseState.LeftButton == ButtonState.Pressed)
+           {
+               Player.HealthPoints = 0;
+                foreach (Zombie z in zombies)
+                    z.animState = Entity.AnimationState.Attacking;
+            }
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
@@ -586,7 +586,14 @@ namespace zombies
                 Player.animState = Entity.AnimationState.Idle;        
            
             #endregion
+            if (Player.HealthPoints <= 0)
+            {
+                if (Player.animState != Entity.AnimationState.Dying)
+                {
+                    Player.animState = Entity.AnimationState.Dying;
+                }
 
+            }
             if (Player.Dead)
             {
                 // TODO: GameOver
@@ -1045,29 +1052,58 @@ namespace zombies
         private void DrawModel(Zombie zombie)
         {
             Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
-
-            // Render the skinned mesh
-            foreach (ModelMesh mesh in zombie.model.Meshes)
+            if (zombie.animationPlayer == zombie.animationPlayerattack)
             {
-                foreach (SkinnedEffect effect in mesh.Effects)
+
+
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in zombie.model.Meshes)
                 {
-                    effect.World = Matrix.CreateRotationY((float)(zombie.Rotation - Math.PI)) * 
-                    Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
-                    effect.SetBoneTransforms(bones);
-                    effect.View = Camera.ActiveCamera.View;
-                    effect.World = effect.World;
-                    effect.Projection = Camera.ActiveCamera.Projection;
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
 
-                    effect.EnableDefaultLighting();
+                        effect.World = Matrix.CreateRotationY((float)(zombie.Rotation)) *
+                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.World = effect.World;
+                        effect.Projection = Camera.ActiveCamera.Projection;
 
-                    effect.SpecularColor = new Vector3(0.25f);
-                    effect.SpecularPower = 16;
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
                 }
+            }
 
-                mesh.Draw();
+            else
+            {
+                // Render the skinned mesh
+                foreach (ModelMesh mesh in zombie.model.Meshes)
+                {
+                    foreach (SkinnedEffect effect in mesh.Effects)
+                    {
+
+                        effect.World = Matrix.CreateRotationY((float)(zombie.Rotation - Math.PI)) *
+                        Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                        effect.SetBoneTransforms(bones);
+                        effect.View = Camera.ActiveCamera.View;
+                        effect.World = effect.World;
+                        effect.Projection = Camera.ActiveCamera.Projection;
+
+                        effect.EnableDefaultLighting();
+
+                        effect.SpecularColor = new Vector3(0.25f);
+                        effect.SpecularPower = 16;
+                    }
+
+                    mesh.Draw();
+                }
             }
         }
-
         public void DrawSchool()
         {
 
