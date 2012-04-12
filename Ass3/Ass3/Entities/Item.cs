@@ -32,7 +32,7 @@ namespace Entities
             {
                 case ItemType.Extinguisher:
                     {
-                        SoundRadius = 30;
+                        SoundRadius = 40;
                         Range = 10;
                         break;
                     }

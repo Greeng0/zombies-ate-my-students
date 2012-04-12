@@ -32,7 +32,7 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public float moveSpeed = 0.2f;
+        public float moveSpeed = 0.6f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
         public bool Dead = false;
@@ -71,7 +71,6 @@ namespace Entities
         public int TimeSinceLastUse = 0;
         public const int ITEM_USE_INTERVAL = 500;
 
-
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
 
         //adding flanking var
@@ -88,10 +87,8 @@ namespace Entities
         private Vector3 rayHeight = new Vector3(0, 5.5f, 0);
         public float raydist = 50;
 
-
         //items
         public int current = 0;
-
 
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
@@ -321,11 +318,13 @@ namespace Entities
         {
             Position += (PowerupsList.Contains(new Powerup(PowerupType.Sneakers))) ? 2 * Velocity : Velocity;
             notifyObservers();
+            ActionFunction(this, null);
         }
         public void MoveBackward()
         {
             Position -= Velocity;
             notifyObservers();
+            ActionFunction(this, null);
         }
         public void TurnLeft()
         {

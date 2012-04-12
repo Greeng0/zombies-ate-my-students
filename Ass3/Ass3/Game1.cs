@@ -69,6 +69,7 @@ namespace zombies
 
         HUD hud;
 
+        #region Models
         Model School;
 
         //4 animations for zombies
@@ -77,6 +78,7 @@ namespace zombies
         Model ZombieHurt;
         Model ZombieDie;
 
+        
         //3 animations for zombies
         Model HeroWalk;
         Model HeroHurt;
@@ -86,6 +88,17 @@ namespace zombies
         Model NodeModel;
         Model StartNode;
         Model EndNode;
+
+        //weapon/item/powerup models
+        Model handgunModel;
+        Model magnumModel;
+        Model medkitModel;
+        Model extinguisherModel;
+        Model keyModel;
+        Model silencerModel;
+        Model sneakerModel;
+        #endregion
+
         int ButtonTimer = 0;
         int zCounter = 63;
 
@@ -103,15 +116,6 @@ namespace zombies
 
         List<Entity> PickupableObjects;
 
-        //weapon/item/powerup models
-        Model handgunModel;
-        Model magnumModel;
-        Model medkitModel;
-        Model extinguisherModel;
-        Model keyModel;
-        Model silencerModel;
-        Model sneakerModel;
-
         Weapon magnum;
         Weapon socom;
         Powerup silencer;
@@ -128,8 +132,9 @@ namespace zombies
         int scrollWheelHigh = 50;
 
         const int SIGHT_RADIUS = 60;
-        const float COLLISON_SOUND_RADIUS = 25;
+        const float COLLISON_SOUND_RADIUS = 30;
         const int COLLISION_ITEM_RANGE = 5;
+        const float WALK_SOUND_RADIUS = 25;
 
         float ItemRotation = 0f;
         float ItemHeight = 0f;
@@ -3918,7 +3923,7 @@ namespace zombies
             }
 
 
-            if (Player.SelectedItem != null &&keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
+            if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 CheckCollisions(true);
             }
@@ -3950,7 +3955,6 @@ namespace zombies
             {
                 sound.playExtinguisher();
                 ChemicalsEmitter.Start();
-
             }
             else
             {
@@ -4172,6 +4176,16 @@ namespace zombies
             else if (objectCasted is Item)
             {
                 CastItem(objectCasted as Item, actionCaster);   
+            }
+            else if (objectCasted == null)
+            {
+                // Hero is walking, generate sound radius
+                foreach (Zombie z in zombies)
+                {
+                    float walkRadius = (((actionCaster as Hero).PowerupsList.Contains(new Powerup(PowerupType.Sneakers))) ? WALK_SOUND_RADIUS / 2 : WALK_SOUND_RADIUS);
+                    if ((z.Position - actionCaster.Position).Length() < walkRadius)
+                        z.Alert(actionCaster as Hero);
+                }
             }
         }
 
