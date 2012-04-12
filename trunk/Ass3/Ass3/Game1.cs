@@ -4024,31 +4024,34 @@ namespace zombies
                                 fireHazards.Remove(fireHazards[i]);
                             }
                         }
-                        if (fireHazards[i].Tag == "Fire2")
+                        if (fireHazards.Count > 0)
                         {
-                            FireEmitter2.particleGroups[0].controller.LifeSpan -= 5;
-                            if (FireEmitter2.particleGroups[0].controller.LifeSpan <= 0)
+                            if (fireHazards[i].Tag == "Fire2")
                             {
-                                FireEmitter2.Stop();
-                                fireHazards.Remove(fireHazards[i]);
+                                FireEmitter2.particleGroups[0].controller.LifeSpan -= 5;
+                                if (FireEmitter2.particleGroups[0].controller.LifeSpan <= 0)
+                                {
+                                    FireEmitter2.Stop();
+                                    fireHazards.Remove(fireHazards[i]);
+                                }
                             }
-                        }
-                        if (fireHazards[i].Tag == "Fire3")
-                        {
-                            FireEmitter3.particleGroups[0].controller.LifeSpan -= 5;
-                            if (FireEmitter3.particleGroups[0].controller.LifeSpan <= 0)
+                            if (fireHazards[i].Tag == "Fire3")
                             {
-                                FireEmitter3.Stop();
-                                fireHazards.Remove(fireHazards[i]);
+                                FireEmitter3.particleGroups[0].controller.LifeSpan -= 5;
+                                if (FireEmitter3.particleGroups[0].controller.LifeSpan <= 0)
+                                {
+                                    FireEmitter3.Stop();
+                                    fireHazards.Remove(fireHazards[i]);
+                                }
                             }
-                        }
-                        if (fireHazards[i].Tag == "Fire4")
-                        {
-                            FireEmitter4.particleGroups[0].controller.LifeSpan -= 5;
-                            if (FireEmitter4.particleGroups[0].controller.LifeSpan <= 0)
+                            if (fireHazards[i].Tag == "Fire4")
                             {
-                                FireEmitter4.Stop();
-                                fireHazards.Remove(fireHazards[i]);
+                                FireEmitter4.particleGroups[0].controller.LifeSpan -= 5;
+                                if (FireEmitter4.particleGroups[0].controller.LifeSpan <= 0)
+                                {
+                                    FireEmitter4.Stop();
+                                    fireHazards.Remove(fireHazards[i]);
+                                }
                             }
                         }
                     }
