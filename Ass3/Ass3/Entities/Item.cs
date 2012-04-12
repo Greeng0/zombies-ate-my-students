@@ -18,7 +18,6 @@ namespace Entities
     {
         public ItemType itemType;
         public float SoundRadius;
-        public float Range = 0;
 
         public Item(ItemType type, ref Model model) : this(type)
         {
@@ -33,7 +32,6 @@ namespace Entities
                 case ItemType.Extinguisher:
                     {
                         SoundRadius = 40;
-                        Range = 10;
                         break;
                     }
                 case ItemType.Key:
