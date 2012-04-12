@@ -302,32 +302,32 @@ namespace Entities
                     }
                 case EntityPositionState.SteeringArrive:
                     {
-                        if (onPath)
-                        {
-                            // see if we can get to second node in path
-                            if (path.Count > 1 && astarGetter(Position, path[1].position).Equals(Vector3.Zero))
-                            {
-                                GroundTarget = path[1].position;
-                                path.RemoveAt(0);
-                            }
-                            else if (path.Count > 0)
-                            {
-                                if (!astarGetter(Position, GroundTarget).Equals(Vector3.Zero))
-                                    GroundTarget = path[0].position;
-                                else
-                                    onPath = false;
-                            }
-                        }
-                        else if (!onPath) // try to get path
-                        {
-                            if (timeSinceAstar > MIN_PATHFINDING_IDLE)
-                            {
-                                path = GetAStarPath(GroundTarget);
-                                if (path != null)
-                                    onPath = true;
-                                timeSinceAstar = 0;
-                            }
-                        }
+                        //if (onPath)
+                        //{
+                        //    // see if we can get to second node in path
+                        //    if (path.Count > 1 && astarGetter(Position, path[1].position).Equals(Vector3.Zero))
+                        //    {
+                        //        GroundTarget = path[1].position;
+                        //        path.RemoveAt(0);
+                        //    }
+                        //    else if (path.Count > 0)
+                        //    {
+                        //        if (!astarGetter(Position, GroundTarget).Equals(Vector3.Zero))
+                        //            GroundTarget = path[0].position;
+                        //        else
+                        //            onPath = false;
+                        //    }
+                        //}
+                        //else if (!onPath) // try to get path
+                        //{
+                        //    if (timeSinceAstar > MIN_PATHFINDING_IDLE)
+                        //    {
+                        //        path = GetAStarPath(GroundTarget);
+                        //        if (path != null)
+                        //            onPath = true;
+                        //        timeSinceAstar = 0;
+                        //    }
+                        //}
                         SteeringArrive(creep);
                         animState = AnimationState.Walking;
                         Position += Velocity;
