@@ -75,10 +75,10 @@ namespace Entities
 
         //adding flanking var
         private float attackdist = 3;
-        private List<IHeroObserver> observer = new List<IHeroObserver>();
+        private List<IHeroObserver> Observers = new List<IHeroObserver>();
 
         //add nodes
-        private Node[] nodes = new Node[6];
+        private Node[] slots = new Node[6];
 
         //adding line to show where aiming info
         public VertexPositionColor[] ray = new VertexPositionColor[2];
@@ -88,7 +88,7 @@ namespace Entities
         public float raydist = 50;
 
         //items
-        public int current = 0;
+        //public int current = 0;
 
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
@@ -144,7 +144,7 @@ namespace Entities
             //adding flanking info
             for (int i = 0; i < 6; i++)
             {
-                nodes[i] = new Node();
+                slots[i] = new Node();
             }
         }
 
@@ -241,12 +241,22 @@ namespace Entities
             }
         }
 
-        public void AddWeapon(Weapon weapon)
+        public void AddEquipment(Entity eq)
+        {
+            if (eq is Weapon)
+                AddWeapon(eq as Weapon);
+            else if (eq is Item)
+                AddItem(eq as Item);
+            else if (eq is Powerup)
+                AddPowerup(eq as Powerup);
+        }
+
+        private void AddWeapon(Weapon weapon)
         {
             WeaponsList.Add(weapon, 1);
             EquippedWeapon = weapon;
         }
-        public void AddItem(Item item)
+        private void AddItem(Item item)
         {
             if (ItemsList.Count < 1)
             {
@@ -262,7 +272,7 @@ namespace Entities
                 ItemsList.Add(item, 1);
             }
         }
-        public void AddPowerup(Powerup p)
+        private void AddPowerup(Powerup p)
         {
             if (!PowerupsList.Contains(p))
                 PowerupsList.Add(p);
@@ -290,7 +300,6 @@ namespace Entities
                     if (ItemsList.Count > 1)
                     {
                         SelectedItem = ItemsList.ToArray()[1].Key;
-                        current = 1;
                     }
                 }
                 else if (SelectedItem == ItemsList.ToArray()[1].Key)
@@ -298,18 +307,15 @@ namespace Entities
                     if (ItemsList.Count > 2)
                     {
                         SelectedItem = ItemsList.ToArray()[2].Key;
-                        current = 2;
                     }
                     else
                     {
                         SelectedItem = ItemsList.ToArray()[0].Key;
-                        current = 0;
                     }
                 }
                 else if (SelectedItem == ItemsList.ToArray()[2].Key)
                 {
                     SelectedItem = ItemsList.ToArray()[0].Key;
-                    current = 0;
                 }
             }
         }
@@ -379,9 +385,9 @@ namespace Entities
         //adding flanking data
         private void notifyObservers()
         {
-            foreach (IHeroObserver i in observer)
+            foreach (IHeroObserver i in Observers)
             {
-                i.Notify(nodes[i.Targetslot()].po + Position);
+                i.Notify(slots[i.Targetslot()].po + Position);
             }
         }
 
@@ -390,7 +396,7 @@ namespace Entities
             //finding slot positions.
             moveme decision = new moveme();
 
-            if (observer.Count == 0)//if first in list, give him ideal position
+            if (Observers.Count == 0)//if first in list, give him ideal position
             {
                 //give new slot at shortest distace
                 decision.move = true;
@@ -399,64 +405,64 @@ namespace Entities
                 //reset nodes
                 float angle = (float)Math.Atan((ent.Position - Position).Z / (ent.Position - Position).X);
 
-                nodes[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
-                nodes[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
-                nodes[2].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
-                nodes[3].po = -new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
-                nodes[4].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
-                nodes[5].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
+                slots[0].po = new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
+                slots[1].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
+                slots[2].po = new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
+                slots[3].po = -new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)) * attackdist;
+                slots[4].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(60)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(60))) * attackdist;
+                slots[5].po = -new Vector3((float)Math.Sin(angle + MathHelper.ToRadians(120)), 0, (float)Math.Cos(angle + MathHelper.ToRadians(120))) * attackdist;
 
                 //set node to right state
-                nodes[0].occ = true;
+                slots[0].occ = true;
                 decision.slot = 0;
             }
-            else if (observer.Count > 6)//too many zombies, refuse
+            else if (Observers.Count > 6)//too many zombies, refuse
             {
                 decision.move = false;
             }
             else
             {
-                int start = observer.Last().Targetslot();
+                int start = Observers.Last().Targetslot();
 
-                if (!nodes[((start + 2)) % 6].occ)
+                if (!slots[((start + 2)) % 6].occ)
                 {
-                    nodes[((start + 2) % 6)].occ = true;
+                    slots[((start + 2) % 6)].occ = true;
                     decision.slot = ((start + 2) % 6);
 
                     decision.move = true;
-                    decision.pos = nodes[((start + 2) % 6)].po;
+                    decision.pos = slots[((start + 2) % 6)].po;
                 }
-                else if (!nodes[((start + 4)) % 6].occ)//first try not open go on
+                else if (!slots[((start + 4)) % 6].occ)//first try not open go on
                 {
-                    nodes[((start + 4) % 6)].occ = true;
+                    slots[((start + 4) % 6)].occ = true;
                     decision.slot = ((start + 4) % 6);
 
                     decision.move = true;
-                    decision.pos = nodes[((start + 4) % 6)].po;
+                    decision.pos = slots[((start + 4) % 6)].po;
                 }
-                else if (!nodes[((start + 3)) % 6].occ)
+                else if (!slots[((start + 3)) % 6].occ)
                 {
-                    nodes[((start + 3) % 6)].occ = true;
+                    slots[((start + 3) % 6)].occ = true;
                     decision.slot = ((start + 3) % 6);
 
                     decision.move = true;
-                    decision.pos = nodes[((start + 3) % 6)].po;
+                    decision.pos = slots[((start + 3) % 6)].po;
                 }
-                else if (!nodes[((start + 5)) % 6].occ)
+                else if (!slots[((start + 5)) % 6].occ)
                 {
-                    nodes[((start + 5) % 6)].occ = true;
+                    slots[((start + 5) % 6)].occ = true;
                     decision.slot = ((start + 5) % 6);
 
                     decision.move = true;
-                    decision.pos = nodes[((start + 5) % 6)].po;
+                    decision.pos = slots[((start + 5) % 6)].po;
                 }
-                else if (!nodes[((start + 1)) % 6].occ)
+                else if (!slots[((start + 1)) % 6].occ)
                 {
-                    nodes[((start + 1) % 6)].occ = true;
+                    slots[((start + 1) % 6)].occ = true;
                     decision.slot = ((start + 1) % 6);
 
                     decision.move = true;
-                    decision.pos = nodes[((start + 1) % 6)].po;
+                    decision.pos = slots[((start + 1) % 6)].po;
                 }
                 else
                 {
@@ -483,17 +489,17 @@ namespace Entities
 
         public void releaseSlot(IHeroObserver obs, int slot)
         {
-            nodes[slot].occ = false;
+            slots[slot].occ = false;
             unsubscribe(obs);
         }
 
         private void subscribe(IHeroObserver obs)
         {
-            observer.Add(obs);
+            Observers.Add(obs);
         }
         private void unsubscribe(IHeroObserver obs)
         {
-            observer.Remove(obs);
+            Observers.Remove(obs);
         }
     }
 }
