@@ -30,7 +30,7 @@ namespace zombies
 
         private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
         public Viewport frontViewport;
-        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1500, 900));
+        public Viewport Viewport = new Viewport(new Rectangle(0, 0, 1300, 700));
 
         List<Box> CollisionBoxes = new List<Box>();
         List<Primitive> TotalNearbyBoxes = new List<Primitive>();
@@ -87,7 +87,7 @@ namespace zombies
         Model StartNode;
         Model EndNode;
         int ButtonTimer = 0;
-        int zCounter = 1;
+        int zCounter = 63;
 
         BasicEffect globalEffect;
         QuadTree LevelQuadTree;
@@ -230,7 +230,7 @@ namespace zombies
             medkitModel = Content.Load<Model>("MedKit");
             keyModel = Content.Load<Model>("Key");
             extinguisherModel = Content.Load<Model>("Extinguisher");
-            //sneakerModel = Content.Load<Model>("key");
+            sneakerModel = Content.Load<Model>("Sneakers");
 
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
             magnum.Position = new Vector3(70f, 0, -15);
@@ -238,8 +238,8 @@ namespace zombies
             socom.Position = new Vector3(293.3976f, 0, 123.4541f);
             silencer = new Powerup(PowerupType.Silencer, ref silencerModel);
             silencer.Position = new Vector3(-6.841653f, 0, 191.983f);
-            //sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
-           // sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
+            sneakers = new Powerup(PowerupType.Sneakers, ref sneakerModel);
+            sneakers.Position = new Vector3(80.49309f, 0, -13.14439f);
             medkit1 = new Item(ItemType.MedPack, ref medkitModel);
             medkit1.Position = new Vector3(335.4893f, 0, -14.48104f);
             medkit2 = new Item(ItemType.MedPack, ref medkitModel);
@@ -255,17 +255,13 @@ namespace zombies
             PickupableObjects.Add(socom);
             PickupableObjects.Add(magnum);
             PickupableObjects.Add(silencer);
-            //PickupableObjects.Add(sneakers);
+            PickupableObjects.Add(sneakers);
             PickupableObjects.Add(medkit1);
             PickupableObjects.Add(medkit2);
             PickupableObjects.Add(medkit3);
             PickupableObjects.Add(key1);
             PickupableObjects.Add(key2);
             PickupableObjects.Add(extinguisher);
-
-        
-
-
             Player = new Hero(1000, 1000, ref HeroWalk, ref HeroDie, ref HeroHurt, DoAction);
             Player.Position = new Vector3(316.9466f, 0, 202.9034f);
 
@@ -3405,6 +3401,7 @@ namespace zombies
                 LevelQuadTree.Insert(node);
             }
 
+            #region Particles
             globalEffect = new BasicEffect(GraphicsDevice);
             globalEffect.VertexColorEnabled = true;
             globalEffect.View = Camera.ActiveCamera.View;
@@ -3508,10 +3505,7 @@ namespace zombies
             FireEmitter4.Start();
             ChemicalsEmitter.Start();
 
-          
-            
- 
-
+            #endregion
 
             base.LoadContent();
         }
@@ -3625,13 +3619,7 @@ namespace zombies
             Camera.ActiveCamera.dudeang = (float) Player.Rotation;
 
             mouseState = Mouse.GetState();
-            if (mouseState.LeftButton == ButtonState.Pressed)
-           {
-               //sound.playgun();
-               //Player.HealthPoints = 0;
-                foreach (Zombie z in zombies)
-                    z.animState = Entity.AnimationState.Attacking;
-            }
+
             if (mouseState.ScrollWheelValue < scrollWheel)
             {
                 if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
@@ -3707,22 +3695,25 @@ namespace zombies
             //Create new Collision Box
             if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
             {
-                Debug.WriteLine("CollisionBoxes.Add(new Box(new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Position.X + "f, " +  CollisionBoxes[CollisionBoxes.Count-1].Position.Y + "f, " + CollisionBoxes[CollisionBoxes.Count-1].Position.Z +"f) , new Vector3(0), new Vector3(" + CollisionBoxes[CollisionBoxes.Count-1].Size.X + "f, 20 , " + CollisionBoxes[CollisionBoxes.Count-1].Size.Z +"f)));");
-                CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
 
-                LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
+                //Debug.WriteLine("Zombie z" + zCounter + " = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);");
+                //Debug.WriteLine("z"+zCounter+".Position = new Vector3("+Player.Position.X+"f, 0, "+Player.Position.Z+"f);");
+                //Debug.WriteLine("zombies.Add(z"+zCounter+");");
+                //CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
 
-                if (keyboard.IsKeyDown(Keys.RightShift))
-                {
-                    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
-                }
-                else
-                {
-                    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
-                }
+                //LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
+
+                //if (keyboard.IsKeyDown(Keys.RightShift))
+                //{
+                //    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
+                //}
+                //else
+                //{
+                //    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+                //}
                 ButtonTimer = 10;
             }
-             */
+            */
 
             #endregion
             #region PathFindingNodeControls
@@ -3958,7 +3949,7 @@ namespace zombies
             if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
             {
                 sound.playExtinguisher();
-                ChemicalsEmitter.Start();            
+                ChemicalsEmitter.Start();
 
             }
             else
@@ -4316,63 +4307,34 @@ namespace zombies
         }
         private void checkItemCollisions()
         {
-
-            if(PickupableObjects.Count > 0){
+            List<Entity> toRemove = new List<Entity>();
+            if(PickupableObjects.Count > 0)
+            {
             //check for collisions with map items
-               for(int i = 0; i < PickupableObjects.Count(); i ++){
-                   Entity p = PickupableObjects.ElementAt(i);
-
-                   if ((p.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
+                foreach(Entity e in PickupableObjects)
+                {
+                    if ((e.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
                     {
-
-                        if (p.model == extinguisherModel)
+                        if (e is Item)
                         {
-                            Player.SelectedItem = extinguisher;
-                            Player.extinguishers += 10;
-                          
+                            Player.AddItem(e as Item);
                         }
-                        
-                        else if (p.model == medkitModel)
+                        else if (e is Powerup)
                         {
-                            Player.meds++;
-                       
-                        }  
-
-                        else if (p.model == keyModel)
-                        {
-                            Player.keys++;
-                           
+                            Player.AddPowerup(e as Powerup);
                         }
-                        else if (p.model == sneakerModel)
+                        else if (e is Weapon)
                         {
-                            Player.PowerupsList.Add(sneakers);  
-                           
+                            Player.AddWeapon(e as Weapon);
                         }
 
-                        else if (p.model== silencerModel)
-                        {
-                            Player.PowerupsList.Add(silencer);
-               
-                        }
-                        else if (p.model == magnumModel)
-                        {
-                            Player.AddWeapon((Weapon)p);
-                        }
-                        else if (p.model == socom.model)
-                        {
-                            Player.AddWeapon((Weapon)p);
-
-                        }
-                            PickupableObjects.Remove(p);
-
-
-                        
+                        toRemove.Add(e);
                     }
-               
-                  
-
                 }
-           
+                foreach (Entity et in toRemove)
+                {
+                    PickupableObjects.Remove(et);
+                }
 
             }
         }
@@ -4405,27 +4367,27 @@ namespace zombies
                     }
                 case ItemType.Extinguisher:
                     {
-                        List<Box> firesToRemove = new List<Box>();
-                        Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
-                        foreach (Box hazard in fireHazards)
-                        {
-                            if ((hazard.Position - Player.Position).Length() < item.Range)
-                            {
-                                BoundingBox bbox = new BoundingBox(
-                                    new Vector3(hazard.Position.X - hazard.Size.X / 2, hazard.Position.Y - hazard.Size.Y / 2, hazard.Position.Z - hazard.Size.Z / 2),
-                                    new Vector3(hazard.Position.X + hazard.Size.X / 2, hazard.Position.Y + hazard.Size.Y / 2, hazard.Position.Z + hazard.Size.Z / 2)
-                                );
-                                if (ray.Intersects(bbox) != null)
-                                {
-                                    firesToRemove.Add(hazard);
-                                }
-                            }
-                        }
-                        // remove any intersecting fires
-                        foreach (Box toRemove in firesToRemove)
-                        {
-                            fireHazards.Remove(toRemove);
-                        }
+                        //List<Box> firesToRemove = new List<Box>();
+                        //Ray ray = new Ray(actionCaster.Position, Vector3.Normalize(actionCaster.Velocity));
+                        //foreach (Box hazard in fireHazards)
+                        //{
+                        //    if ((hazard.Position - Player.Position).Length() < item.Range)
+                        //    {
+                        //        BoundingBox bbox = new BoundingBox(
+                        //            new Vector3(hazard.Position.X - hazard.Size.X / 2, hazard.Position.Y - hazard.Size.Y / 2, hazard.Position.Z - hazard.Size.Z / 2),
+                        //            new Vector3(hazard.Position.X + hazard.Size.X / 2, hazard.Position.Y + hazard.Size.Y / 2, hazard.Position.Z + hazard.Size.Z / 2)
+                        //        );
+                        //        if (ray.Intersects(bbox) != null)
+                        //        {
+                        //            firesToRemove.Add(hazard);
+                        //        }
+                        //    }
+                        //}
+                        //// remove any intersecting fires
+                        //foreach (Box toRemove in firesToRemove)
+                        //{
+                        //    fireHazards.Remove(toRemove);
+                        //}
                         
                         break;
                     }
@@ -4824,7 +4786,9 @@ namespace zombies
             if (zombie.animationPlayer != null)
             {
                 Matrix[] bones = zombie.animationPlayer.GetSkinTransforms();
-
+                float scale = .1f;
+                if (zombie.zombieType == ZombieType.Boss)
+                    scale = .2f;
                 float zombieRotation;
                 if (zombie.animState == Entity.AnimationState.Attacking || zombie.animState == Entity.AnimationState.Hurt ||
                     zombie.animState == Entity.AnimationState.Dying)
@@ -4842,7 +4806,7 @@ namespace zombies
                     foreach (SkinnedEffect effect in mesh.Effects)
                     {
                         effect.World = Matrix.CreateRotationY(zombieRotation) *
-                            Matrix.CreateScale(zombie.scale) * Matrix.CreateTranslation(zombie.Position);
+                            Matrix.CreateScale(scale) * Matrix.CreateTranslation(zombie.Position);
                         effect.SetBoneTransforms(bones);
                         effect.View = Camera.ActiveCamera.View;
                         effect.World = effect.World;
