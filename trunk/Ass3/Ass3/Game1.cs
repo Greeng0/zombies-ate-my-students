@@ -4332,19 +4332,7 @@ namespace zombies
                 {
                     if ((e.Position - Player.Position).Length() < COLLISION_ITEM_RANGE)
                     {
-                        if (e is Item)
-                        {
-                            Player.AddItem(e as Item);
-                        }
-                        else if (e is Powerup)
-                        {
-                            Player.AddPowerup(e as Powerup);
-                        }
-                        else if (e is Weapon)
-                        {
-                            Player.AddWeapon(e as Weapon);
-                        }
-
+                        Player.AddEquipment(e);
                         toRemove.Add(e);
                     }
                 }
