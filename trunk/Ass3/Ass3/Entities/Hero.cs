@@ -32,7 +32,7 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public float moveSpeed = 0.8f;
+        public float moveSpeed = 0.2f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
         public bool Dead = false;
@@ -72,10 +72,6 @@ namespace Entities
         public const int ITEM_USE_INTERVAL = 500;
 
 
-        Item fireext;
-        
-
-
         public Action<Entity, Entity> ActionFunction;   // Callback function used when an attack is made
 
         //adding flanking var
@@ -94,11 +90,6 @@ namespace Entities
 
 
         //items
-
-        public int extinguishers = 0;
-        public int meds = 0;
-        public int keys = 0;
-
         public int current = 0;
 
 
@@ -109,13 +100,10 @@ namespace Entities
             this.HealthPoints = health;
             this.MaxHealth = maxHealth;
             this.Stance = AnimationStance.Standing;
-         
 
             PowerupsList = new List<Powerup>();
             ItemsList = new Dictionary<Item, int>();
             WeaponsList = new Dictionary<Weapon, int>();
-         //   AddWeapon(new Weapon(WeaponType.Handgun9mm));
-
             this.ActionFunction = actionFunction;
 
             //get animations
@@ -277,7 +265,11 @@ namespace Entities
                 ItemsList.Add(item, 1);
             }
         }
-
+        public void AddPowerup(Powerup p)
+        {
+            if (!PowerupsList.Contains(p))
+                PowerupsList.Add(p);
+        }
         public void SwitchNextWeapon()
         {
             if (EquippedWeapon != null)
@@ -296,25 +288,31 @@ namespace Entities
         {
             if (SelectedItem != null)
             {
-                if (SelectedItem.itemType == ItemType.Extinguisher)
+                if (SelectedItem == ItemsList.First().Key)
                 {
-                    SelectedItem.itemType = ItemType.Key;
-                    current = 1;
+                    if (ItemsList.Count > 1)
+                    {
+                        SelectedItem = ItemsList.ToArray()[1].Key;
+                        current = 1;
+                    }
                 }
-                else if (SelectedItem.itemType == ItemType.Key)
+                else if (SelectedItem == ItemsList.ToArray()[1].Key)
                 {
-                    SelectedItem.itemType = ItemType.MedPack;
-                    current = 2;
+                    if (ItemsList.Count > 2)
+                    {
+                        SelectedItem = ItemsList.ToArray()[2].Key;
+                        current = 2;
+                    }
+                    else
+                    {
+                        SelectedItem = ItemsList.ToArray()[0].Key;
+                        current = 0;
+                    }
                 }
-
-                else if (SelectedItem.itemType == ItemType.MedPack )
+                else if (SelectedItem == ItemsList.ToArray()[2].Key)
                 {
-                    SelectedItem.itemType = ItemType.Extinguisher;
+                    SelectedItem = ItemsList.ToArray()[0].Key;
                     current = 0;
-                }
-                else
-                {
-                    current = 0; 
                 }
             }
         }
