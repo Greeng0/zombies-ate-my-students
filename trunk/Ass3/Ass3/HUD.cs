@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Linq;
 using System.Text;
+using Entities;
 
 namespace zombies
 {
@@ -27,11 +28,7 @@ namespace zombies
         public Vector3 p;
         public float angle;
 
-
         //calculating scale of blood for hud info
-
-
-
         public int min = 13;
         public int max = 290;
         public float rate = 2.73f;
@@ -41,12 +38,9 @@ namespace zombies
         public int healthx = 40;
         public int healthsizex = 30;
 
-
-
         //in game hud pictures
 
         //textures
-
         Texture2D fire;
         Texture2D gun;
         Texture2D gun2;
@@ -55,8 +49,7 @@ namespace zombies
         Texture2D keys;
         Texture2D powerup;
         Texture2D healthbar;
-
-
+        
         //slots holding texures
         Texture2D slot1;
         Texture2D slot2;
@@ -64,7 +57,6 @@ namespace zombies
         Texture2D slot4;
         Texture2D slot5;
 
-     
         //adding their rectangles
 
         Rectangle slot1rec = new Rectangle(150, 10, 70, 70);
@@ -75,10 +67,8 @@ namespace zombies
 
         int fires = 0;
         int meds = 0;
-
         int keyss = 0;
     
-
         //powerups
         Texture2D silencer;
         Texture2D shoes;
@@ -100,11 +90,7 @@ namespace zombies
         public int selecteditem = 0;
 
         public bool useweapons = false;
-
-        
         Texture2D temp;
-     
-
         Texture2D letter;
         Texture2D a;
         Texture2D b;
@@ -138,14 +124,9 @@ namespace zombies
 
         protected override void LoadContent()
         {
-
-
-
             spriteBatch = new SpriteBatch(device);
             Font1 = _content.Load<SpriteFont>("Arial");
             empty = _content.Load<Texture2D>("empty");
-
-
             fire = _content.Load<Texture2D>("fireext");
             gun = _content.Load<Texture2D>("gun");
             gun2 = _content.Load<Texture2D>("gun2");
@@ -155,9 +136,7 @@ namespace zombies
             med = _content.Load<Texture2D>("med");
             healthbar = _content.Load<Texture2D>("healthbar");
 
-
             //for letters 
-
             a = _content.Load<Texture2D>("a");
             b = _content.Load<Texture2D>("b");
             c = _content.Load<Texture2D>("c");
@@ -170,17 +149,12 @@ namespace zombies
             selectedwep = _content.Load<Texture2D>("selectedweapon");
             selectedeq = _content.Load<Texture2D>("selecteditem");
 
-
-
             //fill slots with inventory
             slot1 = gun;
             slot2 = gun2;
             slot3 = fire;
             slot4 = keys;
             slot5 = med;
-
-
-
 
             silencer = _content.Load<Texture2D>("powerup");
             shoes = _content.Load<Texture2D>("shoe");
@@ -189,10 +163,7 @@ namespace zombies
         }
         public void chooseslots(ref Entities.Hero p)
         {
-
-
             // choosing weapons
-   
             drawselectedwep = true;
             if (p.WeaponsList.Count == 2)//if have both weapons need to decide which one to draw green around
             {
@@ -211,7 +182,6 @@ namespace zombies
                     selectedweprec.X = slot2rec.X - 10;
                     selectedweprec.Y = slot2rec.Y - 10;
                 }
-
             }
 
             else if (p.WeaponsList.Count == 1)
@@ -242,91 +212,80 @@ namespace zombies
                 selectedweprec.Y = slot1rec.Y - 10;
                 drawselectedwep = false;
             }
-
-
-
             //end of choosing weapons
 
-
             //choosing items
+            if (p.ItemsList.ContainsKey(new Item(ItemType.Extinguisher)))
+            {
+                fires = p.ItemsList[new Item(ItemType.Extinguisher)];
+            }
+            if (p.ItemsList.ContainsKey(new Item(ItemType.MedPack)))
+            {
+                meds = p.ItemsList[new Item(ItemType.MedPack)];
+            }
+            if (p.ItemsList.ContainsKey(new Item(ItemType.Key)))
+            {
+                keyss = p.ItemsList[new Item(ItemType.Key)];
+            }
 
-        
+            int current = p.current;
+            if (fires + meds + keyss > 0)
+                drawselectedeq = true;
+            else 
+                drawselectedeq = false;
 
-        fires = p.extinguishers;
-          meds=  p.meds;
-         keyss= p.keys;
-    int current = p.current;
-    if (fires + meds + keyss > 0)
-        drawselectedeq = true;
-    else 
-            drawselectedeq = false;
-        
-            // if(p.ItemsList.ContainsKey(Entities.ItemType.Extinguisher))
-
-    if (fires > 0)
-    {
-        if (current % 3 == 0)
-        {
-            selectedeqrec.X = slot3rec.X - 10;
-            selectedeqrec.Y = slot3rec.Y - 10;
-        }
-        slot3 = fire;
-    }
-    else
-    {
-        slot3 = empty;
-    }
+            if (fires > 0)
+            {
+                if (current % 3 == 0)
+                {
+                    selectedeqrec.X = slot3rec.X - 10;
+                    selectedeqrec.Y = slot3rec.Y - 10;
+                }
+                slot3 = fire;
+            }
+            else
+            {
+                slot3 = empty;
+            }
                 
-                if (keyss > 0)
+            if (keyss > 0)
+            {
+                if (current % 3 == 1 || (meds == 0 && current == 2))
                 {
-                    if (current % 3 == 1 || (meds == 0 && current == 2))
-                    {
-                        selectedeqrec.X = slot4rec.X - 10;
-                        selectedeqrec.Y = slot4rec.Y - 10;
-                    }
-                    slot4 = keys;
-                 
+                    selectedeqrec.X = slot4rec.X - 10;
+                    selectedeqrec.Y = slot4rec.Y - 10;
                 }
-                else
+                slot4 = keys;
+            }
+            else
+            {
+                slot4 = empty;
+            }
+            if (meds > 0)
+            {
+                if (current % 3 == 2 || (keyss == 0 && current == 1))
                 {
-                    slot4 = empty;
+                    selectedeqrec.X = slot5rec.X - 10;
+                    selectedeqrec.Y = slot5rec.Y - 10;
                 }
-              if (meds > 0)
-                {
-                    if (current % 3 == 2 || (keyss == 0 && current == 1))
-                    {
-                        selectedeqrec.X = slot5rec.X - 10;
-                        selectedeqrec.Y = slot5rec.Y - 10;
-                    }
-                    slot5 = med;
-                  
-                }
-              else
-              {
-                  slot5 = empty;
-              }
+                slot5 = med;
+            }
+            else
+            {
+                slot5 = empty;
+            }
             
-
-            
-
-           
-
-
-
             //choose to draw special weapons
-
             if (p.PowerupsList.Count >= 2)
             {
                 //draw both
 
                 drawshoes = true;
                 drawsilencer = true;
-
             }
             else if (p.PowerupsList.Count == 1)
             {
                 //find out which to draw
-
                 if (p.PowerupsList.First().Type == Entities.PowerupType.Silencer)
                 {
                     drawsilencer = true;
@@ -339,11 +298,9 @@ namespace zombies
                 }
             }
             else{
-
                 drawshoes = false;
                 drawsilencer = false;
             }
-
         }
 
 
@@ -374,56 +331,32 @@ namespace zombies
 
         public override void Draw(GameTime gameTime)
         {
-
-
             frames++;
             spriteBatch.Begin();
 
-/*
-
-      string out2 = "Position";
-            out2 += "\n" + p;
-            out2 += "\n\n\nAngle";
-            out2 += "\n" + MathHelper.ToDegrees(angle);
-            out2 += "\n\n\nFps";
-            out2 += "\n" + fps ;
 
 
-            Vector2 pos2 = new Vector2(200, 100);
-            spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
-
-
-*/
-
-
+            string out2 = "        ";
+            
             healthscale = rate * playerhealth;
             int diff = min + (int)(rate * (100 - playerhealth));
-
 
             //draw health bar
             spriteBatch.Draw(healthbar, new Rectangle(healthx, diff, healthsizex, max - diff), Color.White);
             spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
             spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
 
-
-
             //numbers
-
-
-
             
-              Vector2 pos2 = new Vector2(200, 100);
-           String out2 = "    ";
-     
-
+            
+            out2 += "    ";
+            if(keyss>0)
+            out2+=keyss;
             out2 += "            ";
-            if(meds>0)
-            out2+=meds;
-            out2 += "            ";
-            if (keyss > 0)
-                out2 += keyss;
+            if (meds > 0)
+                out2 += meds;
 
-         pos2 = new Vector2(400, 100);
+            Vector2 pos2 = new Vector2(400, 100);
             spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
 
             
@@ -453,9 +386,6 @@ namespace zombies
             spriteBatch.Draw(temp, selectedeqrec, Color.White);
 
 
-
-
-
   //draw powerups
             if (drawsilencer)
                 temp = silencer;
@@ -469,9 +399,6 @@ namespace zombies
                  temp = empty;
                  spriteBatch.Draw(temp, shoerec, Color.White);
            
-
-
-
             spriteBatch.End();
 
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
