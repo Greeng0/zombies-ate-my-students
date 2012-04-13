@@ -88,7 +88,7 @@ namespace Entities
         public float raydist = 50;
 
         //items
-        //public int current = 0;
+        public int current = 0;
 
         public Hero(int health, int maxHealth, ref Model modelwalk, ref Model  modeldie, ref Model modelhurt, Action<Entity, Entity> actionFunction)
             : base()
@@ -300,6 +300,7 @@ namespace Entities
                     if (ItemsList.Count > 1)
                     {
                         SelectedItem = ItemsList.ToArray()[1].Key;
+                        current = 1;
                     }
                 }
                 else if (SelectedItem == ItemsList.ToArray()[1].Key)
@@ -307,15 +308,18 @@ namespace Entities
                     if (ItemsList.Count > 2)
                     {
                         SelectedItem = ItemsList.ToArray()[2].Key;
+                        current = 2;
                     }
                     else
                     {
                         SelectedItem = ItemsList.ToArray()[0].Key;
+                        current = 0;
                     }
                 }
                 else if (SelectedItem == ItemsList.ToArray()[2].Key)
                 {
                     SelectedItem = ItemsList.ToArray()[0].Key;
+                    current = 0;
                 }
             }
         }

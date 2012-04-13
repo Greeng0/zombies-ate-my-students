@@ -134,8 +134,9 @@ namespace Entities
             this.MaxAcceleration = 0.04f;
             if (type == ZombieType.Boss)
             {
-                this.MaxVelocity = 0.08f;
-                this.MaxAcceleration = 0.08f;
+                this.MaxVelocity *= 2;
+                this.MaxAcceleration *= 2;
+                this.modelRadius *= 2;
             }
             ArriveRadius = 1;
             FleeRadius = 30;
