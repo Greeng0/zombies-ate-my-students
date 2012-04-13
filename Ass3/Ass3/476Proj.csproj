@@ -116,6 +116,7 @@
     <Compile Include="Entities\Powerup.cs" />
     <Compile Include="Entities\Weapon.cs" />
     <Compile Include="AI\Fuzzifier.cs" />
+    <Compile Include="GameState\GameStates.cs" />
     <Compile Include="HIDInput\KeyboardInput.cs" />
     <Compile Include="HUD.cs" />
     <Compile Include="Entities\IHeroObserver.cs" />

@@ -101,6 +101,10 @@ namespace zombies
 
         Texture2D empty;
 
+        Texture2D died;
+        Texture2D escaped;
+
+        float FadeValue = 0;
 
         public static HUD ActiveHUD
         {
@@ -122,7 +126,7 @@ namespace zombies
         }
 
 
-        protected override void LoadContent()
+        public void ContentLoad()
         {
             spriteBatch = new SpriteBatch(device);
             Font1 = _content.Load<SpriteFont>("Arial");
@@ -135,6 +139,8 @@ namespace zombies
             powerup = _content.Load<Texture2D>("powerup");
             med = _content.Load<Texture2D>("med");
             healthbar = _content.Load<Texture2D>("healthbar");
+            died = _content.Load<Texture2D>("Died");
+            escaped = _content.Load<Texture2D>("Escaped");
 
             //for letters 
             a = _content.Load<Texture2D>("a");
@@ -156,10 +162,19 @@ namespace zombies
             slot4 = keys;
             slot5 = med;
 
+            fires = 0;
+            meds = 0;
+            keyss = 0;
+
             silencer = _content.Load<Texture2D>("powerup");
             shoes = _content.Load<Texture2D>("shoe");
 
             base.LoadContent();
+        }
+
+        protected override void LoadContent()
+        {
+            ContentLoad();
         }
         public void chooseslots(ref Entities.Hero p)
         {
@@ -306,105 +321,119 @@ namespace zombies
 
         public override void Update(GameTime gameTime)
         {
-            if (gameTime.TotalGameTime.TotalMilliseconds > lasttime + 1000)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.InGame)
             {
-                fps = frames;
-                frames = 0;
-                lasttime = gameTime.TotalGameTime.TotalMilliseconds;
+                if (gameTime.TotalGameTime.TotalMilliseconds > lasttime + 1000)
+                {
+                    fps = frames;
+                    frames = 0;
+                    lasttime = gameTime.TotalGameTime.TotalMilliseconds;
+                }
+                //update letter
+
+                if (playerhealth > 75)
+                    letter = a;
+                else if (playerhealth > 50)
+                    letter = b;
+                else if (playerhealth > 25)
+                    letter = c;
+                else if (playerhealth > 15)
+                    letter = d;
+                else
+                    letter = f;
             }
-            //update letter
-
-            if (playerhealth > 75)
-                letter = a;
-            else if (playerhealth > 50)
-                letter = b;
-            else if (playerhealth > 25)
-                letter = c;
-            else if (playerhealth > 15)
-                letter = d;
-            else
-                letter = f;
-
+            
             base.Update(gameTime);
         }
 
 
         public override void Draw(GameTime gameTime)
         {
-            frames++;
-            spriteBatch.Begin();
-
-
-
-            string out2 = "        ";
-            
-            healthscale = rate * playerhealth;
-            int diff = min + (int)(rate * (100 - playerhealth));
-
-            //draw health bar
-            spriteBatch.Draw(healthbar, new Rectangle(healthx, diff, healthsizex, max - diff), Color.White);
-            spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
-            spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
-
-            //numbers
-            
-            
-            out2 += "    ";
-            if(keyss>0)
-            out2+=keyss;
-            out2 += "            ";
-            if (meds > 0)
-                out2 += meds;
-
-            Vector2 pos2 = new Vector2(400, 100);
-            spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
-
-            
-            //draw slots
-
-            spriteBatch.Draw(slot1, slot1rec, Color.White);
-            spriteBatch.Draw(slot2, slot2rec, Color.White);
-            spriteBatch.Draw(slot3, slot3rec, Color.White);
-            spriteBatch.Draw(slot4, slot4rec, Color.White);
-            spriteBatch.Draw(slot5, slot5rec, Color.White);
-
-          
-            if (drawselectedwep)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.End)
             {
-                spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                spriteBatch.Draw(escaped, new Rectangle(0, 0, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight), new Color(255, 255, 255, FadeValue));
+                spriteBatch.End();
+
+                FadeValue += 0.01f;
             }
 
-            if (drawselectedeq)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.InGame)
             {
-                temp = selectedeq;
+                frames++;
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+                string out2 = "        ";
+
+                healthscale = rate * playerhealth;
+                int diff = min + (int)(rate * (100 - playerhealth));
+
+                //draw health bar
+                spriteBatch.Draw(healthbar, new Rectangle(healthx, diff, healthsizex, max - diff), Color.White);
+                spriteBatch.Draw(health, new Rectangle(0, 0, 100, 400), Color.White);
+                spriteBatch.Draw(letter, new Rectangle(0, 276, 100, 100), Color.White);
+
+                //numbers
+
+
+                out2 += "    ";
+                if (keyss > 0)
+                    out2 += keyss;
+                out2 += "            ";
+                if (meds > 0)
+                    out2 += meds;
+
+                Vector2 pos2 = new Vector2(400, 100);
+                spriteBatch.DrawString(Font1, out2, pos2, Color.Red, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 0.5f);
+
+
+                //draw slots
+
+                spriteBatch.Draw(slot1, slot1rec, Color.White);
+                spriteBatch.Draw(slot2, slot2rec, Color.White);
+                spriteBatch.Draw(slot3, slot3rec, Color.White);
+                spriteBatch.Draw(slot4, slot4rec, Color.White);
+                spriteBatch.Draw(slot5, slot5rec, Color.White);
+
+                if(playerhealth <=0)
+                    spriteBatch.Draw(died, new Rectangle(0, 0, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight), Color.White);
+
+                if (drawselectedwep)
+                {
+                    spriteBatch.Draw(selectedwep, selectedweprec, Color.White);
+                }
+
+                if (drawselectedeq)
+                {
+                    temp = selectedeq;
+                }
+                else
+                {
+                    temp = empty;
+                }
+
+                spriteBatch.Draw(temp, selectedeqrec, Color.White);
+
+                //draw powerups
+                if (drawsilencer)
+                    temp = silencer;
+                else
+                    temp = empty;
+                spriteBatch.Draw(temp, silencerrec, Color.White);
+
+                if (drawshoes)
+                    temp = shoes;
+                else
+                    temp = empty;
+                spriteBatch.Draw(temp, shoerec, Color.White);
+
+                spriteBatch.End();
+
+                GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
+                GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
-            else
-            {
-                temp = empty;
-            }
-
-            spriteBatch.Draw(temp, selectedeqrec, Color.White);
-
-
-  //draw powerups
-            if (drawsilencer)
-                temp = silencer;
-            else
-              temp = empty ;
-            spriteBatch.Draw(temp, silencerrec, Color.White);
-
-             if (drawshoes)
-                 temp = shoes;
-             else
-                 temp = empty;
-                 spriteBatch.Draw(temp, shoerec, Color.White);
-           
-            spriteBatch.End();
-
-            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
         }
     }
