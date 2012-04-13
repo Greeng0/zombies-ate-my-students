@@ -24,6 +24,7 @@ namespace zombies
         GraphicsDeviceManager graphics;
         GraphicsDevice device;
         SpriteFont Font1;
+        SpriteFont SplashFont;
         SpriteBatch spriteBatch;
 
         MouseState mouseState;
@@ -100,15 +101,20 @@ namespace zombies
         #endregion
 
         int ButtonTimer = 0;
-        int zCounter = 63;
 
         BasicEffect globalEffect;
         QuadTree LevelQuadTree;
 
+        Texture2D Splash;
+        Texture2D Controls;
+
+        public static GameStates.GameStates.GameState ZombieGameState = GameStates.GameStates.GameState.Start;
         bool WireFrameCollisionBoxes = false;
         bool ShowQuadBoundaries = false;
         bool ShowCollisionBoxes = false;
         bool ShowPathFindingGraph = false;
+
+        int StartGameOption = 0;
 
         Hero Player;
         List<Zombie> zombies;
@@ -145,7 +151,8 @@ namespace zombies
         int fireDamageDelay = 0;
         bool released = true;
 
-
+        Sphere EscapeSpot = new Sphere(new Vector3(175.4254f, 0f, -103.5071f), Vector3.Zero, 5);
+        
         public Game1()
         {
             mouseState = new MouseState();
@@ -200,6 +207,13 @@ namespace zombies
       
         protected override void LoadContent()
         {
+            hud.ContentLoad();
+            PickupableObjects.Clear();
+            CollisionBoxes.Clear();
+            PathFindingNodes.Clear();
+            zombies.Clear();
+            fireHazards.Clear();
+
             //sounds
        
             sound = new Sounds.Sounds(this, Content);
@@ -207,6 +221,7 @@ namespace zombies
             this.Components.Add(sound);
 
             Font1 = Content.Load<SpriteFont>("Arial");
+            SplashFont = Content.Load<SpriteFont>("SplashFont");
             School = Content.Load<Model>("School");
           
             //zombie animations
@@ -237,6 +252,9 @@ namespace zombies
             extinguisherModel = Content.Load<Model>("Extinguisher");
             sneakerModel = Content.Load<Model>("Sneakers");
 
+            Splash = Content.Load<Texture2D>("Splash");
+            Controls = Content.Load<Texture2D>("keyboard");
+            
             magnum = new Weapon(WeaponType.Magnum, ref magnumModel);
             magnum.Position = new Vector3(70f, 0, -15);
             socom = new Weapon(WeaponType.Handgun9mm, ref handgunModel);
@@ -3615,36 +3633,6 @@ namespace zombies
 
         protected override void Update(GameTime gameTime)
         {
-
-            #region Update hud
-            HUD.ActiveHUD.chooseslots(ref Player);
-            HUD.ActiveHUD.p = Player.Position;
-            HUD.ActiveHUD.angle = (float) Player.Rotation;
-            HUD.ActiveHUD.playerhealth = (int)((float)Player.HealthPoints / (float)Player.MaxHealth * 100);
-            Camera.ActiveCamera.dudeang = (float) Player.Rotation;
-
-            mouseState = Mouse.GetState();
-
-            if (mouseState.ScrollWheelValue < scrollWheel)
-            {
-                if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
-                {
-                    Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
-                }
-                scrollWheel = mouseState.ScrollWheelValue;
-            }
-
-            if (mouseState.ScrollWheelValue > scrollWheel)
-            {
-                if (Camera.ActiveCamera.CameraZoom.Length() > scrollWheelLow)
-                {
-                    Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
-                }
-                scrollWheel = mouseState.ScrollWheelValue;
-            }
-            #endregion
-
-            #region Player input
             KeyboardState keyboard = Keyboard.GetState();
 
             if (keyboard.IsKeyDown(Keys.Escape))
@@ -3652,79 +3640,180 @@ namespace zombies
                 Exit();
             }
 
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.Start)
+            {
+                if (keyboard.IsKeyDown(Keys.Down) && ButtonTimer <= 0)
+                {
+                    StartGameOption = (StartGameOption + 1) % 3;
+                    ButtonTimer = 10;
+                }
 
-            #region Collision Detection Box Placement Input
+                if (keyboard.IsKeyDown(Keys.Up) && ButtonTimer <= 0)
+                {
+                    StartGameOption = (StartGameOption - 1);
 
-            int modifier = 1;
+                    if (StartGameOption < 0)
+                    {
+                        StartGameOption = 2;
+                    }
+                    ButtonTimer = 10;
+                }
 
-            if(keyboard.IsKeyDown(Keys.RightShift))
-            {
-                modifier = 10;
-            }
-                        
-            //Rotate World with Arrow Keys
-            /*if (keyboard.IsKeyDown(Keys.K))
-            {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, modifier);
-            }
-            if (keyboard.IsKeyDown(Keys.I))
-            {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, modifier);
-            }
-            if (keyboard.IsKeyDown(Keys.L))
-            {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(modifier, 0, 0);
-            }
-            if (keyboard.IsKeyDown(Keys.J))
-            {
-                CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(modifier, 0, 0);
+                if ((keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space)) && ButtonTimer <= 0)
+                {
+                    switch (StartGameOption)
+                    {
+                        case 0:
+                            {
+                                LoadContent();
+                                GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.InGame;
+                                break;
+                            }
+                        case 1:
+                            {
+                                GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.Controls;
+                                break;
+                            }
+                        case 2:
+                            {
+                                Exit();
+                                break;
+                            }
+                    }
+                    ButtonTimer = 10;
+                }
             }
 
-            if (keyboard.IsKeyDown(Keys.Y))
+            //Game Ended. Press space or enter to restart
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.End)
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(modifier, 0, 0);
+                if ((keyboard.IsKeyDown(Keys.Space) || keyboard.IsKeyDown(Keys.Enter)) && ButtonTimer <= 0)
+                {
+                    GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.Start;
+                    ButtonTimer = 10;
+                }
             }
-            if (keyboard.IsKeyDown(Keys.U))
+
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.Controls)
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(modifier, 0, 0);
+                if ((keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space)) && ButtonTimer <= 0)
+                {
+
+                    GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.Start;
+                    ButtonTimer = 10;
+                }
             }
-            if (keyboard.IsKeyDown(Keys.O))
+
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.InGame)
             {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, modifier);
-            }
-            if (keyboard.IsKeyDown(Keys.P))
-            {
-                CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, modifier);
-            }
+
+                GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                #region Update hud
+                HUD.ActiveHUD.chooseslots(ref Player);
+                HUD.ActiveHUD.p = Player.Position;
+                HUD.ActiveHUD.angle = (float)Player.Rotation;
+                HUD.ActiveHUD.playerhealth = (int)((float)Player.HealthPoints / (float)Player.MaxHealth * 100);
+                Camera.ActiveCamera.dudeang = (float)Player.Rotation;
+
+                mouseState = Mouse.GetState();
+
+                if (mouseState.ScrollWheelValue < scrollWheel)
+                {
+                    if (Camera.ActiveCamera.CameraZoom.Length() < scrollWheelHigh)
+                    {
+                        Camera.ActiveCamera.CameraZoom += new Vector3(0, 5, 0);
+                    }
+                    scrollWheel = mouseState.ScrollWheelValue;
+                }
+
+                if (mouseState.ScrollWheelValue > scrollWheel)
+                {
+                    if (Camera.ActiveCamera.CameraZoom.Length() > scrollWheelLow)
+                    {
+                        Camera.ActiveCamera.CameraZoom -= new Vector3(0, 5, 0);
+                    }
+                    scrollWheel = mouseState.ScrollWheelValue;
+                }
+                #endregion
+
+                #region Player input
+
+
+                if (Player.HealthPoints > 0)
+                {
+                    #region Collision Detection Box Placement Input
+
+                    int modifier = 1;
+
+                    if (keyboard.IsKeyDown(Keys.RightShift))
+                    {
+                        modifier = 10;
+                    }
+
+                    //Rotate World with Arrow Keys
+                    /*if (keyboard.IsKeyDown(Keys.K))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(0, 0, modifier);
+                    }
+                    if (keyboard.IsKeyDown(Keys.I))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(0, 0, modifier);
+                    }
+                    if (keyboard.IsKeyDown(Keys.L))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Position += new Vector3(modifier, 0, 0);
+                    }
+                    if (keyboard.IsKeyDown(Keys.J))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Position -= new Vector3(modifier, 0, 0);
+                    }
+
+                    if (keyboard.IsKeyDown(Keys.Y))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(modifier, 0, 0);
+                    }
+                    if (keyboard.IsKeyDown(Keys.U))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(modifier, 0, 0);
+                    }
+                    if (keyboard.IsKeyDown(Keys.O))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Size += new Vector3(0, 0, modifier);
+                    }
+                    if (keyboard.IsKeyDown(Keys.P))
+                    {
+                        CollisionBoxes[CollisionBoxes.Count - 1].Size -= new Vector3(0, 0, modifier);
+                    }
             
-            //Create new Collision Box
-            if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
-            {
+                    //Create new Collision Box
+                    if (keyboard.IsKeyDown(Keys.Enter) && ButtonTimer <= 0)
+                    {
 
-                //Debug.WriteLine("Zombie z" + zCounter + " = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);");
-                //Debug.WriteLine("z"+zCounter+".Position = new Vector3("+Player.Position.X+"f, 0, "+Player.Position.Z+"f);");
-                //Debug.WriteLine("zombies.Add(z"+zCounter+");");
-                //CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
+                        //Debug.WriteLine("Zombie z" + zCounter + " = new Zombie(500, 500, ZombieType.Adult, ref ZombieWalk, ref ZombieAttack, ref ZombieHurt, ref ZombieDie, DoAction, GetPathfindingNode);");
+                        //Debug.WriteLine("z"+zCounter+".Position = new Vector3("+Player.Position.X+"f, 0, "+Player.Position.Z+"f);");
+                        //Debug.WriteLine("zombies.Add(z"+zCounter+");");
+                        //CollisionBoxes.Add(new Box(CollisionBoxes[CollisionBoxes.Count-1].Position,new Vector3(0),CollisionBoxes[CollisionBoxes.Count-1].Size));
 
-                //LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
+                        //LevelQuadTree.Insert(CollisionBoxes[CollisionBoxes.Count - 1]);
 
-                //if (keyboard.IsKeyDown(Keys.RightShift))
-                //{
-                //    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
-                //}
-                //else
-                //{
-                //    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
-                //}
-                ButtonTimer = 10;
-            }
-            */
+                        //if (keyboard.IsKeyDown(Keys.RightShift))
+                        //{
+                        //    CollisionBoxes.Add(new Box(new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Position.X, CollisionBoxes[CollisionBoxes.Count - 1].Position.Y, CollisionBoxes[CollisionBoxes.Count - 1].Position.Z), new Vector3(0), new Vector3(CollisionBoxes[CollisionBoxes.Count - 1].Size.X, 20, CollisionBoxes[CollisionBoxes.Count - 1].Size.Z)));
+                        //}
+                        //else
+                        //{
+                        //    CollisionBoxes.Add(new Box(new Vector3(Player.Position.X, Player.Position.Y, Player.Position.Z), new Vector3(0), new Vector3(10, 20, 10)));
+                        //}
+                        ButtonTimer = 10;
+                    }
+                    */
 
-            #endregion
-            #region PathFindingNodeControls
+                    #endregion
+                    #region PathFindingNodeControls
 
 
-            /*//PathFinding Node Controls
+                    /*//PathFinding Node Controls
             if (keyboard.IsKeyDown(Keys.Y) && (ButtonTimer <= 0 || keyboard.IsKeyDown(Keys.RightShift)))
             {
                 currentNode -= modifier;
@@ -3788,190 +3877,202 @@ namespace zombies
             }
             */
 
-            #endregion
+                    #endregion
 
-            
+                    //Toggle Collision Boundaries Display
+                    if (keyboard.IsKeyDown(Keys.C) && ButtonTimer <= 0)
+                    {
+                        WireFrameCollisionBoxes = !WireFrameCollisionBoxes;
+                        ButtonTimer = 10;
+                    }
 
-            //Toggle Collision Boundaries Display
-            if (keyboard.IsKeyDown(Keys.C) && ButtonTimer <= 0)
-            {
-                WireFrameCollisionBoxes = !WireFrameCollisionBoxes;
-                ButtonTimer = 10;
-            }
+                    //Toggle QuadTree Boundaries Display
+                    if (keyboard.IsKeyDown(Keys.B) && ButtonTimer <= 0)
+                    {
+                        ShowQuadBoundaries = !ShowQuadBoundaries;
+                        ButtonTimer = 10;
+                    }
 
-            //Toggle QuadTree Boundaries Display
-            if (keyboard.IsKeyDown(Keys.B) && ButtonTimer <= 0)
-            {
-                ShowQuadBoundaries = !ShowQuadBoundaries;
-                ButtonTimer = 10;
-            }
+                    //Toggle PathFinding Graph Display
+                    if (keyboard.IsKeyDown(Keys.P) && ButtonTimer <= 0)
+                    {
+                        ShowPathFindingGraph = !ShowPathFindingGraph;
+                        ButtonTimer = 10;
+                    }
 
-            //Toggle PathFinding Graph Display
-            if (keyboard.IsKeyDown(Keys.P) && ButtonTimer <= 0)
-            {
-                ShowPathFindingGraph = !ShowPathFindingGraph;
-                ButtonTimer = 10;
-            }
+                    //Toggle Collision Boxes Display
+                    if (keyboard.IsKeyDown(Keys.N) && ButtonTimer <= 0)
+                    {
+                        ShowCollisionBoxes = !ShowCollisionBoxes;
+                        ButtonTimer = 10;
+                    }
 
-            //Toggle Collision Boxes Display
-            if (keyboard.IsKeyDown(Keys.N) && ButtonTimer <= 0)
-            {
-                ShowCollisionBoxes = !ShowCollisionBoxes;
-                ButtonTimer = 10;
+                    if (keyboard.IsKeyDown(Keys.LeftShift))
+                        Player.Stance = AnimationStance.Shooting;
+                    else
+                        Player.Stance = AnimationStance.Standing;
+
+                    bool walk = false;
+                    Keys[] keysPressed = keyboard.GetPressedKeys();
+
+                    foreach (Keys key in keysPressed)
+                    {
+                        switch (key)
+                        {
+                            case Keys.W:
+                                {
+                                    if (ButtonTimer <= 0)
+                                    {
+                                        Player.SwitchNextWeapon();
+                                        ButtonTimer = 10;
+                                    }
+                                    break;
+                                }
+                            case Keys.LeftShift:
+                                break;
+                            case Keys.Up:
+                                if (KeyboardInput.ProcessInput(key, Player))
+                                {
+                                    Player.MoveForward();
+                                    walk = true;
+                                }
+                                break;
+                            case Keys.Down:
+                                if (KeyboardInput.ProcessInput(key, Player))
+                                {
+                                    Player.MoveBackward();
+                                    walk = true;
+                                }
+                                break;
+                            case Keys.Left:
+                                if (KeyboardInput.ProcessInput(key, Player))
+                                    Player.TurnLeft();
+                                break;
+                            case Keys.Right:
+                                if (KeyboardInput.ProcessInput(key, Player))
+                                    Player.TurnRight();
+                                break;
+                            case Keys.Tab:
+                                if (released)
+                                {
+                                    Player.SwitchNextItem();
+                                    released = false;
+                                }
+                                break;
+
+                            case Keys.Space:
+                                if (KeyboardInput.ProcessInput(key, Player))
+                                    Player.DoAction();
+                                break;
+                        }
+                    }
+                    if (keyboard.IsKeyUp(Keys.Tab))
+                    {
+                        released = true;
+
+                    }
+
+                    if (walk)
+                        Player.animState = Entity.AnimationState.Walking;
+                    else if (Player.animState != Entity.AnimationState.Hurt && Player.animState != Entity.AnimationState.Dying)
+                        Player.animState = Entity.AnimationState.Idle;
+
+                }
+                else
+                {
+                    //Player is dead
+                    if ((keyboard.IsKeyDown(Keys.Space) || keyboard.IsKeyDown(Keys.Enter)) && ButtonTimer <= 0)
+                    {
+                        GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.Start;
+                        ButtonTimer = 10;
+                    }
+                }
+
+                #endregion
+
+                if (Player.Dead)
+                {
+                    // TODO: GameOver
+                }
+                else
+                    Player.Update(gameTime);
+
+                //update right zombies
+                List<Zombie> deadZombies = new List<Zombie>();
+                foreach (Zombie z in zombies)//update zombies
+                {
+                    //This checks a radius around the player to see whether or not we should be updating the zombie
+                    //If zombie is out of radius, we must still check to see if it is chasing the character. 
+                    //If that is the case then we still need to update, but not to draw.
+                    if ((z.Position - Player.Position).Length() < SIGHT_RADIUS || z.BehaviouralState != BehaviourState.Wander)
+                    {
+                        if (z.Dead)
+                            deadZombies.Add(z);
+                        else
+                            z.Update(gameTime);
+                    }
+                }
+                // remove any dead zombies
+                foreach (Zombie dz in deadZombies)
+                {
+                    zombies.Remove(dz);
+                }
+
+
+                if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
+                {
+                    CheckCollisions(true);
+                }
+                else
+                {
+                    CheckCollisions(false);
+
+                }
+
+                Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
+                Camera.ActiveCamera.CameraLookAt = Player.Position;
+
+                globalEffect.View = Camera.ActiveCamera.View;
+                globalEffect.World = world;
+                globalEffect.Projection = Camera.ActiveCamera.Projection;
+
+
+                FireEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+                FireEmitter2.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+                FireEmitter3.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+                FireEmitter4.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+                ChemicalsEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
+                FireEmitter.UpdateEmitter(gameTime);
+                FireEmitter2.UpdateEmitter(gameTime);
+                FireEmitter3.UpdateEmitter(gameTime);
+                FireEmitter4.UpdateEmitter(gameTime);
+
+                if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
+                {
+                    sound.playExtinguisher();
+                    ChemicalsEmitter.Start();
+                }
+                else
+                {
+                    sound.StopExtinguisher();
+                    ChemicalsEmitter.Stop();
+                }
+
+                if (fireDamageDelay > 0)
+                    fireDamageDelay -= 1;
+
+                ChemicalsEmitter.UpdateEmitter(gameTime);
+                ChemicalsEmitter.particleGroups[0].controller.Velocity = Player.Velocity / (Player.Velocity.Length() * 16f);
+                ChemicalsEmitter.position = Player.Position + new Vector3(0, 5, 0); ;
+                ChemicalsEmitter.particleGroups[0].controller.InitialPositionOffset = (Player.Velocity / Player.Velocity.Length()) * 2;
+
+                ItemRotation += 0.01f % ((float)Math.PI * 2);
+                ItemHeight = (float)Math.Cos(ItemRotation * 4);
+
             }
 
             if (ButtonTimer > 0)
                 ButtonTimer -= 1;
-            if (keyboard.IsKeyDown(Keys.LeftShift))
-                Player.Stance = AnimationStance.Shooting;
-            else
-                Player.Stance = AnimationStance.Standing;
-
-            bool walk = false;
-            Keys[] keysPressed = keyboard.GetPressedKeys();
-           
-            foreach (Keys key in keysPressed)
-            {
-                switch (key)
-                {
-                    case Keys.W:
-                        {
-                            if (ButtonTimer <= 0)
-                            {
-                                Player.SwitchNextWeapon();
-                                ButtonTimer = 10;
-                            }
-                            break;
-                        }
-                    case Keys.LeftShift:
-                        break;
-                    case Keys.Up:
-                        if (KeyboardInput.ProcessInput(key, Player))
-                        {
-                            Player.MoveForward();
-                            walk = true;
-                        }
-                        break;
-                    case Keys.Down:
-                        if (KeyboardInput.ProcessInput(key, Player))
-                        {
-                            Player.MoveBackward();
-                            walk = true;
-                        }
-                        break;
-                    case Keys.Left:
-                        if (KeyboardInput.ProcessInput(key, Player))
-                            Player.TurnLeft();
-                        break;
-                    case Keys.Right:
-                        if (KeyboardInput.ProcessInput(key, Player))
-                            Player.TurnRight();
-                        break;
-                    case Keys.Tab:
-                        if (released)
-                        {
-                            Player.SwitchNextItem();
-                            released = false;
-                        }
-                        break;
-                  
-                    case Keys.Space:
-                        if (KeyboardInput.ProcessInput(key, Player))
-                            Player.DoAction();
-                        break;
-                }
-            }
-            if (keyboard.IsKeyUp(Keys.Tab))
-            {
-                released = true;
-
-            }
-            if (walk)
-                    Player.animState = Entity.AnimationState.Walking;
-            else if (Player.animState != Entity.AnimationState.Hurt && Player.animState != Entity.AnimationState.Dying)
-                Player.animState = Entity.AnimationState.Idle;
-           
-
-            #endregion
-         
-            if (Player.Dead)
-            {
-                // TODO: GameOver
-            }
-            else
-                Player.Update(gameTime);
-
-            //update right zombies
-            List<Zombie> deadZombies = new List<Zombie>();
-            foreach (Zombie z in zombies)//update zombies
-            {
-                //This checks a radius around the player to see whether or not we should be updating the zombie
-                //If zombie is out of radius, we must still check to see if it is chasing the character. 
-                //If that is the case then we still need to update, but not to draw.
-                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS || z.BehaviouralState != BehaviourState.Wander)
-                {
-                    if (z.Dead)
-                        deadZombies.Add(z);
-                    else
-                        z.Update(gameTime);
-                }
-            }
-            // remove any dead zombies
-            foreach (Zombie dz in deadZombies)
-            {
-                zombies.Remove(dz);
-            }
-
-
-            if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
-            {
-                CheckCollisions(true);
-            }
-            else
-            {
-                CheckCollisions(false);
-
-            }
-            
-            Camera.ActiveCamera.CameraPosition = Player.Position + new Vector3(0, 30, 30) + Camera.ActiveCamera.CameraZoom;
-            Camera.ActiveCamera.CameraLookAt = Player.Position;
-           
-            globalEffect.View = Camera.ActiveCamera.View;
-            globalEffect.World = world;
-            globalEffect.Projection = Camera.ActiveCamera.Projection;
-
-
-            FireEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
-            FireEmitter2.particleGroups[0].effect.View = Camera.ActiveCamera.View;
-            FireEmitter3.particleGroups[0].effect.View = Camera.ActiveCamera.View;
-            FireEmitter4.particleGroups[0].effect.View = Camera.ActiveCamera.View;
-            ChemicalsEmitter.particleGroups[0].effect.View = Camera.ActiveCamera.View;
-            FireEmitter.UpdateEmitter(gameTime);
-            FireEmitter2.UpdateEmitter(gameTime);
-            FireEmitter3.UpdateEmitter(gameTime);
-            FireEmitter4.UpdateEmitter(gameTime);
-
-            if (Player.SelectedItem != null && keyboard.IsKeyDown(Keys.Space) && Player.Stance == AnimationStance.Standing && Player.SelectedItem.itemType == ItemType.Extinguisher)
-            {
-                sound.playExtinguisher();
-                ChemicalsEmitter.Start();
-            }
-            else
-            {
-                sound.StopExtinguisher();
-                ChemicalsEmitter.Stop();
-            }
-
-            if (fireDamageDelay > 0)
-                fireDamageDelay -= 1;
-
-            ChemicalsEmitter.UpdateEmitter(gameTime);
-            ChemicalsEmitter.particleGroups[0].controller.Velocity = Player.Velocity / (Player.Velocity.Length() * 16f);
-            ChemicalsEmitter.position = Player.Position + new Vector3(0, 5, 0); ;
-            ChemicalsEmitter.particleGroups[0].controller.InitialPositionOffset = (Player.Velocity / Player.Velocity.Length())*2;
-
-            ItemRotation += 0.01f % ((float)Math.PI*2);
-            ItemHeight = (float)Math.Cos(ItemRotation*4);
 
             base.Update(gameTime);
         }        
@@ -3989,6 +4090,13 @@ namespace zombies
                 if (!TotalNearbyBoxes.Contains(bx))
                     TotalNearbyBoxes.Add(bx);
             }*/
+
+            Contact EndingContact = heroSphere.Collides(EscapeSpot);
+
+            if (EndingContact != null && (Player.ItemsList.ContainsKey(key1) || Player.ItemsList.ContainsKey(key2)))
+            {
+                GameStates.GameStates.ZombieGameState = GameStates.GameStates.GameState.End;
+            }
 
             primitivesNearby.AddRange(fireHazards);
             foreach (Primitive p in primitivesNearby)
@@ -4343,6 +4451,7 @@ namespace zombies
 
             }
         }
+
         private void CastItem(Item item, Entity actionCaster)
         {
             CastSoundWave(item.SoundRadius);
@@ -4365,8 +4474,8 @@ namespace zombies
                         //if (lock in range)
                         //{
                         //      unlock
-                        if(Player.ItemsList.Count > 1)
-                        Player.ItemsList[item]--;
+                        //if(Player.ItemsList.Count > 1)
+                        //Player.ItemsList[item]--;
                         //}
                         break;
                     }
@@ -4420,76 +4529,142 @@ namespace zombies
             GraphicsDevice.Clear(Color.Black);
             graphics.GraphicsDevice.Viewport = frontViewport;
 
-            DrawSchool();
-            DrawModel(Player);
+            #region Start Draw
 
-            #region Collision Detection Helpers
-            
-            if (ShowCollisionBoxes)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.Start)
             {
-                foreach (Box box in CollisionBoxes)
+                spriteBatch.Begin();
+
+                spriteBatch.Draw(Splash, new Rectangle(0, 0, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight), Color.White);
+
+                switch (StartGameOption)
                 {
-                    DrawBox(box, Color.Red, WireFrameCollisionBoxes);
+                    case 0:
+                        {
+                            spriteBatch.DrawString(SplashFont, "<< Start Game >>", new Vector2(452, 352), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "<< Start Game >>", new Vector2(450, 350), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "    Controls    ", new Vector2(462, 392), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "    Controls    ", new Vector2(460, 390), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "   Quit Game   ", new Vector2(472, 432), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "   Quit Game   ", new Vector2(470, 430), Color.Red);
+                            break;
+                        }
+                    case 1:
+                        {
+                            spriteBatch.DrawString(SplashFont, "   Start Game   ", new Vector2(452, 352), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "   Start Game   ", new Vector2(450, 350), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "<<  Controls  >>", new Vector2(462, 392), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "<<  Controls  >>", new Vector2(460, 390), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "   Quit Game   ", new Vector2(472, 432), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "   Quit Game   ", new Vector2(470, 430), Color.Red);
+                            break;
+                        }
+                    case 2:
+                        {
+                            spriteBatch.DrawString(SplashFont, "   Start Game   ", new Vector2(452, 352), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "   Start Game   ", new Vector2(450, 350), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "    Controls    ", new Vector2(462, 392), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "    Controls    ", new Vector2(460, 390), Color.Red);
+
+                            spriteBatch.DrawString(SplashFont, "<< Quit Game >>", new Vector2(472, 432), Color.Black);
+                            spriteBatch.DrawString(SplashFont, "<< Quit Game >>", new Vector2(470, 430), Color.Red);
+                            break;
+                        }
                 }
+
+                spriteBatch.End();
             }
 
-            if (ShowQuadBoundaries)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.Controls)
             {
-                List<Box> QuadBoxes = new List<Box>();
-                LevelQuadTree.RetrieveBoundariesFromPosition(new Sphere(Player.Position, Player.Velocity, Player.modelRadius), ref QuadBoxes);
+                spriteBatch.Begin();
 
-                foreach (Box bx in QuadBoxes)
-                {
-                    DrawBox(bx, Color.White, true);
-                }
+                spriteBatch.Draw(Controls, new Rectangle(0, 0, device.PresentationParameters.BackBufferWidth, device.PresentationParameters.BackBufferHeight), Color.White);
 
-                //Display all items currently being checked for collisions this frame for all characters
-
-                foreach (Box box in TotalNearbyBoxes)
-                {
-                    DrawBox(box, Color.Chartreuse, false);
-                }
-
-                TotalNearbyBoxes.Clear();
-
+                spriteBatch.End();
             }
+
             #endregion
 
-            #region Path Finding Helpers
+            #region In Game Draw
 
-
-            if (ShowPathFindingGraph)
+            if (GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.InGame || GameStates.GameStates.ZombieGameState == GameStates.GameStates.GameState.End)
             {
-                for (int i = 0; i < PathFindingNodes.Count; i++)
+                DrawSchool();
+                DrawModel(Player);
+
+                #region Collision Detection Helpers
+
+                if (ShowCollisionBoxes)
                 {
-                    //Draw Graph Nodes
-                    DrawPathFindingNode(NodeModel, Matrix.CreateTranslation(PathFindingNodes[i].position) * world, globalEffect.View, globalEffect.Projection);
+                    foreach (Box box in CollisionBoxes)
+                    {
+                        DrawBox(box, Color.Red, WireFrameCollisionBoxes);
+                    }
                 }
 
-                globalEffect.LightingEnabled = false;
-                globalEffect.CurrentTechnique.Passes[0].Apply();
-                //Draw Links between nodes
-                VertexPositionColor[] LinkLines;
-                LinkLines = vpc;
-
-                VertexDeclaration VertexDecl = new VertexDeclaration(new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0), new VertexElement(12, VertexElementFormat.Color, VertexElementUsage.Color, 0));
-                VertexBuffer vertexBuffer;
-
-                if (LinkLines.Length > 0)
+                if (ShowQuadBoundaries)
                 {
-                    vertexBuffer = new VertexBuffer(GraphicsDevice, VertexDecl, LinkLines.Length, BufferUsage.None);
-                    vertexBuffer.SetData<VertexPositionColor>(LinkLines);
+                    List<Box> QuadBoxes = new List<Box>();
+                    LevelQuadTree.RetrieveBoundariesFromPosition(new Sphere(Player.Position, Player.Velocity, Player.modelRadius), ref QuadBoxes);
 
-                    GraphicsDevice.SetVertexBuffer(vertexBuffer);
-                    GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, 0, LinkLines.Length);
+                    foreach (Box bx in QuadBoxes)
+                    {
+                        DrawBox(bx, Color.White, true);
+                    }
 
-                    vertexBuffer.Dispose();
+                    //Display all items currently being checked for collisions this frame for all characters
+
+                    foreach (Box box in TotalNearbyBoxes)
+                    {
+                        DrawBox(box, Color.Chartreuse, false);
+                    }
+
+                    TotalNearbyBoxes.Clear();
+
                 }
+                #endregion
 
-                #region PathFinding links helper drawings
-                
-                
-                /*//Determine set of lines to draw for Graph Links
+                #region Path Finding Helpers
+
+
+                if (ShowPathFindingGraph)
+                {
+                    for (int i = 0; i < PathFindingNodes.Count; i++)
+                    {
+                        //Draw Graph Nodes
+                        DrawPathFindingNode(NodeModel, Matrix.CreateTranslation(PathFindingNodes[i].position) * world, globalEffect.View, globalEffect.Projection);
+                    }
+
+                    globalEffect.LightingEnabled = false;
+                    globalEffect.CurrentTechnique.Passes[0].Apply();
+                    //Draw Links between nodes
+                    VertexPositionColor[] LinkLines;
+                    LinkLines = vpc;
+
+                    VertexDeclaration VertexDecl = new VertexDeclaration(new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0), new VertexElement(12, VertexElementFormat.Color, VertexElementUsage.Color, 0));
+                    VertexBuffer vertexBuffer;
+
+                    if (LinkLines.Length > 0)
+                    {
+                        vertexBuffer = new VertexBuffer(GraphicsDevice, VertexDecl, LinkLines.Length, BufferUsage.None);
+                        vertexBuffer.SetData<VertexPositionColor>(LinkLines);
+
+                        GraphicsDevice.SetVertexBuffer(vertexBuffer);
+                        GraphicsDevice.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineList, 0, LinkLines.Length);
+
+                        vertexBuffer.Dispose();
+                    }
+
+                    #region PathFinding links helper drawings
+
+
+                    /*//Determine set of lines to draw for Graph Links
                 vpc = new VertexPositionColor[PathFindingNodes[currentNode].Links.Count * 2];
 
                 int vIndex = 0;
@@ -4549,34 +4724,37 @@ namespace zombies
                 GraphicsDevice.BlendState = blend;
                 GraphicsDevice.DepthStencilState = depthState;
                 */
+                    #endregion
+                }
+
                 #endregion
+
+                foreach (Zombie z in zombies)
+                {
+                    if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
+                        DrawModel(z);
+                }
+
+
+                foreach (Entity ent in PickupableObjects)
+                {
+                    if (ent is Item)
+                        DrawModel(ent as Item);
+                    else if (ent is Weapon)
+                        DrawModel(ent as Weapon);
+                    else if (ent is Powerup)
+                        DrawModel(ent as Powerup);
+
+                }
+
+                EmitterDraw(FireEmitter);
+                EmitterDraw(FireEmitter2);
+                EmitterDraw(FireEmitter3);
+                EmitterDraw(FireEmitter4);
+                EmitterDraw(ChemicalsEmitter);
             }
 
             #endregion
-
-            foreach (Zombie z in zombies)
-            {
-                if ((z.Position - Player.Position).Length() < SIGHT_RADIUS)
-                    DrawModel(z);
-            }
-
-
-            foreach (Entity ent in PickupableObjects)
-            {
-                if (ent is Item)
-                    DrawModel(ent as Item);
-                else if (ent is Weapon)
-                    DrawModel(ent as Weapon);
-                else if (ent is Powerup)
-                    DrawModel(ent as Powerup);
-             
-            }
-
-            EmitterDraw(FireEmitter);
-            EmitterDraw(FireEmitter2);
-            EmitterDraw(FireEmitter3);
-            EmitterDraw(FireEmitter4);
-            EmitterDraw(ChemicalsEmitter);
 
             base.Draw(gameTime);
         }

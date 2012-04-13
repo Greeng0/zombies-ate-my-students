@@ -32,7 +32,7 @@ namespace Entities
     {
         public int HealthPoints;
         public int MaxHealth;
-        public float moveSpeed = 0.6f;
+        public float moveSpeed = 0.2f;
         public float rotationSpeed = 0.1f;
         public AnimationStance Stance;
         public bool Dead = false;
@@ -206,11 +206,7 @@ namespace Entities
             animationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
 
 
-            //update ray positions
-
-            //ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
-            //ray[1] = new VertexPositionColor(Position + rayHeight + new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * EquippedWeapon.Range, Color.GreenYellow);
-        
+            //update ray positions        
             ray[0] = new VertexPositionColor(Position + rayHeight, Color.GreenYellow);
             ray[1] = new VertexPositionColor(Position + rayHeight + raydist * new Vector3((float)Math.Sin(Rotation), 0, (float)Math.Cos(Rotation)) * 2f, Color.GreenYellow);          
         }
